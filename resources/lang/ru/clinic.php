@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'clinics' => 'Клиники',
+    'create_clinic' => 'Создать',
+    'edit_clinic' => 'Редактировать',
+    'specialization' => 'Специализации',
+    'diseaseType' => 'Тип болезни',
+    'name' => 'Название',
+    'description' => 'Описание',
+    'actions' => 'Действия',
+    'save' => 'Сохранить',
+    'update' => 'Обновить',
+    'edit' => 'Редактировать',
+    'working_hours' => 'График работы',
+    'location_link' => 'Локация (ссылка)',
+    'contacts' => 'Контакты',
+    'add_contact' => 'Добавить Контакт',
+    'contact_type' => 'Тип контакта',
+    'contact_value' => 'Значение Типа',
+    'delete_contact' => 'Удалить',
+    'upload_images' => 'Загрузить фото',
+    'successfully_created' => 'Клиника успешно добавлена!',
+    'successfully_updated' => 'Клиника успешно обновлена!',
+    'successfully_deleted' => 'Клиника успешно удалена!',
+];
