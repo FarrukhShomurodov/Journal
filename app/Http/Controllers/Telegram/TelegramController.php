@@ -31,12 +31,16 @@ class TelegramController extends Controller
             $text = $message->getText();
 
             $user = BotUser::firstOrCreate(['chat_id' => $chatId]);
-            $user->update(['uname' => $message->from->username]);
 
             if ($text == '/start') {
-                $user->update(['step' => 'choose_language']);
+                $user->update([
+                    'uname' => $message->from->username,
+                    'first_name' => $message->from->first_name,
+                    'second_name' => $message->from->last_name,
+                    'step' => 'choose_language'
+                ]);
 
-                $user->stepInformation()->updateOrCreate(
+                $user->previousChoice()->updateOrCreate(
                     ['bot_user_id' => $user->id],
                     [
                         'previous_specialization_id' => null,
@@ -70,22 +74,33 @@ class TelegramController extends Controller
                 $user->update([
                     'phone' => $phoneNumber
                 ]);
-            } else if (preg_match('/^\+998\d{9}$/', $text)) {
-                $user->update([
-                    'phone' => $text
-                ]);
+
+                if ($user->step === 'change_phone') {
+                    $user->update([
+                        'step' => 'phone_changed'
+                    ]);
+                }
+            } else if ($user->step === 'get_application' || $user->step === 'change_phone') {
+                if ((int)$text) {
+                    $user->update([
+                        'phone' => $text
+                    ]);
+
+                    if ($user->step === 'change_phone') {
+                        $user->update([
+                            'step' => 'phone_changed'
+                        ]);
+                    }
+                } else {
+                    $this->telegram->sendMessage([
+                        'chat_id' => $chatId,
+                        'text' => 'Введите действительный номер телефона.',
+                        'reply_markup' => $this->telegramService->requestPhoneKeyboard(),
+                    ]);
+                }
             }
 
-
             $this->telegramService->processMessage($chatId, $text, $user->step, $message);
-        }
-
-        // Обработка callback_query
-        if ($update->has('callback_query')) {
-            $callbackQuery = $update->getCallbackQuery();
-            $chatId = $callbackQuery->getMessage()->getChat()->getId();
-            $data = $callbackQuery->getData();
-            $this->telegramService->processCallbackQuery($chatId, $data, $callbackQuery);
         }
     }
 

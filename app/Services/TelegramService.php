@@ -28,15 +28,6 @@ class TelegramService
         $this->telegram = new Api(config('telegram.bot_token'));
     }
 
-    public function processCallbackQuery($chatId, $data, $callbackQuery)
-    {
-//        if (str_starts_with($data, 'sub_category_')) {
-//            $subCategoryId = str_replace('sub_category_', '', $data);
-//            $this->showProductsBySubCategory($chatId, $subCategoryId);
-//        }
-    }
-
-
     public function processMessage($chatId, $text, $step, $message)
     {
         $this->user = BotUser::where('chat_id', $chatId);
@@ -47,8 +38,12 @@ class TelegramService
             'Поиск лечения' => 'selectDiseaseType',
             'Каталог клиник' => 'clinicList',
             'Топ клиники' => 'clinicTop',
-            'По специализации' => 'selectSpecialization',
-            'По типу болезни' => 'selectDiseaseType',
+            'По специализации' => function () use ($chatId) {
+                $this->selectSpecialization($chatId, true);
+            },
+            'По типу болезни' => function () use ($chatId) {
+                $this->selectDiseaseType($chatId, true);
+            },
             'Оставить заявку' => 'getApplication',
 
             // Promotion
@@ -76,8 +71,11 @@ class TelegramService
         ];
 
         if (array_key_exists($text, $commands)) {
-            $this->{$commands[$text]}($chatId);
-            return;
+            if (is_callable($commands[$text])) {
+                $commands[$text]();
+            } else {
+                $this->{$commands[$text]}($chatId);
+            }
         }
 
         switch ($step) {
@@ -99,6 +97,15 @@ class TelegramService
                     $this->clinicList($chatId, $text, 'specialization');
                 }
                 break;
+            case 'show_top_specializations':
+                if ($text == 'Назад') {
+                    $this->clinicTop($chatId);
+                    break;
+                }
+                if ($text !== 'На главную') {
+                    $this->clinicList($chatId, $text, 'specialization', true);
+                }
+                break;
             case 'show_disease_types':
                 if ($text == 'Назад') {
                     $this->clinicTop($chatId);
@@ -110,9 +117,20 @@ class TelegramService
                 }
 
                 break;
+            case 'show_top_disease_types':
+                if ($text == 'Назад') {
+                    $this->clinicTop($chatId);
+                    break;
+                }
+
+                if ($text !== 'На главную') {
+                    $this->clinicList($chatId, $text, 'disease_type', true);
+                }
+
+                break;
             case 'show_clinic':
                 if ($text == 'Назад') {
-                    $stepInfo = $this->user->first()->stepInformation;
+                    $stepInfo = $this->user->first()->previousChoice;
 
                     if ($stepInfo && $stepInfo->previous_specialization_id) {
                         $this->back($chatId, 'show_specializations');
@@ -126,9 +144,30 @@ class TelegramService
                     $this->showClinicInformation($chatId, $text);
                 }
                 break;
+            case 'show_top_clinic':
+                if ($text == 'Назад') {
+                    $stepInfo = $this->user->first()->previousChoice;
+
+                    if ($stepInfo && $stepInfo->previous_specialization_id) {
+                        $this->back($chatId, 'show_specializations_top_clinic');
+                    } elseif ($stepInfo && $stepInfo->previous_disease_type_id) {
+                        $this->back($chatId, 'show_disease_types_top_clinic');
+                    } else {
+                        $this->showMainMenu($chatId);
+                    }
+
+                } else {
+                    $this->showClinicInformation($chatId, $text, true);
+                }
+                break;
             case 'show_clinic_information':
                 if ($text == 'Назад') {
                     $this->back($chatId, 'show_clinic');
+                }
+                break;
+            case 'show_top_clinic_information':
+                if ($text == 'Назад') {
+                    $this->back($chatId, 'show_top_clinic');
                 }
                 break;
             case 'get_application':
@@ -188,6 +227,10 @@ class TelegramService
                 break;
 
             // Setting
+            case 'phone_changed':
+                $this->settingInformation($chatId);
+                break;
+
             case 'settings':
                 if ($text === 'Язык') {
                     $this->user->update(['step' => 'edit_language']);
@@ -215,16 +258,13 @@ class TelegramService
                         'text' => "Введите номер телефона",
                         'reply_markup' => $this->requestPhoneKeyboard(),
                     ]);
-                } else {
-                    $this->settingInformation($chatId);
+                    $this->updateUserStep($chatId, 'change_phone');
                 }
-
                 break;
-
             // Main menu
-            case 'show_main_menu':
-                $this->showMainMenu($chatId);
-                break;
+//            case 'show_main_menu':
+//                $this->showMainMenu($chatId);
+//                break;
         }
     }
 
@@ -293,7 +333,7 @@ class TelegramService
         ]);
 
 
-        $this->user->first()->stepInformation()->updateOrCreate(
+        $this->user->first()->previousChoice()->updateOrCreate(
             ['bot_user_id' => $this->user->first()->id],
             [
                 'previous_specialization_id' => null,
@@ -306,7 +346,7 @@ class TelegramService
     }
 
     // Clinic
-    private function selectSpecialization($chatId): void
+    private function selectSpecialization($chatId, $isTop = false): void
     {
         $specializations = Specialization::query()->get();
 
@@ -327,7 +367,7 @@ class TelegramService
             $keyboard[] = [$specialization->name['ru']];
         }
 
-        if ($this->user->first()->step == 'clinic_top') {
+        if ($this->user->first()->step == 'clinic_top' || $this->user->first()->step == 'show_top_clinic') {
             $keyboard[] = [
                 'Назад'
             ];
@@ -350,10 +390,11 @@ class TelegramService
             'reply_markup' => $reply_markup
         ]);
 
-        $this->updateUserStep($chatId, 'show_specializations');
+        $step = $isTop ? 'show_top_specializations' : 'show_specializations';
+        $this->updateUserStep($chatId, $step);
     }
 
-    private function selectDiseaseType($chatId): void
+    private function selectDiseaseType($chatId, $isTop = false): void
     {
         $diseaseTypes = DiseaseType::query()->get();
 
@@ -372,7 +413,7 @@ class TelegramService
             $keyboard[] = [$diseaseType->name['ru']];
         }
 
-        if ($this->user->first()->step == 'clinic_top') {
+        if ($this->user->first()->step == 'clinic_top' || $this->user->first()->step == 'show_top_clinic') {
             $keyboard[] = [
                 'Назад'
             ];
@@ -394,7 +435,8 @@ class TelegramService
             'reply_markup' => $reply_markup
         ]);
 
-        $this->updateUserStep($chatId, 'show_disease_types');
+        $step = $isTop ? 'show_top_disease_types' : 'show_disease_types';
+        $this->updateUserStep($chatId, $step);
     }
 
     private function clinicTop($chatId): void
@@ -424,7 +466,7 @@ class TelegramService
         $this->updateUserStep($chatId, 'clinic_top');
     }
 
-    private function clinicList($chatId, $text = null, $from = null): void
+    private function clinicList($chatId, $text = null, $from = null, $isTop = false): void
     {
         if ($from == 'specialization') {
             if (is_integer($text)) {
@@ -441,7 +483,7 @@ class TelegramService
                 return;
             }
 
-            $this->user->first()->stepInformation()->updateOrCreate(
+            $this->user->first()->previousChoice()->updateOrCreate(
                 ['bot_user_id' => $this->user->first()->id],
                 [
                     'previous_specialization_id' => $specialization->id,
@@ -449,7 +491,7 @@ class TelegramService
                 ]
             );
 
-            $clinics = $specialization->clinics;
+            $clinics = $isTop ? $specialization->clinics()->orderByRating()->get() : $specialization->clinics;
         } elseif ($from == 'disease_type') {
             if (is_integer($text)) {
                 $diseaseType = DiseaseType::query()->find($text);
@@ -465,7 +507,7 @@ class TelegramService
                 return;
             }
 
-            $this->user->first()->stepInformation()->updateOrCreate(
+            $this->user->first()->previousChoice()->updateOrCreate(
                 ['bot_user_id' => $this->user->first()->id],
                 [
                     'previous_disease_type_id' => $diseaseType->id,
@@ -473,7 +515,7 @@ class TelegramService
                 ]
             );
 
-            $clinics = $diseaseType->clinics;
+            $clinics = $isTop ? $diseaseType->clinics()->orderByRating()->get() : $diseaseType->clinics;
         } else {
             $clinics = Clinic::query()->get();
         }
@@ -507,11 +549,12 @@ class TelegramService
                 'reply_markup' => $reply_markup
             ]);
 
-            $this->updateUserStep($chatId, 'show_clinic');
+            $step = $isTop ? 'show_top_clinic' : 'show_clinic';
+            $this->updateUserStep($chatId, $step);
         }
     }
 
-    private function showClinicInformation($chatId, $text): void
+    private function showClinicInformation($chatId, $text, $isTop = false): void
     {
         $clinic = Clinic::query()->whereJsonContains('name->ru', $text)->first();
 
@@ -585,12 +628,13 @@ class TelegramService
             ]);
         }
 
-        $this->user->first()->stepInformation()->updateOrCreate(
+        $this->user->first()->previousChoice()->updateOrCreate(
             ['bot_user_id' => $this->user->first()->id],
             ['previous_clinic_id' => $clinic->id]
         );
 
-        $this->updateUserStep($chatId, 'show_clinic_information');
+        $step = $isTop ? 'show_top_clinic_information' : 'show_clinic_information';
+        $this->updateUserStep($chatId, $step);
     }
 
     // Application
@@ -614,7 +658,7 @@ class TelegramService
 
     private function storeApplication($chatId, $text): void
     {
-        $clinicId = $this->user->first()->stepInformation->previous_clinic_id;
+        $clinicId = $this->user->first()->previousChoice->previous_clinic_id;
 
         try {
             $this->user->first()->application()->create([
@@ -1243,7 +1287,7 @@ class TelegramService
         $this->updateUserStep($chatId, 'settings');
     }
 
-    private function requestPhoneKeyboard(): Keyboard
+    public function requestPhoneKeyboard(): Keyboard
     {
         return new Keyboard(['keyboard' => [[['text' => 'Отправить контакт', 'request_contact' => true]]], 'resize_keyboard' => true, 'one_time_keyboard' => true]);
     }
@@ -1251,16 +1295,31 @@ class TelegramService
     // Back
     private function back($chatId, $step): void
     {
-        $stepInfo = $this->user->first()->stepInformation;
+        $stepInfo = $this->user->first()->previousChoice;
 
         $commands = [
             'show_specializations' => 'selectSpecialization',
             'show_disease_types' => 'selectDiseaseType',
+            'show_specializations_top_clinic' => function () use ($chatId) {
+                $this->selectSpecialization($chatId, true);
+            },
+            'show_disease_types_top_clinic' => function () use ($chatId) {
+                $this->selectDiseaseType($chatId, true);
+            },
             'show_clinic' => function () use ($chatId, $stepInfo) {
                 if ($stepInfo && $stepInfo->previous_specialization_id) {
                     $this->clinicList($chatId, $stepInfo->previous_specialization_id, 'specialization');
                 } elseif ($stepInfo && $stepInfo->previous_disease_type_id) {
                     $this->clinicList($chatId, $stepInfo->previous_disease_type_id, 'disease_type');
+                } else {
+                    $this->clinicList($chatId);
+                }
+            },
+            'show_top_clinic' => function () use ($chatId, $stepInfo) {
+                if ($stepInfo && $stepInfo->previous_specialization_id) {
+                    $this->clinicList($chatId, $stepInfo->previous_specialization_id, 'specialization', true);
+                } elseif ($stepInfo && $stepInfo->previous_disease_type_id) {
+                    $this->clinicList($chatId, $stepInfo->previous_disease_type_id, 'disease_type', true);
                 } else {
                     $this->clinicList($chatId);
                 }

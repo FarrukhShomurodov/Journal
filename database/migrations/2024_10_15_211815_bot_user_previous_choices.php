@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('bot_user_step_information', function (Blueprint $table) {
+        Schema::create('bot_user_previous_choices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('bot_user_id')->constrained('bot_users')->cascadeOnDelete();
             $table->foreignId('previous_specialization_id')->nullable()->constrained('specializations')->cascadeOnDelete();
@@ -25,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('bot_user_step_information');
+        Schema::dropIfExists('bot_user_previous_choices');
     }
 };

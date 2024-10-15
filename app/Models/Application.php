@@ -13,11 +13,17 @@ class Application extends Model
     protected $fillable = [
         'bot_user_id',
         'clinic_id',
-        'text'
+        'text',
+        'is_reviewed'
     ];
 
     public function botUser(): BelongsTo
     {
         return $this->belongsTo(BotUser::class);
+    }
+
+    public function clinic(): BelongsTo
+    {
+        return $this->belongsTo(Clinic::class);
     }
 }

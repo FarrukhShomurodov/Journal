@@ -140,6 +140,17 @@
                     @enderror
                 </div>
                 <div class="mb-3">
+                    <label class="form-label" for="rating">Рейтинг</label>
+                    <input type="number" name="rating"
+                           class="form-control @error('rating') is-invalid @enderror" id="rating"
+                           placeholder="@lang('clinic.rating')"
+                           min="1" max="5" step="0.1" required>
+                    @error('rating')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label" for="category_id">Спецелизация</label>
                     <select name="specialization[]" class="form-control @error('category_id') is-invalid @enderror"
                             id="category_id" required multiple>

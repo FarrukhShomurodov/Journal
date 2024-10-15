@@ -18,15 +18,14 @@ class BotUser extends Model
         'uname',
         'typed_name',
         'phone',
-        'sms_code',
         'step',
         'lang',
         'isactive'
     ];
 
-    public function stepInformation(): HasOne
+    public function previousChoice(): HasOne
     {
-        return $this->hasOne(BotUserStepInformation::class);
+        return $this->hasOne(BotUserPreviousChoice::class);
     }
 
     public function application(): HasMany

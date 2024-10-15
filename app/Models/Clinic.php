@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,6 +18,7 @@ class Clinic extends Model
         'working_hours',
         'location_link',
         'contacts',
+        'rating',
     ];
 
     protected $casts = [
@@ -40,4 +42,17 @@ class Clinic extends Model
     {
         return $this->belongsToMany(Specialization::class, 'clinic_specialization');
     }
+
+    /**
+     * Scope a query to sort clinics by rating.
+     *
+     * @param Builder $query
+     * @param string $order
+     * @return Builder
+     */
+    public function scopeOrderByRating($query, $order = 'desc'): Builder
+    {
+        return $query->orderBy('rating', $order);
+    }
+
 }

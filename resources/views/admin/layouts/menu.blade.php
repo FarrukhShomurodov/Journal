@@ -21,6 +21,18 @@
                 <div data-i18n="Панел управление">Панел управление</div>
             </a>
         </li>
+        <li class="menu-item {{ Request::is('bot-users*') ? 'active' : '' }}">
+            <a href="{{route('bot-users')}}" class="menu-link">
+                <i class='menu-icon bx bx-bot'></i>
+                <div data-i18n="Пользователи бота">Пользователи бота</div>
+            </a>
+        </li>
+        <li class="menu-item {{ Request::is('applications*') ? 'active' : '' }}">
+            <a href="{{route('applications')}}" class="menu-link">
+                <i class='menu-icon bx bx-edit'></i>
+                <div data-i18n="Заявки">Заявки</div>
+            </a>
+        </li>
         <li class="menu-item {{ Request::is('/currencies') || Request::is('currencies*') ? 'active' : '' }}">
             <a href="{{route('currencies.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-money"></i>
@@ -73,7 +85,8 @@
             </a>
         </li>
 
-        <li class="menu-item {{ Request::is('clinics*') || Request::is('diseaseTypes*') || Request::is('specializations*') ? 'open' : '' }}" style="">
+        <li class="menu-item {{ Request::is('clinics*') || Request::is('diseaseTypes*') || Request::is('specializations*') ? 'open' : '' }}"
+            style="">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-health"></i>
                 <div data-i18n="Клиники">Клиники</div>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\Web\ApplicationController;
 use App\Http\Controllers\Admin\Web\BotUserController;
 use App\Http\Controllers\Admin\Web\CategoryController;
 use App\Http\Controllers\Admin\Web\ClinicController;
@@ -12,9 +13,9 @@ use App\Http\Controllers\Admin\Web\HotelController;
 use App\Http\Controllers\Admin\Web\PromotionController;
 use App\Http\Controllers\Admin\Web\SpecializationController;
 use App\Http\Controllers\Admin\Web\UsefulInformationController;
-use App\Http\Controllers\Admin\Web\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Telegram\TelegramController;
+use App\Models\Clinic;
 use Illuminate\Support\Facades\Route;
 use Telegram\Bot\Api;
 
@@ -26,8 +27,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::resource('users', UserController::class);
-    Route::resource('bot-users', BotUserController::class);
+    Route::get('bot-users', [BotUserController::class, 'index'])->name('bot-users');
+    Route::get('applications', [ApplicationController::class, 'index'])->name('applications');
 
     Route::resource('currencies', CurrencyController::class);
     Route::resource('establishments', EstablishmentController::class);
@@ -53,6 +54,6 @@ Route::prefix('telegram')->group(function () {
 });
 
 Route::get('test', function () {
-    $clinic = \App\Models\Clinic::first();
-    dd($clinic);
+    $clinics = Clinic::orderByRating()->get();
+    dd($clinics);
 });

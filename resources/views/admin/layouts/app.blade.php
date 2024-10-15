@@ -212,7 +212,6 @@
         @endphp
 
         let i = {{ $i }};
-        console.log(i)
 
         $('#add-contact').click(function () {
             i++;

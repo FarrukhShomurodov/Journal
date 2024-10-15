@@ -18,7 +18,6 @@ return new class extends Migration {
             $table->string('uname')->nullable();
             $table->string('typed_name')->nullable();
             $table->string('phone')->nullable();
-            $table->integer('sms_code')->nullable();
             $table->string('step')->nullable();
             $table->string('lang')->nullable();
             $table->boolean('isactive')->default(true);

@@ -37,15 +37,18 @@
             <table class="datatables-users table border-top">
                 <thead>
                 <tr>
+                    <th>ID</th>
                     <th>@lang('clinic.name')</th>
                     <th>@lang('clinic.specialization')</th>
                     <th>@lang('clinic.diseaseType')</th>
+                    <th>Ретинг</th>
                     <th>@lang('clinic.actions')</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach ($clinics as $clinic)
                     <tr>
+                        <td>{{ $clinic->id }}</td>
                         <td>
                             @foreach($clinic->name as $lang => $name)
                                 <div><b>{{ strtoupper($lang) }}:</b> {{ $name }}</div>
@@ -60,6 +63,9 @@
                             @foreach($clinic->diseaseTypes as $diseaseType)
                                 <div> {{ $diseaseType->name['ru'] }}</div>
                             @endforeach
+                        </td>
+                        <td>
+                            {{ $clinic->rating }}
                         </td>
                         <td>
                             <div class="d-inline-block text-nowrap">

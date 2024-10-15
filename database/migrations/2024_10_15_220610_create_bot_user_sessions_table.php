@@ -4,21 +4,17 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('clinics', function (Blueprint $table) {
+        Schema::create('bot_user_sessions', function (Blueprint $table) {
             $table->id();
-            $table->json('name');
-            $table->json('description');
-            $table->string('working_hours');
-            $table->string('location_link');
-            $table->json('contacts');
-            $table->decimal('rating');
+            $table->foreignId('bot_user_id')->constrained('bot_users');
+            $table->timestamp('session_start');
+            $table->timestamp('session_end')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('clinics');
+        Schema::dropIfExists('bot_user_sessions');
     }
 };

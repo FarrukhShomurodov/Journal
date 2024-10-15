@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class BotUserStepInformation extends Model
+class BotUserPreviousChoice extends Model
 {
     use HasFactory;
 
+    protected $table = 'bot_user_previous_choices';
     protected $fillable = [
         'bot_user_id',
         'previous_specialization_id',

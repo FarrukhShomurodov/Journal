@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->foreignId('bot_user_id')->constrained('bot_users')->cascadeOnDelete();
             $table->foreignId('clinic_id')->constrained('clinics')->cascadeOnDelete();
             $table->text('text');
+            $table->boolean('is_reviewed')->default(0);
             $table->timestamps();
         });
     }
