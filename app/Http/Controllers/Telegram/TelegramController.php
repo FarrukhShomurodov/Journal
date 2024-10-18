@@ -34,6 +34,14 @@ class TelegramController extends Controller
 
             $user = BotUser::query()->firstOrCreate(['chat_id' => $chatId]);
 
+            if (!$user->isactive){
+                $this->telegram->sendMessage([
+                    'chat_id' => $chatId,
+                    'text' => "К сожалению, ваш доступ заблокирован. Пожалуйста, свяжитесь с поддержкой для получения дополнительной информации. Вы можете написать пользователю @support_team.",
+                ]);
+                return;
+            }
+
             $user->update(['last_activity' => now()]);
 
             $lastSession = BotUserSession::query()->where('bot_user_id', $user->id)->latest()->first();

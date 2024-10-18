@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('bot_user_sessions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('bot_user_id')->constrained('bot_users');
+            $table->foreignId('bot_user_id')->constrained('bot_users')->cascadeOnDelete();
             $table->timestamp('session_start');
             $table->timestamp('session_end')->nullable();
             $table->timestamps();

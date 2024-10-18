@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('bot_user_journeys', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('bot_user_id')->constrained('bot_users');
+            $table->foreignId('bot_user_id')->constrained('bot_users')->cascadeOnDelete();
             $table->string('event_name');
             $table->timestamps();
         });

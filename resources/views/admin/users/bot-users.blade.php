@@ -70,7 +70,7 @@
                                 </span>
                             </label>
                         </td>
-                        <td>{{ $user->country->name['ru'].','.$user->city->name['ru'] }}</td>
+                        <td>{{ $user->country ? $user->country->name['ru'].',' : ''}} {{ $user->city ? $user->city->name['ru'] : '' }}</td>
                         <td>{{ $user->created_at}}</td>
                         <td>{{ $user->last_activity}}</td>
                         <td>

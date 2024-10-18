@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\BotUser;
 use App\Models\Category;
+use App\Models\City;
 use App\Models\Clinic;
 use App\Models\Country;
 use App\Models\Currency;
@@ -92,14 +93,14 @@ class TelegramService
                 $this->processSelectCity($chatId, $text);
                 break;
             case 'select_city':
-                $city = Country::query()->where('name->ru', $text)->first();
+                $city = City::query()->where('name->ru', $text)->first();
 
                 if (!$city) {
                     $this->updateUserStep($chatId, 'select_country');
 
                     $this->telegram->sendMessage([
                         'chat_id' => $chatId,
-                        'text' => 'Что пошло не так повторите попытку.',
+                        'text' => 'Возникла ошибка. Пожалуйста, повторите попытку.',
                     ]);
 
                     return;
@@ -199,7 +200,23 @@ class TelegramService
                 $this->getApplication($chatId);
                 break;
             case 'store_application':
-                $this->storeApplication($chatId, $text);
+                if ($text == 'Назад') {
+                    $userJourney = $this->user->first()->journey()
+                        ->whereIn('event_name', ['Выбор клиники', 'Выбор топ клиники'])
+                        ->orderBy('created_at', 'desc')
+                        ->first();
+
+                    if ($userJourney) {
+                        if ($userJourney->event_name === 'Выбор клиники') {
+                            $this->back($chatId, 'show_clinic');
+                        } elseif ($userJourney->event_name === 'Выбор топ клиники') {
+                            $this->back($chatId, 'show_top_clinic');
+                        }
+                    }
+                } else {
+                    $this->storeApplication($chatId, $text);
+
+                }
                 break;
 
             // Promotions
@@ -310,7 +327,7 @@ class TelegramService
         } else {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Произошла ошибка повторите попытку позже.'
+                'text' => 'Возникла ошибка. Пожалуйста, повторите попытку.'
             ]);
         }
 
@@ -345,7 +362,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Выберите из какой вы страны.',
+            'text' => 'Откуда вы? Выберите вашу страну из списка.',
             'reply_markup' => $reply_markup
         ]);
 
@@ -362,7 +379,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Что пошло не так повторите попытку.',
+                'text' => 'Возникла ошибка. Пожалуйста, повторите попытку.',
             ]);
 
             return;
@@ -375,7 +392,7 @@ class TelegramService
         $keyboard = [];
 
         foreach ($country->city as $city) {
-            $city[] = [$city->name['ru']];
+            $keyboard[] = [$city->name['ru']];
         }
 
         $reply_markup = Keyboard::make([
@@ -387,7 +404,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Выберите из какого вы города.',
+            'text' => 'Пожалуйста, выберите ваш город из списка.',
             'reply_markup' => $reply_markup
         ]);
 
@@ -492,7 +509,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Выберите Специализацию',
+            'text' => 'Выберите специализацию, чтобы узнать больше о клинике.',
             'reply_markup' => $reply_markup
         ]);
 
@@ -538,7 +555,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Выберите тип болезни',
+            'text' => 'Чтобы помочь вам дальше, выберите тип болезни.',
             'reply_markup' => $reply_markup
         ]);
 
@@ -567,7 +584,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Топ клиники:',
+            'text' => 'Наш рейтинг: лучшие клиники по вашему запросу.',
             'reply_markup' => $reply_markup
         ]);
 
@@ -588,7 +605,7 @@ class TelegramService
             if (!$specialization) {
                 $this->telegram->sendMessage([
                     'chat_id' => $chatId,
-                    'text' => 'Клиники по данной специализации не найдены.',
+                    'text' => 'Мы не смогли найти клиники по данной специализации. Попробуйте изменить поиск.',
                 ]);
                 return;
             }
@@ -612,7 +629,7 @@ class TelegramService
             if (!$diseaseType) {
                 $this->telegram->sendMessage([
                     'chat_id' => $chatId,
-                    'text' => 'Клиники по данной типы болезени не найдены.',
+                    'text' => 'Мы не нашли клиники по этому типу болезни. Попробуйте изменить критерии поиска.',
                 ]);
                 return;
             }
@@ -633,7 +650,7 @@ class TelegramService
         if ($clinics->isEmpty()) {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Клиники не найдены для этой специализации.',
+                'text' => 'Мы не смогли найти клиники по данной специализации. Попробуйте изменить поиск.',
             ]);
         } else {
             $keyboard = [];
@@ -655,7 +672,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Список клиник:',
+                'text' => 'Ниже представлен список клиник, соответствующих вашему запросу:',
                 'reply_markup' => $reply_markup
             ]);
 
@@ -749,7 +766,7 @@ class TelegramService
         $step = $isTop ? 'show_top_clinic_information' : 'show_clinic_information';
         $this->updateUserStep($chatId, $step);
 
-        $this->storeUserJourney("Просмотр информации о клинике" . $clinic->name['ru']);
+        $this->storeUserJourney("Просмотр информации о клинике " . $clinic->name['ru']);
     }
 
     // Application
@@ -758,14 +775,14 @@ class TelegramService
         if ($this->user->first()->phone) {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => "Напишите заявку.",
+                'text' => "Создайте заявку.",
             ]);
             $this->updateUserStep($chatId, 'store_application');
             $this->storeUserJourney("Напишите заявку");
         } else {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => "Введите номер телефона",
+                'text' => "Введите номер телефона.",
                 'reply_markup' => $this->requestPhoneKeyboard(),
             ]);
             $this->updateUserStep($chatId, 'get_application');
@@ -785,7 +802,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Ваша заявка отправлена. Скоро мы свяжемся с вами.'
+                'text' => 'Ваша заявка успешно принята. Мы свяжемся с вами как можно скорее.'
             ]);
             $this->storeUserJourney("Заявка сохранена");
         } catch (Exception $e) {
@@ -793,7 +810,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Что-то пошло не так, повторите попытку.'
+                'text' => 'Возникла ошибка. Пожалуйста, повторите попытку.'
             ]);
         }
 
@@ -810,7 +827,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Пусто',
+                'text' => 'На данный момент акции не найдены. Рекомендуем периодически проверять наличие обновлений.',
             ]);
 
             return;
@@ -835,7 +852,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Выберите Акцию',
+            'text' => 'Пожалуйста, выберите акцию, чтобы узнать больше.',
             'reply_markup' => $reply_markup
         ]);
 
@@ -889,7 +906,7 @@ class TelegramService
             ]);
         }
 
-        $this->storeUserJourney("Просмотр акции" . $promotion->name['ru']);
+        $this->storeUserJourney("Просмотр акции " . $promotion->name['ru']);
     }
 
     // UsefulInfo
@@ -902,7 +919,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Пусто',
+                'text' => 'К сожалению, полезная информация не найдена. Попробуйте поискать позже!',
             ]);
 
             return;
@@ -943,7 +960,7 @@ class TelegramService
         if (!$usefulInformation) {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Информация по полезным информациям не найдено.',
+                'text' => 'К сожалению, мы не смогли найти информацию по полезным вопросам. Попробуйте позже!',
             ]);
             return;
         }
@@ -982,7 +999,7 @@ class TelegramService
             ]);
         }
 
-        $this->storeUserJourney("Просмотр полезной ифнормации" . $usefulInformation->name['ru']);
+        $this->storeUserJourney("Просмотр полезной ифнормации " . $usefulInformation->name['ru']);
     }
 
     // Hotel
@@ -995,7 +1012,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Пусто',
+                'text' => 'Похоже, в данный момент нет доступных отелей. Попробуйте поискать позже',
             ]);
 
             return;
@@ -1037,7 +1054,7 @@ class TelegramService
         if (!$hotel) {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Информация по отелю не найдено.',
+                'text' => 'Похоже, в данный момент нет доступных отелей. Попробуйте поискать позже',
             ]);
             return;
         }
@@ -1082,7 +1099,7 @@ class TelegramService
                 'media' => json_encode($mediaGroup)
             ]);
         }
-        $this->storeUserJourney("Просмотр отеля" . $hotel->name['ru']);
+        $this->storeUserJourney("Просмотр отеля " . $hotel->name['ru']);
 
     }
 
@@ -1096,7 +1113,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Пусто',
+                'text' => 'Похоже, в данный момент нет доступных развлечений. Попробуйте поискать позже!',
             ]);
 
             return;
@@ -1121,7 +1138,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Выберите развлечения',
+            'text' => 'Пожалуйста, выберите развлечения, чтобы узнать больше.',
             'reply_markup' => $reply_markup
         ]);
 
@@ -1136,7 +1153,7 @@ class TelegramService
         if (!$entertainment) {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Информация по развлечениям не найдено.',
+                'text' => 'Похоже, в данный момент нет доступных развлечений. Попробуйте поискать позже!',
             ]);
             return;
         }
@@ -1181,7 +1198,7 @@ class TelegramService
                 'media' => json_encode($mediaGroup)
             ]);
         }
-        $this->storeUserJourney("Просмотр развлечения" . $entertainment->name['ru']);
+        $this->storeUserJourney("Просмотр развлечения " . $entertainment->name['ru']);
     }
 
     // Establishment
@@ -1194,7 +1211,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Пусто',
+                'text' => 'Похоже, в данный момент нет доступных заведений. Попробуйте поискать позже!',
             ]);
 
             return;
@@ -1219,7 +1236,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Выберите категорию',
+            'text' => 'Пожалуйста, выберите категорию, чтобы продолжить.',
             'reply_markup' => $reply_markup
         ]);
 
@@ -1238,7 +1255,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Заведение не найдены для этой категории.',
+                'text' => 'Похоже, в данный момент нет доступных заведений. Попробуйте поискать позже!',
             ]);
         } else {
             $keyboard = [];
@@ -1260,7 +1277,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Список заведений:',
+                'text' => 'Ниже представлен список заведений, соответствующих вашему запросу:',
                 'reply_markup' => $reply_markup
             ]);
 
@@ -1278,7 +1295,7 @@ class TelegramService
         if (!$establishment) {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Информация по заведению не найдено.',
+                'text' => 'Похоже, в данный момент нет доступных заведений. Попробуйте поискать позже!',
             ]);
             return;
         }
@@ -1324,7 +1341,7 @@ class TelegramService
             ]);
         }
 
-        $this->storeUserJourney("Просмотр информации об заведение" . $establishment->name['ru']);
+        $this->storeUserJourney("Просмотр информации об заведение " . $establishment->name['ru']);
 
     }
 
@@ -1338,7 +1355,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Пусто',
+                'text' => 'Похоже, в данный момент нет доступных валют. Попробуйте поискать позже!',
             ]);
 
             return;
@@ -1363,7 +1380,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Выберите валюту',
+            'text' => 'Пожалуйста, выберите валюту, чтобы продолжить.',
             'reply_markup' => $reply_markup
         ]);
 
@@ -1386,7 +1403,7 @@ class TelegramService
             'parse_mode' => 'Markdown'
         ]);
 
-        $this->storeUserJourney("Просмотр валюты" . $currency->ccy);
+        $this->storeUserJourney("Просмотр валюты " . $currency->ccy);
     }
 
     // Setting

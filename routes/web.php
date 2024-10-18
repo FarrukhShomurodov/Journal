@@ -59,6 +59,10 @@ Route::prefix('telegram')->group(function () {
 });
 
 Route::get('test', function () {
-    $clinics = Clinic::orderByRating()->get();
-    dd($clinics);
+    $userJourney = \App\Models\BotUser::query()->find(2)->journey()
+        ->orderBy('created_at', 'desc')
+        ->whereIn('event_name', ['Выбор клиники', 'Выбор топ клиники'])
+        ->first();
+
+    dd($userJourney);
 });

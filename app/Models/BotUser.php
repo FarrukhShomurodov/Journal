@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -49,13 +50,13 @@ class BotUser extends Model
         return $this->hasMany(BotUserSession::class);
     }
 
-    public function country(): HasOne
+    public function country(): BelongsTo
     {
-        return $this->hasOne(Country::class);
+        return $this->belongsTo(Country::class);
     }
 
-    public function city(): HasOne
+    public function city(): BelongsTo
     {
-        return $this->hasOne(City::class);
+        return $this->belongsTo(City::class);
     }
 }

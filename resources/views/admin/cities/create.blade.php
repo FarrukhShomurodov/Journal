@@ -72,7 +72,7 @@
                     <label class="form-label" for="country_id">Страна</label>
                     <select name="country_id" class="select2 @error('country_id') is-invalid @enderror"
                             id="country_id" required>
-                        <option value="">Выберите категорию</option>
+                        <option value="">Выберите страну</option>
                         @foreach($countries as $country)
                             <option value="{{ $country->id }}">{{ $country->name['ru'] }}</option>
                         @endforeach
