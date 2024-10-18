@@ -35,7 +35,7 @@ class HotelController extends Controller
     {
         $validated = $request->validated();
         $this->hotelsService->store($validated);
-        return redirect()->route('hotels.index')->with('success', __('hotel.successfully_cr1eated'));
+        return redirect()->route('hotels.index')->with('success', "Отель успешно добавлена!");
     }
 
     public function show(Hotel $hotel): View
@@ -52,12 +52,12 @@ class HotelController extends Controller
     {
         $validated = $request->validated();
         $this->hotelsService->update($hotel, $validated);
-        return redirect()->route('hotels.index')->with('success', __('hotel.successfully_updated'));
+        return redirect()->route('hotels.index')->with('success', "Отель успешно обновлена!");
     }
 
     public function destroy(Hotel $hotel): RedirectResponse
     {
         $this->hotelsService->destroy($hotel);
-        return redirect()->route('hotels.index')->with('success', __('hotel.successfully_deleted'));
+        return redirect()->route('hotels.index')->with('success', "Отель успешно удалена!");
     }
 }

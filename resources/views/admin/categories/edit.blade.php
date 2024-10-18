@@ -1,16 +1,17 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    <title>{{ 'Findz - ' . __('category.edit_category') }}</title>
+    <title>Journal - Редактировать категорию</title>
 @endsection
 
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
-        <span class="text-muted fw-light"><a class="text-muted" href="{{ route('categories.index') }}">{{ __('category.categories') }}</a> /</span>@lang('category.edit_category')
+        <span class="text-muted fw-light"><a class="text-muted"
+                                             href="{{ route('categories.index') }}">Категория</a> /</span>Редактировать
     </h6>
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">@lang('category.edit_category')</h5>
+            <h5 class="mb-0">Редактировать</h5>
         </div>
         @if ($errors->any())
             <div class="alert alert-danger" role="alert">
@@ -26,50 +27,55 @@
                 @csrf
                 @method('PUT')
                 <div class="mb-3">
-                    <label class="form-label" for="name_ru">@lang('category.name') RU</label>
+                    <label class="form-label" for="name_ru">Название RU</label>
                     <input type="text" name="name[ru]" class="form-control @error('name.ru') is-invalid @enderror"
-                           id="name_ru" value="{{ old('name.ru', $category->name['ru']) }}" required>
+                           placeholder="Название RU"
+                           id="name_ru" value="{{ $category->name['ru'] }}" required>
                     @error('name.ru')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="name_en">@lang('category.name') EN</label>
+                    <label class="form-label" for="name_en">Название EN</label>
                     <input type="text" name="name[en]" class="form-control @error('name.en') is-invalid @enderror"
-                           id="name_en" value="{{ old('name.en', $category->name['en']) }}" required>
+                           placeholder="Название EN"
+                           id="name_en" value="{{ $category->name['en'] }}" required>
                     @error('name.en')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="name_uz">@lang('category.name') UZ</label>
+                    <label class="form-label" for="name_uz">Название UZ</label>
                     <input type="text" name="name[uz]" class="form-control @error('name.uz') is-invalid @enderror"
-                           id="name_uz" value="{{ old('name.uz', $category->name['uz']) }}" required>
+                           placeholder="Название UZ"
+                           id="name_uz" value="{{ $category->name['uz'] }}" required>
                     @error('name.uz')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="name_kz">@lang('category.name') KZ</label>
+                    <label class="form-label" for="name_kz">Название KZ</label>
                     <input type="text" name="name[kz]" class="form-control @error('name.kz') is-invalid @enderror"
-                           id="name_kz" value="{{ old('name.kz', $category->name['kz']) }}" required>
+                           placeholder="Название KZ"
+                           id="name_kz" value="{{ $category->name['kz'] }}" required>
                     @error('name.kz')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="name_tj">@lang('category.name') TJ</label>
+                    <label class="form-label" for="name_tj">Название TJ</label>
                     <input type="text" name="name[tj]" class="form-control @error('name.tj') is-invalid @enderror"
-                           id="name_tj" value="{{ old('name.tj', $category->name['tj']) }}" required>
+                           placeholder="Название TJ"
+                           id="name_tj" value="{{ $category->name['tj'] }}" required>
                     @error('name.tj')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                <button type="submit" class="btn btn-warning">@lang('commands.edit')</button>
+                <button type="submit" class="btn btn-warning">Редактировать</button>
             </form>
         </div>
     </div>

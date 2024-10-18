@@ -1,12 +1,12 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    <title>{{ 'Findz - ' . __('clinic.clinics') }}</title>
+    <title>Journal - Клиника</title>
 @endsection
 
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
-        <span class="text-muted fw-light">@lang('clinic.clinics')</span>
+        <span class="text-muted fw-light">Клиника</span>
     </h6>
 
     @if ($errors->any())
@@ -28,9 +28,9 @@
 
     <div class="card">
         <div class="d-flex justify-content-between align-items-center">
-            <h5 class="card-header">@lang('clinic.clinics')</h5>
+            <h5 class="card-header">Клиника</h5>
             <a href="{{  route('clinics.create') }}" class="btn btn-primary"
-               style="margin-right: 22px;">@lang('commands.create')</a>
+               style="margin-right: 22px;">Создать</a>
         </div>
 
         <div class="card-datatable table-responsive">
@@ -38,11 +38,11 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>@lang('clinic.name')</th>
-                    <th>@lang('clinic.specialization')</th>
-                    <th>@lang('clinic.diseaseType')</th>
+                    <th>Название</th>
+                    <th>Специализация</th>
+                    <th>Тип болезни</th>
                     <th>Ретинг</th>
-                    <th>@lang('clinic.actions')</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>

@@ -8,25 +8,6 @@
 
         <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
             <ul class="navbar-nav flex-row align-items-center ms-auto">
-                {{-- Lang selection --}}
-                <li class="nav-item dropdown-language dropdown me-2 me-xl-0">
-                    <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
-                        <i class="bx bx-globe bx-sm"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
-                            <a class="dropdown-item @if( app()->getLocale() == "ru") active @endif" href="{{ url('set-lang/ru') }}" >
-                                <span class="align-middle">Русский</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item @if( app()->getLocale() == "uz") active @endif " href="{{ url('set-lang/uz') }}">
-                                <span class="align-middle">O'zbekcha</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
                 <!-- User -->
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                     <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
@@ -83,13 +64,6 @@
                 </li>
                 <!--/ User -->
             </ul>
-        </div>
-
-        <!-- Search Small Screens -->
-        <div class="navbar-search-wrapper search-input-wrapper container-xxl d-none">
-            <input type="text" class="form-control search-input border-0" placeholder="Search..."
-                   aria-label="Search...">
-            <i class="bx bx-x bx-sm search-toggler cursor-pointer"></i>
         </div>
     </div>
 </nav>

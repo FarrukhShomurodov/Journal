@@ -1,32 +1,48 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    <title>{{'Findz - '. __('user.bot_user') }}</title>
+    <title>Journal - Поользователи бота</title>
 @endsection
 
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
-        <span class="text-muted fw-light">@lang('usefulInfo.usefulInfos')</span>
+        <span class="text-muted fw-light">Пользователи бота</span>
     </h6>
 
     <div class="card">
         <div class="d-flex justify-content-between align-items-center">
-            <h5 class="card-header"> Поользователи бота</h5>
+            <h5 class="card-header">Пользователи бота</h5>
+            <form method="GET" action="">
+                <div class="d-flex">
+                    <div class="d-flex flex-row align-items-center " style="margin-right: 10px">
+                        <label class="me-2">От: </label>
+                        <input onchange="this.form.submit()" name="date_from" type="date" class="form-control"
+                               value="{{ request('date_from') }}">
+                    </div>
+                    <div class="d-flex flex-row align-items-center " style="margin-right: 10px">
+                        <label class="me-2">До: </label>
+                        <input onchange="this.form.submit()" name="date_to" type="date" class="form-control"
+                               value="{{ request('date_to') }}">
+                    </div>
+                </div>
+            </form>
         </div>
         <div class="card-datatable table-responsive">
             <table class="datatables-users table border-top">
                 <thead>
                 <tr>
                     <th>id</th>
-                    <th>chat_id</th>
-                    <th>first_name</th>
-                    <th>second_name</th>
-                    <th>uname</th>
-                    <th>typed_name</th>
-                    <th>phone</th>
-                    <th>step</th>
-                    <th>isactive</th>
-                    <th>Created at</th>
+                    <th>Chat id</th>
+                    <th>Имя</th>
+                    <th>Фамилия</th>
+                    <th>Имя пользоватля</th>
+                    <th>Телефон</th>
+                    <th>Шаг</th>
+                    <th>Активный</th>
+                    <th>Местоположения</th>
+                    <th>Первое посешение</th>
+                    <th>Последное посешение</th>
+                    <th>Путь</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -42,7 +58,6 @@
                         <td>{{ $user->first_name }}</td>
                         <td>{{ $user->second_name }}</td>
                         <td>{{ $user->uname }}</td>
-                        <td>{{ $user->typed_name }}</td>
                         <td>{{ $user->phone }}</td>
                         <td>{{ $user->step}}</td>
                         <td>
@@ -55,7 +70,15 @@
                                 </span>
                             </label>
                         </td>
+                        <td>{{ $user->country->name['ru'].','.$user->city->name['ru'] }}</td>
                         <td>{{ $user->created_at}}</td>
+                        <td>{{ $user->last_activity}}</td>
+                        <td>
+                            <button class="btn btn-sm btn-icon"
+                                    onclick="location.href='{{ route('bot.user.journey', $user->id) }}'">
+                                <i class="bx bx-show"></i>
+                            </button>
+                        </td>
                     </tr>
                 @endforeach
                 </tbody>

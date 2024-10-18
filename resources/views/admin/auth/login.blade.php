@@ -68,13 +68,13 @@
                     <form id="formAuthentication" class="mb-3" action="{{ route('login') }}" method="POST">
                         @csrf
                         <div class="mb-3">
-                            <label for="login" class="form-label">{{ __('login.Логин') }}</label>
+                            <label for="login" class="form-label">Логин</label>
                             <input type="text" class="form-control" id="login" name="login"
-                                   placeholder="{{ __('login.Введите ваш логи') }}" autofocus>
+                                   placeholder="Введите ваш логи" autofocus>
                         </div>
                         <div class="mb-3 form-password-toggle">
                             <div class="d-flex justify-content-between">
-                                <label class="form-label" for="password">{{ __('login.Пароль') }}</label>
+                                <label class="form-label" for="password">Пароль</label>
                             </div>
                             <div class="input-group input-group-merge">
                                 <input type="password" id="password" class="form-control" name="password"
@@ -83,7 +83,7 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <button class="btn btn-primary d-grid w-100" type="submit">{{ __('login.Войти') }}</button>
+                            <button class="btn btn-primary d-grid w-100" type="submit">Войти</button>
                         </div>
                     </form>
                 </div>

@@ -10,6 +10,9 @@ class Hotel extends Model
 {
     use HasFactory;
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'name',
         'description',

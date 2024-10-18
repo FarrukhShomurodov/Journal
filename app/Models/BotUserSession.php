@@ -9,6 +9,9 @@ class BotUserSession extends Model
 {
     use HasFactory;
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'bot_user_id',
         'session_start',

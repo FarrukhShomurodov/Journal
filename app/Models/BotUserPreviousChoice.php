@@ -11,6 +11,11 @@ class BotUserPreviousChoice extends Model
     use HasFactory;
 
     protected $table = 'bot_user_previous_choices';
+
+
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'bot_user_id',
         'previous_specialization_id',

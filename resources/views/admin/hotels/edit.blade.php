@@ -1,13 +1,13 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    <title>{{ 'Findz - ' . __('hotel.edit_hotel') }}</title>
+    <title>Journal - Редактировать отель</title>
 @endsection
 
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
         <span class="text-muted fw-light"><a class="text-muted"
-                                             href="{{ route('hotels.index') }}">{{ __('hotel.hotels') }}</a> /</span>@lang('commands.edit')
+                                             href="{{ route('hotels.index') }}">Отель</a> /</span>Редактировать
     </h6>
 
     @if ($errors->any())
@@ -21,155 +21,165 @@
 
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">@lang('commands.edit')</h5>
+            <h5 class="mb-0">Редактировать</h5>
         </div>
         <div class="card-body">
             <form action="{{ route('hotels.update', $hotel->id) }}" method="POST"
                   enctype="multipart/form-data">
                 @csrf
-                @method('PUT') {{-- Используем метод PUT для обновления --}}
+                @method('PUT')
 
-                {{-- Поле для названия на разных языках --}}
                 <div class="mb-3">
-                    <label class="form-label" for="name_ru">@lang('hotel.name') RU</label>
+                    <label class="form-label" for="name_ru">Название RU</label>
                     <input type="text" name="name[ru]" class="form-control @error('name.ru') is-invalid @enderror"
-                           id="name_ru" value="{{ old('name.ru', $hotel->name['ru']) }}" required>
+                           placeholder="Название RU"
+                           id="name_ru" value="{{ $hotel->name['ru'] }}" required>
                     @error('name.ru')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="name_en">@lang('hotel.name') EN</label>
+                    <label class="form-label" for="name_en">Название EN</label>
                     <input type="text" name="name[en]" class="form-control @error('name.en') is-invalid @enderror"
-                           id="name_en" value="{{ old('name.en', $hotel->name['en']) }}" required>
+                           placeholder="Название EN"
+                           id="name_en" value="{{ $hotel->name['en'] }}" required>
                     @error('name.en')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="name_uz">@lang('hotel.name') UZ</label>
+                    <label class="form-label" for="name_uz">Название UZ</label>
                     <input type="text" name="name[uz]" class="form-control @error('name.uz') is-invalid @enderror"
-                           id="name_uz" value="{{ old('name.uz', $hotel->name['uz']) }}" required>
+                           placeholder="Название UZ"
+                           id="name_uz" value="{{ $hotel->name['uz'] }}" required>
                     @error('name.uz')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="name_kz">@lang('hotel.name') KZ</label>
+                    <label class="form-label" for="name_kz">Название KZ</label>
                     <input type="text" name="name[kz]" class="form-control @error('name.kz') is-invalid @enderror"
-                           id="name_kz" value="{{ old('name.kz', $hotel->name['kz']) }}" required>
+                           placeholder="Название KZ"
+                           id="name_kz" value="{{ $hotel->name['kz'] }}" required>
                     @error('name.kz')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="name_tj">@lang('hotel.name') TJ</label>
+                    <label class="form-label" for="name_tj">Название TJ</label>
                     <input type="text" name="name[tj]" class="form-control @error('name.tj') is-invalid @enderror"
-                           id="name_tj" value="{{ old('name.tj', $hotel->name['tj']) }}" required>
+                           placeholder="Название TJ"
+                           id="name_tj" value="{{ $hotel->name['tj'] }}" required>
                     @error('name.tj')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
-                {{-- Поле для описания на разных языках --}}
                 <div class="mb-3">
-                    <label class="form-label" for="description_ru">@lang('hotel.description') RU</label>
+                    <label class="form-label" for="description_ru">Описание RU</label>
                     <textarea name="description[ru]"
                               class="form-control @error('description.ru') is-invalid @enderror" id="description_ru"
-                              required>{{ old('description.ru', $hotel->description['ru']) }}</textarea>
+                              placeholder="Описание RU"
+                              required>{{ $hotel->description['ru'] }}</textarea>
                     @error('description.ru')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="description_en">@lang('hotel.description') EN</label>
+                    <label class="form-label" for="description_en">Описание EN</label>
                     <textarea name="description[en]"
                               class="form-control @error('description.en') is-invalid @enderror" id="description_en"
-                              required>{{ old('description.en', $hotel->description['en']) }}</textarea>
+                              placeholder="Описание EN"
+                              required>{{  $hotel->description['en'] }}</textarea>
                     @error('description.en')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="description_uz">@lang('hotel.description') UZ</label>
+                    <label class="form-label" for="description_uz">Описание UZ</label>
                     <textarea name="description[uz]"
                               class="form-control @error('description.uz') is-invalid @enderror" id="description_uz"
-                              required>{{ old('description.uz', $hotel->description['uz']) }}</textarea>
+                              placeholder="Описание UZ"
+                              required>{{ $hotel->description['uz'] }}</textarea>
                     @error('description.uz')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="description_kz">@lang('hotel.description') KZ</label>
+                    <label class="form-label" for="description_kz">Описание KZ</label>
                     <textarea name="description[kz]"
                               class="form-control @error('description.kz') is-invalid @enderror" id="description_kz"
-                              required>{{ old('description.kz', $hotel->description['kz']) }}</textarea>
+                              placeholder="Описание KZ"
+                              required>{{ $hotel->description['kz'] }}</textarea>
                     @error('description.kz')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="description_tj">@lang('hotel.description') TJ</label>
+                    <label class="form-label" for="description_tj">Описание TJ</label>
                     <textarea name="description[tj]"
                               class="form-control @error('description.tj') is-invalid @enderror" id="description_tj"
-                              required>{{ old('description.tj', $hotel->description['tj']) }}</textarea>
+                              placeholder="Описание TJ"
+                              required>{{ $hotel->description['tj'] }}</textarea>
                     @error('description.tj')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
-                {{-- Рабочие часы, цены, категория и ссылки --}}
                 <div class="mb-3">
-                    <label class="form-label" for="working_hours">@lang('hotel.working_hours')</label>
+                    <label class="form-label" for="working_hours">График работы</label>
                     <input type="text" name="working_hours"
                            class="form-control @error('working_hours') is-invalid @enderror" id="working_hours"
-                           value="{{ old('working_hours', $hotel->working_hours) }}">
+                           placeholder="График работы"
+                           value="{{ $hotel->working_hours }}">
                     @error('working_hours')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="price_from">@lang('hotel.price_from')</label>
+                    <label class="form-label" for="price_from">Цена от</label>
                     <input type="number" step="0.01" name="price_from"
                            class="form-control @error('price_from') is-invalid @enderror" id="price_from"
-                           value="{{ old('price_from', $hotel->price_from) }}">
+                           placeholder="Цена от"
+                           value="{{ round($hotel->price_from) }}">
                     @error('price_from')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="price_to">@lang('hotel.price_to')</label>
+                    <label class="form-label" for="price_to">Цена до</label>
                     <input type="number" step="0.01" name="price_to"
                            class="form-control @error('price_to') is-invalid @enderror" id="price_to"
-                           value="{{ old('price_to', $hotel->price_to) }}">
+                           placeholder="Цена до"
+                           value="{{ round($hotel->price_to) }}">
                     @error('price_to')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="location_link">@lang('hotel.location_link')</label>
+                    <label class="form-label" for="location_link">Локация (ссылка)</label>
                     <input type="text" name="location_link"
                            class="form-control @error('location_link') is-invalid @enderror" id="location_link"
-                           value="{{$hotel->location_link}}"
-                           placeholder="@lang('hotel.location_link')">
+                           value="{{ $hotel->location_link }}"
+                           placeholder="Локация (ссылка)">
                     @error('location_link')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label for="imageInput" class="form-label">{{ __('hotel.upload_images') }}</label>
+                    <label for="imageInput" class="form-label">Загрузить фото</label>
                     <input type="file" name="photos[]" id="imageInput" class="form-control" multiple>
                 </div>
                 <div id="imagePreview" class="mb-3 main__td">
@@ -179,7 +189,7 @@
                                 <img src="{{ asset('storage/' . $photo->url) }}" alt="Court Image"
                                      class="uploaded-image">
                                 <button type="button" class="btn btn-danger btn-sm delete-image"
-                                        data-photo-path="{{ $photo->url }}"> {{ __('court.delete') }}
+                                        data-photo-path="{{ $photo->url }}"> Удалить
                                 </button>
                             </div>
                         @endforeach
@@ -187,14 +197,15 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">@lang('hotel.contacts')</label>
+                    <label class="form-label">Контакты</label>
                     <div id="contacts-container">
                         @foreach($hotel->contacts['type'] as $index => $contactType)
                             <div class="contact-group mb-2">
                                 <div class="d-flex">
                                     <div class="me-2">
-                                        <label>@lang('hotel.contact_type'):</label>
+                                        <label for="type">Тип контакта:</label>
                                         <input type="text" name="contacts[type][{{ $index }}]"
+                                               id="type"
                                                class="form-control @error('contacts.type.' . $index) is-invalid @enderror"
                                                placeholder="(e.g., Phone)"
                                                value="{{ $contactType }}">
@@ -203,8 +214,9 @@
                                         @enderror
                                     </div>
                                     <div>
-                                        <label>@lang('hotel.contact_value'):</label>
+                                        <label for="type_val">Значение Типа:</label>
                                         <input type="text" name="contacts[type_value][{{ $index }}]"
+                                               id="type_val"
                                                class="form-control @error('contacts.type_value.' . $index) is-invalid @enderror"
                                                placeholder="(e.g., 99890000000)"
                                                value="{{ $hotel->contacts['type_value'][$index] }}">
@@ -214,18 +226,20 @@
                                     </div>
                                     @if($index > 1)
                                         <button type="button"
-                                                class="btn btn-danger mt-3 ms-2 delete-contact">@lang("hotel.delete_contact")</button>
+                                                class="btn btn-danger mt-3 ms-2 delete-contact">Добавить Контакт
+                                        </button>
                                     @endif
                                 </div>
                             </div>
                         @endforeach
                     </div>
                     <button type="button" class="btn btn-secondary mt-2"
-                            id="add-contact">@lang('hotel.add_contact')</button>
+                            id="add-contact">Добавить контакт
+                    </button>
                 </div>
 
                 <div class="mb-3">
-                    <button type="submit" class="btn btn-warning">@lang('commands.edit')</button>
+                    <button type="submit" class="btn btn-warning">Редактировать</button>
                 </div>
             </form>
         </div>

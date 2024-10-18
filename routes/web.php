@@ -3,7 +3,9 @@
 use App\Http\Controllers\Admin\Web\ApplicationController;
 use App\Http\Controllers\Admin\Web\BotUserController;
 use App\Http\Controllers\Admin\Web\CategoryController;
+use App\Http\Controllers\Admin\Web\CityController;
 use App\Http\Controllers\Admin\Web\ClinicController;
+use App\Http\Controllers\Admin\Web\CountryController;
 use App\Http\Controllers\Admin\Web\CurrencyController;
 use App\Http\Controllers\Admin\Web\DashboardController;
 use App\Http\Controllers\Admin\Web\DiseaseTypeController;
@@ -27,7 +29,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('bot-users', [BotUserController::class, 'index'])->name('bot-users');
+    Route::get('bot-users', [BotUserController::class, 'index'])->name('bot.users');
+    Route::get('bot-user-journey/{user}', [BotUserController::class, 'showJourney'])->name('bot.user.journey');
     Route::get('applications', [ApplicationController::class, 'index'])->name('applications');
 
     Route::resource('currencies', CurrencyController::class);
@@ -40,6 +43,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('diseaseTypes', DiseaseTypeController::class);
     Route::resource('specializations', SpecializationController::class);
     Route::resource('categories', CategoryController::class);
+    Route::resource('countries', CountryController::class);
+    Route::resource('cities', CityController::class);
 });
 
 // Telegram

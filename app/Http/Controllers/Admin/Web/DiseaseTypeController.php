@@ -33,7 +33,7 @@ class DiseaseTypeController extends Controller
     {
         $validated = $request->validated();
         $this->diseaseTypeService->store($validated);
-        return redirect()->route('diseaseTypes.index')->with('success', __('diseaseType.successfully_created'));
+        return redirect()->route('diseaseTypes.index')->with('success', 'Тип болезни успешно добавлен!');
     }
 
     public function show(DiseaseType $diseaseType): View
@@ -50,12 +50,12 @@ class DiseaseTypeController extends Controller
     {
         $validated = $request->validated();
         $this->diseaseTypeService->update($diseaseType, $validated);
-        return redirect()->route('diseaseTypes.index')->with('success', __('diseaseType.successfully_updated'));
+        return redirect()->route('diseaseTypes.index')->with('success', 'Тип болезни успешно обновлена!');
     }
 
     public function destroy(DiseaseType $diseaseType): RedirectResponse
     {
         $this->diseaseTypeService->destroy($diseaseType);
-        return redirect()->route('diseaseTypes.index')->with('success', __('diseaseType.successfully_deleted'));
+        return redirect()->route('diseaseTypes.index')->with('success', 'Тип болезни успешно удалена!');
     }
 }

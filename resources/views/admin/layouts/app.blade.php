@@ -10,7 +10,6 @@
 
     @yield('title')
 
-
     <meta name="description" content="Start your development with a Dashboard for Bootstrap 5"/>
     <meta name="keywords"
           content="dashboard, bootstrap 5 dashboard, bootstrap 5 admin, bootstrap 5 design, bootstrap 5">
@@ -55,6 +54,11 @@
     <!-- Helpers -->
     <script src="{{ asset('vendor/js/helpers.js') }}"></script>
     <script src="{{ asset('js/config.js') }}"></script>
+    <style>
+        body{
+            overflow-x: hidden;
+        }
+    </style>
 </head>
 
 <body>
@@ -114,14 +118,9 @@
 <script src="{{ asset('js/main.js') }}"></script>
 
 <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
-
-<script src="{{asset('js/app-calendar-events.js')}}"></script>
-<script src="{{asset('js/app-calendar.js')}}"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/ru.js"></script>
-
-<script>
-    flatpickr.localize(flatpickr.l10ns.ru);
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 
 @yield('scripts')
 <script>
@@ -220,7 +219,7 @@
             const flexContainer = $('<div class="d-flex align-items-center"></div>');
 
             const contactTypeInput = $('<div class="me-2"></div>').append(
-                $('<label>@lang("clinic.contact_type"):</label>'),
+                $('<label>Тип контакта:</label>'),
                 $('<input>', {
                     type: 'text',
                     name: `contacts[type][${i}]`,
@@ -231,7 +230,7 @@
 
             // Create input for contact value
             const contactValueInput = $('<div></div>').append(
-                $('<label>@lang("clinic.contact_value"):</label>'),
+                $('<label>Значение Типа:</label>'),
                 $('<input>', {
                     type: 'text',
                     name: `contacts[type_value][${i}]`,
@@ -240,7 +239,7 @@
                 })
             );
 
-            const deleteButton = $('<button type="button" class="btn btn-danger mt-3 ms-2 delete-contact">@lang("clinic.delete_contact")</button>');
+            const deleteButton = $('<button type="button" class="btn btn-danger mt-3 ms-2 delete-contact">Удалить</button>');
 
             flexContainer.append(contactTypeInput);
             flexContainer.append(contactValueInput);
@@ -254,9 +253,10 @@
         $(document).on('click', '.delete-contact', function () {
             $(this).closest('.contact-group').remove();
         });
+
+        $('.select2').select2();
     });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 </body>
 
 </html>

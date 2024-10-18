@@ -11,16 +11,22 @@ class BotUser extends Model
 {
     use HasFactory;
 
+
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'chat_id',
         'first_name',
         'second_name',
         'uname',
-        'typed_name',
         'phone',
         'step',
         'lang',
-        'isactive'
+        'isactive',
+        'country_id',
+        'city_id',
+        'last_activity',
     ];
 
     public function previousChoice(): HasOne
@@ -31,5 +37,25 @@ class BotUser extends Model
     public function application(): HasMany
     {
         return $this->hasMany(Application::class);
+    }
+
+    public function journey(): HasMany
+    {
+        return $this->hasMany(BotUserJourney::class);
+    }
+
+    public function session(): HasMany
+    {
+        return $this->hasMany(BotUserSession::class);
+    }
+
+    public function country(): HasOne
+    {
+        return $this->hasOne(Country::class);
+    }
+
+    public function city(): HasOne
+    {
+        return $this->hasOne(City::class);
     }
 }

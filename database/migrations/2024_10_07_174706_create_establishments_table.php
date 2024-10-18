@@ -19,7 +19,7 @@ return new class extends Migration
             $table->decimal('price_from', 10, 2);
             $table->decimal('price_to', 10, 2);
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
-            $table->string('location_link');
+            $table->text('location_link');
             $table->string('contacts');
             $table->timestamps();
         });

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\BotUser;
 use App\Models\Category;
 use App\Models\Clinic;
+use App\Models\Country;
 use App\Models\Currency;
 use App\Models\DiseaseType;
 use App\Models\Entertainment;
@@ -30,7 +31,7 @@ class TelegramService
 
     public function processMessage($chatId, $text, $step, $message)
     {
-        $this->user = BotUser::where('chat_id', $chatId);
+        $this->user = BotUser::query()->where('chat_id', $chatId);
 
         $commands = [
             // Clinic
@@ -85,6 +86,30 @@ class TelegramService
                 break;
             case 'edit_language':
                 $this->processLanguageChoice($chatId, $text, true);
+                break;
+            // Location
+            case 'select_country':
+                $this->processSelectCity($chatId, $text);
+                break;
+            case 'select_city':
+                $city = Country::query()->where('name->ru', $text)->first();
+
+                if (!$city) {
+                    $this->updateUserStep($chatId, 'select_country');
+
+                    $this->telegram->sendMessage([
+                        'chat_id' => $chatId,
+                        'text' => 'Что пошло не так повторите попытку.',
+                    ]);
+
+                    return;
+                }
+
+                $this->user->update([
+                    'city_id' => $city->id
+                ]);
+
+                $this->showMainMenu($chatId);
                 break;
 
             // Clinic
@@ -280,7 +305,8 @@ class TelegramService
 
         if (array_key_exists($text, $lang)) {
             $this->updateUserLang($lang[$text]);
-            $isEdit ? $this->settingInformation($chatId) : $this->showMainMenu($chatId);
+            $this->storeUserJourney('Выбор языка');
+            $isEdit ? $this->settingInformation($chatId) : $this->processSelectCountry($chatId);
         } else {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
@@ -288,6 +314,85 @@ class TelegramService
             ]);
         }
 
+    }
+
+    private function processSelectCountry($chatId): void
+    {
+        $countries = Country::query()->get();
+
+        if ($countries->isEmpty()) {
+            $this->updateUserStep($chatId, 'show_main_menu');
+
+            $this->telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => 'Пусто',
+            ]);
+
+            return;
+        }
+
+        $keyboard = [];
+
+        foreach ($countries as $country) {
+            $keyboard[] = [$country->name['ru']];
+        }
+
+        $reply_markup = Keyboard::make([
+            'keyboard' => $keyboard,
+            'resize_keyboard' => true,
+            'one_time_keyboard' => true
+        ]);
+
+        $this->telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => 'Выберите из какой вы страны.',
+            'reply_markup' => $reply_markup
+        ]);
+
+        $this->updateUserStep($chatId, 'select_country');
+        $this->storeUserJourney("Выбор Страны");
+    }
+
+    private function processSelectCity($chatId, $text): void
+    {
+        $country = Country::query()->where('name->ru', $text)->first();
+
+        if (!$country) {
+            $this->updateUserStep($chatId, 'choose_language');
+
+            $this->telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => 'Что пошло не так повторите попытку.',
+            ]);
+
+            return;
+        }
+
+        $this->user->update([
+            'country_id' => $country->id
+        ]);
+
+        $keyboard = [];
+
+        foreach ($country->city as $city) {
+            $city[] = [$city->name['ru']];
+        }
+
+        $reply_markup = Keyboard::make([
+            'keyboard' => $keyboard,
+            'resize_keyboard' => true,
+            'one_time_keyboard' => false,
+            'selective' => false
+        ]);
+
+        $this->telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => 'Выберите из какого вы города.',
+            'reply_markup' => $reply_markup
+        ]);
+
+        $this->updateUserStep($chatId, 'select_city');
+        $this->storeUserJourney("Выбор города");
     }
 
     private function showMainMenu($chatId): void
@@ -343,6 +448,7 @@ class TelegramService
         );
 
         $this->updateUserStep($chatId, 'show_main_menu');
+        $this->storeUserJourney('Главное меню');
     }
 
     // Clinic
@@ -392,6 +498,7 @@ class TelegramService
 
         $step = $isTop ? 'show_top_specializations' : 'show_specializations';
         $this->updateUserStep($chatId, $step);
+        $this->storeUserJourney('Выбор специализации');
     }
 
     private function selectDiseaseType($chatId, $isTop = false): void
@@ -437,6 +544,7 @@ class TelegramService
 
         $step = $isTop ? 'show_top_disease_types' : 'show_disease_types';
         $this->updateUserStep($chatId, $step);
+        $this->storeUserJourney('Выбор тип болезни');
     }
 
     private function clinicTop($chatId): void
@@ -464,6 +572,8 @@ class TelegramService
         ]);
 
         $this->updateUserStep($chatId, 'clinic_top');
+        $this->storeUserJourney('Топ клиники');
+
     }
 
     private function clinicList($chatId, $text = null, $from = null, $isTop = false): void
@@ -551,6 +661,9 @@ class TelegramService
 
             $step = $isTop ? 'show_top_clinic' : 'show_clinic';
             $this->updateUserStep($chatId, $step);
+
+            $event = $isTop ? 'Выбор топ клиники' : 'Выбор клиники';
+            $this->storeUserJourney($event);
         }
     }
 
@@ -635,6 +748,8 @@ class TelegramService
 
         $step = $isTop ? 'show_top_clinic_information' : 'show_clinic_information';
         $this->updateUserStep($chatId, $step);
+
+        $this->storeUserJourney("Просмотр информации о клинике" . $clinic->name['ru']);
     }
 
     // Application
@@ -646,6 +761,7 @@ class TelegramService
                 'text' => "Напишите заявку.",
             ]);
             $this->updateUserStep($chatId, 'store_application');
+            $this->storeUserJourney("Напишите заявку");
         } else {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
@@ -653,6 +769,7 @@ class TelegramService
                 'reply_markup' => $this->requestPhoneKeyboard(),
             ]);
             $this->updateUserStep($chatId, 'get_application');
+            $this->storeUserJourney("Введите номер телефона");
         }
     }
 
@@ -670,6 +787,7 @@ class TelegramService
                 'chat_id' => $chatId,
                 'text' => 'Ваша заявка отправлена. Скоро мы свяжемся с вами.'
             ]);
+            $this->storeUserJourney("Заявка сохранена");
         } catch (Exception $e) {
             Log::error('Application storage failed: ' . $e->getMessage());
 
@@ -722,6 +840,7 @@ class TelegramService
         ]);
 
         $this->updateUserStep($chatId, 'show_promotions');
+        $this->storeUserJourney("Выбор акции");
     }
 
     private function showPromotionInformation($chatId, $text): void
@@ -769,6 +888,8 @@ class TelegramService
                 'media' => json_encode($mediaGroup)
             ]);
         }
+
+        $this->storeUserJourney("Просмотр акции" . $promotion->name['ru']);
     }
 
     // UsefulInfo
@@ -812,6 +933,7 @@ class TelegramService
         ]);
 
         $this->updateUserStep($chatId, 'show_usefulInformation');
+        $this->storeUserJourney("Выбор полезной информации");
     }
 
     private function showUsefulInfoInformation($chatId, $text): void
@@ -859,6 +981,8 @@ class TelegramService
                 'media' => json_encode($mediaGroup)
             ]);
         }
+
+        $this->storeUserJourney("Просмотр полезной ифнормации" . $usefulInformation->name['ru']);
     }
 
     // Hotel
@@ -902,6 +1026,8 @@ class TelegramService
         ]);
 
         $this->updateUserStep($chatId, 'show_hotel');
+        $this->storeUserJourney("Выбор отеля");
+
     }
 
     private function showHotelInformation($chatId, $text): void
@@ -956,6 +1082,8 @@ class TelegramService
                 'media' => json_encode($mediaGroup)
             ]);
         }
+        $this->storeUserJourney("Просмотр отеля" . $hotel->name['ru']);
+
     }
 
     // Entertainment
@@ -998,6 +1126,7 @@ class TelegramService
         ]);
 
         $this->updateUserStep($chatId, 'show_entertainment');
+        $this->storeUserJourney("Выбор развлечения");
     }
 
     private function showEntertainmentInformation($chatId, $text): void
@@ -1014,7 +1143,7 @@ class TelegramService
         $photos = $entertainment->images;
 
 
-        $clinicDescription = $entertainment->description ? "*📝 Описание:* _{$entertainment->description['ru']}_\n" : '';
+        $entertainmentDescription = $entertainment->description ? "*📝 Описание:* _{$entertainment->description['ru']}_\n" : '';
 
         $contacts = '';
         foreach ($entertainment->contacts['type'] as $index => $contactType) {
@@ -1023,7 +1152,7 @@ class TelegramService
 
         $description = "*{$entertainment->name['ru']}*\n\n"
             . "📅 *График работы:* _{$entertainment->working_hours}_\n"
-            . $clinicDescription
+            . $entertainmentDescription
             . "📍 *Локация:* [Сылка]($entertainment->location_link)\n\n"
             . "📞 *Контакты:*\n" . $contacts;
 
@@ -1052,6 +1181,7 @@ class TelegramService
                 'media' => json_encode($mediaGroup)
             ]);
         }
+        $this->storeUserJourney("Просмотр развлечения" . $entertainment->name['ru']);
     }
 
     // Establishment
@@ -1094,6 +1224,8 @@ class TelegramService
         ]);
 
         $this->updateUserStep($chatId, 'show_establishment_category');
+        $this->storeUserJourney("Выбор категорию заведения");
+
     }
 
     private function establishmentList($chatId, $text): void
@@ -1134,6 +1266,9 @@ class TelegramService
 
             $this->updateUserStep($chatId, 'show_establishment');
         }
+
+        $this->storeUserJourney("Выбор заведения");
+
     }
 
     private function showEstablishmentInformation($chatId, $text): void
@@ -1150,7 +1285,7 @@ class TelegramService
         $photos = $establishment->images;
 
 
-        $clinicDescription = $establishment->description ? "*📝 Описание:* _{$establishment->description['ru']}_\n" : '';
+        $establishmentDescription = $establishment->description ? "*📝 Описание:* _{$establishment->description['ru']}_\n" : '';
 
         $contacts = '';
         foreach ($establishment->contacts['type'] as $index => $contactType) {
@@ -1159,7 +1294,7 @@ class TelegramService
 
         $description = "*{$establishment->name['ru']}*\n\n"
             . "📅 *График работы:* _{$establishment->working_hours}_\n"
-            . $clinicDescription
+            . $establishmentDescription
             . "📍 *Локация:* [Сылка]($establishment->location_link)\n\n"
             . "📞 *Контакты:*\n" . $contacts;
 
@@ -1188,6 +1323,9 @@ class TelegramService
                 'media' => json_encode($mediaGroup)
             ]);
         }
+
+        $this->storeUserJourney("Просмотр информации об заведение" . $establishment->name['ru']);
+
     }
 
     // Currency
@@ -1230,6 +1368,7 @@ class TelegramService
         ]);
 
         $this->updateUserStep($chatId, 'show_currency');
+        $this->storeUserJourney("Выбор валюты");
     }
 
     private function showCurrencyInformation($chatId, $text): void
@@ -1246,6 +1385,8 @@ class TelegramService
             'text' => $information,
             'parse_mode' => 'Markdown'
         ]);
+
+        $this->storeUserJourney("Просмотр валюты" . $currency->ccy);
     }
 
     // Setting
@@ -1285,6 +1426,7 @@ class TelegramService
         ]);
 
         $this->updateUserStep($chatId, 'settings');
+        $this->storeUserJourney("Настройки");
     }
 
     public function requestPhoneKeyboard(): Keyboard
@@ -1334,6 +1476,19 @@ class TelegramService
                 $this->{$commands[$step]}($chatId);
             }
         }
+
+        $events = [
+            'show_specializations' => 'Выбор специализации',
+            'show_disease_types' => 'Выбор тип болезни',
+            'show_clinic' => 'Выбор клиники',
+            'show_top_clinic' => 'Выбор топ клиники',
+            'show_establishment_category' => 'Выбор категорию заведения'
+        ];
+
+        if (array_key_exists($step, $events)) {
+            $this->storeUserJourney($events[$step]);
+        }
+
     }
 
     // User
@@ -1347,4 +1502,8 @@ class TelegramService
         BotUser::query()->updateOrCreate(['chat_id' => $chatId], ['step' => $step]);
     }
 
+    private function storeUserJourney($event): void
+    {
+        $this->user->first()->journey()->create(['event_name' => $event]);
+    }
 }

@@ -9,6 +9,9 @@ class BotUserJourney extends Model
 {
     use HasFactory;
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'bot_user_id',
         'event_name',

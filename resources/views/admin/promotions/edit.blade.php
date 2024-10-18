@@ -1,16 +1,17 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    <title>{{ 'Findz - ' . __('commands.edit') }}</title>
+    <title>Journal - Редактировать акции</title>
 @endsection
 
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
-        <span class="text-muted fw-light"><a class="text-muted" href="{{ route('promotions.index') }}">{{ __('promotion.promotions') }}</a> /</span>@lang('promotion.edit_promotion')
+        <span class="text-muted fw-light"><a class="text-muted"
+                                             href="{{ route('promotions.index') }}">Акция</a> /</span>Редактировать
     </h6>
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">@lang('commands.edit')</h5>
+            <h5 class="mb-0">Редактировать</h5>
         </div>
         @if ($errors->any())
             <div class="alert alert-danger" role="alert">
@@ -26,101 +27,111 @@
                 @csrf
                 @method('PUT')
                 <div class="mb-3">
-                    <label class="form-label" for="name_ru">@lang('promotion.name') RU</label>
+                    <label class="form-label" for="name_ru">Название RU</label>
                     <input type="text" name="name[ru]" class="form-control @error('name.ru') is-invalid @enderror"
-                           id="name_ru" value="{{ old('name.ru', $promotion->name['ru']) }}" required>
+                           placeholder="Название RU"
+                           id="name_ru" value="{{ $promotion->name['ru'] }}" required>
                     @error('name.ru')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="name_en">@lang('promotion.name') EN</label>
+                    <label class="form-label" for="name_en">Название EN</label>
                     <input type="text" name="name[en]" class="form-control @error('name.en') is-invalid @enderror"
-                           id="name_en" value="{{ old('name.en', $promotion->name['en']) }}" required>
+                           placeholder="Название EN"
+                           id="name_en" value="{{ $promotion->name['en'] }}" required>
                     @error('name.en')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="name_uz">@lang('promotion.name') UZ</label>
+                    <label class="form-label" for="name_uz">Название UZ</label>
                     <input type="text" name="name[uz]" class="form-control @error('name.uz') is-invalid @enderror"
-                           id="name_uz" value="{{ old('name.uz', $promotion->name['uz']) }}" required>
+                           placeholder="Название UZ"
+                           id="name_uz" value="{{ $promotion->name['uz'] }}" required>
                     @error('name.uz')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="name_kz">@lang('promotion.name') KZ</label>
+                    <label class="form-label" for="name_kz">Название KZ</label>
                     <input type="text" name="name[kz]" class="form-control @error('name.kz') is-invalid @enderror"
-                           id="name_kz" value="{{ old('name.kz', $promotion->name['kz']) }}" required>
+                           placeholder="Название KZ"
+                           id="name_kz" value="{{ $promotion->name['kz'] }}" required>
                     @error('name.kz')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="name_tj">@lang('promotion.name') TJ</label>
+                    <label class="form-label" for="name_tj">Название TJ</label>
                     <input type="text" name="name[tj]" class="form-control @error('name.tj') is-invalid @enderror"
-                           id="name_tj" value="{{ old('name.tj', $promotion->name['tj']) }}" required>
+                           placeholder="Название TJ"
+                           id="name_tj" value="{{ $promotion->name['tj'] }}" required>
                     @error('name.tj')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="description_ru">@lang('promotion.description') RU</label>
+                    <label class="form-label" for="description_ru">Описание RU</label>
                     <textarea name="description[ru]"
                               class="form-control @error('description.ru') is-invalid @enderror" id="description_ru"
-                              required>{{ old('description.ru', $promotion->description['ru']) }}</textarea>
+                              placeholder="Описание RU"
+                              required>{{ $promotion->description['ru'] }}</textarea>
                     @error('description.ru')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="description_en">@lang('promotion.description') EN</label>
+                    <label class="form-label" for="description_en">Описание EN</label>
                     <textarea name="description[en]"
                               class="form-control @error('description.en') is-invalid @enderror" id="description_en"
-                              required>{{ old('description.en', $promotion->description['en']) }}</textarea>
+                              placeholder="Описание EN"
+                              required>{{ $promotion->description['en'] }}</textarea>
                     @error('description.en')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="description_uz">@lang('promotion.description') UZ</label>
+                    <label class="form-label" for="description_uz">Описание UZ</label>
                     <textarea name="description[uz]"
                               class="form-control @error('description.uz') is-invalid @enderror" id="description_uz"
-                              required>{{ old('description.uz', $promotion->description['uz']) }}</textarea>
+                              placeholder="Описание UZ"
+                              required>{{  $promotion->description['uz'] }}</textarea>
                     @error('description.uz')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="description_kz">@lang('promotion.description') KZ</label>
+                    <label class="form-label" for="description_kz">Описание KZ</label>
                     <textarea name="description[kz]"
                               class="form-control @error('description.kz') is-invalid @enderror" id="description_kz"
-                              required>{{ old('description.kz', $promotion->description['kz']) }}</textarea>
+                              placeholder="Описание KZ"
+                              required>{{ $promotion->description['kz'] }}</textarea>
                     @error('description.kz')
-                    <div class="invalid-feedback">{{ $message }}</div>1
+                    <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="description_tj">@lang('promotion.description') TJ</label>
+                    <label class="form-label" for="description_tj">Описание TJ</label>
                     <textarea name="description[tj]"
                               class="form-control @error('description.tj') is-invalid @enderror" id="description_tj"
-                              required>{{ old('description.tj', $promotion->description['tj']) }}</textarea>
+                              placeholder="Описание TJ"
+                              required>{{ $promotion->description['tj'] }}</textarea>
                     @error('description.tj')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="mb-3">
-                    <label for="imageInput" class="form-label">{{ __('establishment.upload_images') }}</label>
+                    <label for="imageInput" class="form-label">Загрузить фото</label>
                     <input type="file" name="photos[]" id="imageInput" class="form-control" multiple>
                 </div>
                 <div id="imagePreview" class="mb-3 main__td">
@@ -130,14 +141,14 @@
                                 <img src="{{ asset('storage/' . $photo->url) }}" alt="Court Image"
                                      class="uploaded-image">
                                 <button type="button" class="btn btn-danger btn-sm delete-image"
-                                        data-photo-path="{{ $photo->url }}"> {{ __('court.delete') }}
+                                        data-photo-path="{{ $photo->url }}"> Удалить
                                 </button>
                             </div>
                         @endforeach
                     @endif
                 </div>
 
-                <button type="submit" class="btn btn-warning">@lang('commands.edit')</button>
+                <button type="submit" class="btn btn-warning">Редактировть</button>
             </form>
         </div>
     </div>

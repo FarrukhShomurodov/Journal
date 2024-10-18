@@ -35,7 +35,7 @@ class EstablishmentController extends Controller
     {
         $validated = $request->validated();
         $this->establishmentService->store($validated);
-        return redirect()->route('establishments.index')->with('success', __('establishment.successfully_created'));
+        return redirect()->route('establishments.index')->with('success', 'Заведение успешно добавлена!');
     }
 
     public function show(Establishment $establishment): View
@@ -53,12 +53,12 @@ class EstablishmentController extends Controller
     {
         $validated = $request->validated();
         $this->establishmentService->update($establishment, $validated);
-        return redirect()->route('establishments.index')->with('success', __('establishment.successfully_updated'));
+        return redirect()->route('establishments.index')->with('success', 'Заведение успешно обновлена!');
     }
 
     public function destroy(Establishment $establishment): RedirectResponse
     {
         $this->establishmentService->destroy($establishment);
-        return redirect()->route('establishments.index')->with('success', __('establishment.successfully_deleted'));
+        return redirect()->route('establishments.index')->with('success', 'Заведение успешно удалена!');
     }
 }

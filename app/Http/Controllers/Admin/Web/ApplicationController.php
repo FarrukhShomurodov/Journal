@@ -11,7 +11,6 @@ class ApplicationController
 {
     public function index(Request $request): View
     {
-        $applications = Application::query()->orderBy('id', 'asc')->get();
         $clinics = Clinic::query()->orderBy('id', 'asc')->get();
 
         $clinicId = $request->input('clinic-id');
@@ -20,7 +19,7 @@ class ApplicationController
 
         $query = Application::query()->orderBy('id', 'asc');
 
-        if ($clinicId !== 'all') {
+        if ($clinicId && $clinicId !== 'all') {
             $query->where('clinic_id', $clinicId);
         }
 

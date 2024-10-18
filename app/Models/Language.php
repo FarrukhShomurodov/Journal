@@ -9,6 +9,9 @@ class Language extends Model
 {
     use HasFactory;
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'code',
         'name',

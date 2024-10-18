@@ -10,6 +10,9 @@ class DiseaseType extends Model
 {
     use HasFactory;
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'name',
     ];

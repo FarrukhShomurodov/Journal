@@ -33,7 +33,7 @@ class UsefulInformationController extends Controller
     {
         $validated = $request->validated();
         $this->informationService->store($validated);
-        return redirect()->route('usefulInfos.index')->with('success', __('usefulInfo.successfully_created'));
+        return redirect()->route('usefulInfos.index')->with('success', 'Полезная информация  успешно добавлена!');
     }
 
     public function show(UsefulInformationRequest $usefulInfo): View
@@ -50,12 +50,12 @@ class UsefulInformationController extends Controller
     {
         $validated = $request->validated();
         $this->informationService->update($usefulInfo, $validated);
-        return redirect()->route('usefulInfos.index')->with('success', __('usefulInfo.successfully_created'));
+        return redirect()->route('usefulInfos.index')->with('success', 'Полезная информация  успешно обновлена!');
     }
 
     public function destroy(UsefulInformation $usefulInfo): RedirectResponse
     {
         $this->informationService->destroy($usefulInfo);
-        return redirect()->route('usefulInfos.index')->with('success', __('usefulInfo.successfully_deleted'));
+        return redirect()->route('usefulInfos.index')->with('success', 'Полезная информация  успешно удалена!');
     }
 }

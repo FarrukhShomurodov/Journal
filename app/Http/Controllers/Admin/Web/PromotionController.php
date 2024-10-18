@@ -33,7 +33,7 @@ class PromotionController extends Controller
     {
         $validated = $request->validated();
         $this->promotionService->store($validated);
-        return redirect()->route('promotions.index')->with('success', __('promotion.successfully_created'));
+        return redirect()->route('promotions.index')->with('success', 'Акция успешно добавлена!');
     }
 
     public function show(Promotion $promotion): View
@@ -50,12 +50,12 @@ class PromotionController extends Controller
     {
         $validated = $request->validated();
         $this->promotionService->update($promotion, $validated);
-        return redirect()->route('promotions.index')->with('success', __('promotion.successfully_updated'));
+        return redirect()->route('promotions.index')->with('success', 'Акция успешно обновлена!');
     }
 
     public function destroy(Promotion $promotion): RedirectResponse
     {
         $this->promotionService->destroy($promotion);
-        return redirect()->route('promotions.index')->with('success', __('promotion.successfully_deleted'));
+        return redirect()->route('promotions.index')->with('success', 'Акция успешно удалена!');
     }
 }

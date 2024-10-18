@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('working_hours');
             $table->decimal('price_from', 10, 2);
             $table->decimal('price_to', 10, 2);
-            $table->string('location_link');
+            $table->text('location_link');
             $table->json('contacts');
             $table->timestamps();
         });

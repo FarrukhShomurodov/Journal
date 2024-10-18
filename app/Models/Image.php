@@ -10,6 +10,9 @@ class Image extends Model
 {
     use HasFactory;
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'url',
     ];

@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    <title>{{ 'Findz - ' . __('category.categories') }}</title>
+    <title>Journal - Заявки</title>
 @endsection
 
 @section('content')

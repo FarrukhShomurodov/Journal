@@ -33,7 +33,7 @@ class SpecializationController extends Controller
     {
         $validated = $request->validated();
         $this->specializationService->store($validated);
-        return redirect()->route('specializations.index')->with('success', __('specialization.successfully_created'));
+        return redirect()->route('specializations.index')->with('success', 'Специализация успешно добавлена!');
     }
 
     public function show(Specialization $specialization): View
@@ -50,12 +50,12 @@ class SpecializationController extends Controller
     {
         $validated = $request->validated();
         $this->specializationService->update($specialization, $validated);
-        return redirect()->route('specializations.index')->with('success', __('specialization.successfully_created'));
+        return redirect()->route('specializations.index')->with('success', 'Специализация успешно обновлена!');
     }
 
     public function destroy(Specialization $specialization): RedirectResponse
     {
         $this->specializationService->destroy($specialization);
-        return redirect()->route('specializations.index')->with('success', __('specialization.successfully_created'));
+        return redirect()->route('specializations.index')->with('success', 'Специализация успешно удалена!');
     }
 }

@@ -1,12 +1,12 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    <title>{{ 'Findz - ' . __('establishment.establishments') }}</title>
+    <title>Journal - Заведения</title>
 @endsection
 
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
-        <span class="text-muted fw-light">@lang('currency.currencies')</span>
+        <span class="text-muted fw-light">Заведения</span>
     </h6>
 
     @if ($errors->any())
@@ -28,18 +28,18 @@
 
     <div class="card">
         <div class="d-flex justify-content-between align-items-center">
-            <h5 class="card-header">@lang('establishment.establishments')</h5>
+            <h5 class="card-header">Заведения</h5>
             <a href="{{  route('establishments.create') }}" class="btn btn-primary"
-               style="margin-right: 22px;">@lang('commands.create')</a>
+               style="margin-right: 22px;">Создать</a>
         </div>
 
         <div class="card-datatable table-responsive">
             <table class="datatables-users table border-top">
                 <thead>
                 <tr>
-                    <th>@lang('establishment.name')</th>
-                    <th>@lang('establishment.category')</th>
-                    <th>@lang('establishment.actions')</th>
+                    <th>Названия</th>
+                    <th>Категория</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -54,7 +54,8 @@
                         <td>
                             <div class="d-inline-block text-nowrap">
                                 <button class="btn btn-sm btn-icon"
-                                        onclick="location.href='{{ route('establishments.edit', $establishment->id) }}'"><i
+                                        onclick="location.href='{{ route('establishments.edit', $establishment->id) }}'">
+                                    <i
                                         class="bx bx-edit"></i></button>
                                 <form action="{{ route('establishments.destroy', $establishment->id) }}" method="POST"
                                       style="display:inline;">

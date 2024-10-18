@@ -1,12 +1,12 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    <title>{{ 'Findz - ' . __('currency.currencies') }}</title>
+    <title>Journal - Валюты</title>
 @endsection
 
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
-        <span class="text-muted fw-light">@lang('currency.currencies')</span>
+        <span class="text-muted fw-light">Валюты</span>
     </h6>
 
     @if ($errors->any())
@@ -28,18 +28,18 @@
 
     <div class="card">
         <div class="d-flex justify-content-between align-items-center">
-            <h5 class="card-header">@lang('currency.currencies')</h5>
+            <h5 class="card-header">Валюты</h5>
         </div>
 
         <div class="card-datatable table-responsive">
             <table class="datatables-users table border-top">
                 <thead>
                 <tr>
-                    <th>@lang('currency.name')</th>
+                    <th>Название</th>
                     <th>Код</th>
                     <th>Валюта</th>
                     <th>Курс</th>
-                    <th>@lang('currency.validity_date')</th>
+                    <th>ДАТА АКТУАЛЬНОСТИ</th>
                 </tr>
                 </thead>
                 <tbody>

@@ -1,12 +1,12 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    <title>{{ 'Findz - ' . __('promotion.promotions') }}</title>
+    <title>Journal - Акции</title>
 @endsection
 
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
-        <span class="text-muted fw-light">@lang('promotion.promotions')</span>
+        <span class="text-muted fw-light">Акция</span>
     </h6>
 
     @if ($errors->any())
@@ -28,17 +28,17 @@
 
     <div class="card">
         <div class="d-flex justify-content-between align-items-center">
-            <h5 class="card-header">@lang('promotion.promotions')</h5>
+            <h5 class="card-header">Акции</h5>
             <a href="{{  route('promotions.create') }}" class="btn btn-primary"
-               style="margin-right: 22px;">@lang('commands.create')</a>
+               style="margin-right: 22px;">Создать</a>
         </div>
 
         <div class="card-datatable table-responsive">
             <table class="datatables-users table border-top">
                 <thead>
                 <tr>
-                    <th>@lang('promotion.name')</th>
-                    <th>@lang('promotion.actions')</th>
+                    <th>Название</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>

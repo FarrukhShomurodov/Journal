@@ -1,12 +1,12 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    <title>{{ 'Findz - ' . __('specialization.specializations') }}</title>
+    <title> Journal - Специализация</title>
 @endsection
 
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
-        <span class="text-muted fw-light">@lang('specialization.specializations')</span>
+        <span class="text-muted fw-light">Специализация</span>
     </h6>
 
     @if ($errors->any())
@@ -28,17 +28,17 @@
 
     <div class="card">
         <div class="d-flex justify-content-between align-items-center">
-            <h5 class="card-header">@lang('specialization.specializations')</h5>
+            <h5 class="card-header">Специализация</h5>
             <a href="{{  route('specializations.create') }}" class="btn btn-primary"
-               style="margin-right: 22px;">@lang('commands.create')</a>
+               style="margin-right: 22px;">Создать</a>
         </div>
 
         <div class="card-datatable table-responsive">
             <table class="datatables-users table border-top">
                 <thead>
                 <tr>
-                    <th>@lang('specialization.name')</th>
-                    <th>@lang('specialization.actions')</th>
+                    <th>Название</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -52,7 +52,8 @@
                         <td>
                             <div class="d-inline-block text-nowrap">
                                 <button class="btn btn-sm btn-icon"
-                                        onclick="location.href='{{ route('specializations.edit', $specialization->id) }}'"><i
+                                        onclick="location.href='{{ route('specializations.edit', $specialization->id) }}'">
+                                    <i
                                         class="bx bx-edit"></i></button>
                                 <form action="{{ route('specializations.destroy', $specialization->id) }}" method="POST"
                                       style="display:inline;">

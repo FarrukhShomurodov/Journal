@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Telegram;
 
 use App\Http\Controllers\Controller;
 use App\Models\BotUser;
+use App\Models\BotUserSession;
 use App\Services\TelegramService;
+use Carbon\Carbon;
 use Telegram\Bot\Api;
 use Telegram\Bot\Keyboard\Keyboard;
 
@@ -30,7 +32,20 @@ class TelegramController extends Controller
             $chatId = $message->getChat()->getId();
             $text = $message->getText();
 
-            $user = BotUser::firstOrCreate(['chat_id' => $chatId]);
+            $user = BotUser::query()->firstOrCreate(['chat_id' => $chatId]);
+
+            $user->update(['last_activity' => now()]);
+
+            $lastSession = BotUserSession::query()->where('bot_user_id', $user->id)->latest()->first();
+
+            if (!$lastSession || $lastSession->session_end && Carbon::parse($lastSession->session_end)->diffInMinutes(now()) > 1) {
+                BotUserSession::query()->create([
+                    'bot_user_id' => $user->id,
+                    'session_start' => now(),
+                ]);
+            } else {
+                $lastSession->update(['session_end' => now()]);
+            }
 
             if ($text == '/start') {
                 $user->update([

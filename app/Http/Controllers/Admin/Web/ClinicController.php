@@ -37,7 +37,7 @@ class ClinicController extends Controller
     {
         $validated = $request->validated();
         $this->clinicService->store($validated);
-        return redirect()->route('clinics.index')->with('success', __('clinic.successfully_created'));
+        return redirect()->route('clinics.index')->with('success', 'Клиника успешно добавлена!');
     }
 
     public function edit(Clinic $clinic): View
@@ -51,12 +51,12 @@ class ClinicController extends Controller
     {
         $validated = $request->validated();
         $this->clinicService->update($clinic, $validated);
-        return redirect()->route('clinics.index')->with('success', __('clinic.successfully_created'));
+        return redirect()->route('clinics.index')->with('success', 'Клиника успешно обновлена!');
     }
 
     public function destroy(Clinic $clinic): RedirectResponse
     {
         $this->clinicService->destroy($clinic);
-        return redirect()->route('clinics.index')->with('success', __('clinic.successfully_created'));
+        return redirect()->route('clinics.index')->with('success', 'Клиника успешно удалена!');
     }
 }

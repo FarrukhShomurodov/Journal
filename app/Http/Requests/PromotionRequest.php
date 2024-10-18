@@ -24,11 +24,11 @@ class PromotionRequest extends FormRequest
     {
         return [
             'name' => 'required|array',
-            'name.ru' => 'required|string|max:200',
-            'name.en' => 'required|string|max:200',
-            'name.uz' => 'required|string|max:200',
-            'name.kz' => 'required|string|max:200',
-            'name.tj' => 'required|string|max:200',
+            'name.ru' => 'required|string|max:100',
+            'name.en' => 'required|string|max:100',
+            'name.uz' => 'required|string|max:100',
+            'name.kz' => 'required|string|max:100',
+            'name.tj' => 'required|string|max:100',
             'description' => 'required|array',
             'description.ru' => 'required|string|max:200',
             'description.en' => 'required|string|max:200',

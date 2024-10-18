@@ -16,11 +16,13 @@ return new class extends Migration {
             $table->string('first_name')->nullable();
             $table->string('second_name')->nullable();
             $table->string('uname')->nullable();
-            $table->string('typed_name')->nullable();
             $table->string('phone')->nullable();
             $table->string('step')->nullable();
             $table->string('lang')->nullable();
             $table->boolean('isactive')->default(true);
+            $table->foreignId('country_id')->nullable();
+            $table->foreignId('city_id')->nullable();
+            $table->timestamp('last_activity')->nullable();
             $table->timestamps();
         });
     }

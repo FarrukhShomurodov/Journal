@@ -12,6 +12,10 @@ class Clinic extends Model
 {
     use HasFactory;
 
+
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'name',
         'description',

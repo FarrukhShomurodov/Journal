@@ -21,12 +21,33 @@
                 <div data-i18n="Панел управление">Панел управление</div>
             </a>
         </li>
-        <li class="menu-item {{ Request::is('bot-users*') ? 'active' : '' }}">
-            <a href="{{route('bot-users')}}" class="menu-link">
+        <li class="menu-item {{ Request::is('bot-users*') ||  Request::is('bot-user*')? 'active' : '' }}">
+            <a href="{{route('bot.users')}}" class="menu-link">
                 <i class='menu-icon bx bx-bot'></i>
                 <div data-i18n="Пользователи бота">Пользователи бота</div>
             </a>
         </li>
+
+        <li class="menu-item {{ Request::is('countries*') || Request::is('countries*') || Request::is('cities*') ? 'open' : '' }}"
+            style="">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-globe"></i>
+                <div data-i18n="Местоположения">Местоположения</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ Request::is('/countries') || Request::is('countries*') ? 'active' : '' }}">
+                    <a href="{{route('countries.index')}}" class="menu-link">
+                        <div data-i18n="Старана">Старана</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::is('/cities') || Request::is('cities*') ? 'active' : '' }}">
+                    <a href="{{route('cities.index')}}" class="menu-link">
+                        <div data-i18n="Город">Город</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
         <li class="menu-item {{ Request::is('applications*') ? 'active' : '' }}">
             <a href="{{route('applications')}}" class="menu-link">
                 <i class='menu-icon bx bx-edit'></i>

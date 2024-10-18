@@ -37,7 +37,7 @@ class CategoryController extends Controller
     {
         $validated = $request->validated();
         $this->categoryService->store($validated);
-        return redirect()->route('categories.index')->with('success', __('currency.successfully_created'));
+        return redirect()->route('categories.index')->with('success', 'Категория успешно добавлена!');
     }
 
     public function show(Category $category): View
@@ -55,13 +55,13 @@ class CategoryController extends Controller
     {
         $validated = $request->validated();
         $this->categoryService->update($category, $validated);
-        return redirect()->route('categories.index')->with('success', __('currency.successfully_updated'));
+        return redirect()->route('categories.index')->with('success', 'Категория успешно обновлена!');
     }
 
 
     public function destroy(Category $category): RedirectResponse
     {
         $this->categoryService->destroy($category);
-        return redirect()->route('categories.index')->with('success', __('currency.successfully_deleted'));
+        return redirect()->route('categories.index')->with('success', 'Категория успешно удалена!');
     }
 }
