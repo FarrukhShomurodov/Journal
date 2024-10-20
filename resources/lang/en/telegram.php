@@ -39,8 +39,8 @@ return [
 
     // Navigation
     'navigation' => [
-        'back' => 'Back',
-        'home' => 'Home',
+        'back' => '◀️ Back',
+        'home' => '🏠 Home',
     ],
 
     // Settings
@@ -75,5 +75,7 @@ return [
         'location' => 'Location:',
         'contacts' => 'Contacts:',
         'link' => 'Link',
+        'price_range' => 'Price Range',
+        'rating' => 'Rating',
     ],
 ];

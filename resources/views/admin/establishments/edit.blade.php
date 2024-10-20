@@ -169,7 +169,7 @@
 
                 <div class="mb-3">
                     <label class="form-label" for="category_id">Категорие</label>
-                    <select name="category_id" class="form-control @error('category_id') is-invalid @enderror"
+                    <select name="category_id" class="select2 form-control @error('category_id') is-invalid @enderror"
                             id="category_id" required>
                         <option value="">Выберите категорию</option>
                         @foreach($categories as $category)

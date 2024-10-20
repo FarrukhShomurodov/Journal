@@ -24,7 +24,6 @@ class DashboardController extends Controller
 
     public function index(Request $request): View
     {
-
         $dateFrom = $request->input('date_from', now()->subDays(7)->format('Y-m-d'));
         $dateTo = $request->input('date_to', now()->format('Y-m-d'));
 
@@ -43,6 +42,11 @@ class DashboardController extends Controller
         $chartData = $this->statisticsRepository->activeUsers()->pluck('count');
 
         return view('admin.dashboard', compact('statistics', 'dateFrom', 'dateTo', 'dateFromFrequency', 'dateToFrequency', 'dateFromChurn', 'dateToChurn', 'chartLabels', 'chartData'));
+    }
+
+    public function exportStatistics()
+    {
+
     }
 
     public function setLocale($locale, $botUser = null): RedirectResponse

@@ -37,7 +37,6 @@
             <table class="datatables-users table border-top">
                 <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Название</th>
                     <th>Специализация</th>
                     <th>Тип болезни</th>
@@ -48,7 +47,6 @@
                 <tbody>
                 @foreach ($clinics as $clinic)
                     <tr>
-                        <td>{{ $clinic->id }}</td>
                         <td>
                             @foreach($clinic->name as $lang => $name)
                                 <div><b>{{ strtoupper($lang) }}:</b> {{ $name }}</div>

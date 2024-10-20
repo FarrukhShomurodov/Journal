@@ -128,6 +128,8 @@ class TelegramController extends Controller
                 App::setLocale($user->lang);
             }
 
+            $user = BotUser::query()->where('chat_id', $chatId)->first();
+
             $this->telegramService->processMessage($chatId, $text, $user->step, $message, $user);
         }
     }

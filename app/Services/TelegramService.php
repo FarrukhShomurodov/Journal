@@ -42,10 +42,10 @@ class TelegramService
 
         $commands = [
             // Clinic
-            __('telegram.menu.clinic_search') => 'selectSpecialization',
-            __('telegram.menu.treatment_search') => 'selectDiseaseType',
-            __('telegram.menu.clinic_catalog') => 'clinicList',
-            __('telegram.menu.top_clinics') => 'clinicTop',
+            '🔍 ' . __('telegram.menu.clinic_search') => 'selectSpecialization',
+            '💊 ' . __('telegram.menu.treatment_search') => 'selectDiseaseType',
+            '📚 ' . __('telegram.menu.clinic_catalog') => 'clinicList',
+            '🌟 ' . __('telegram.menu.top_clinics') => 'clinicTop',
             __('telegram.menu.by_specialization') => function () use ($chatId) {
                 $this->selectSpecialization($chatId, true);
             },
@@ -55,25 +55,25 @@ class TelegramService
             __('telegram.menu.submit_application') => 'getApplication',
 
             // Promotion
-            __('telegram.menu.promotions') => 'selectPromotion',
+            '🎉 ' . __('telegram.menu.promotions') => 'selectPromotion',
 
             // Useful Information
-            __('telegram.menu.useful_info') => 'selectUsefulInfo',
+            'ℹ️ ' . __('telegram.menu.useful_info') => 'selectUsefulInfo',
 
             // Hotel
-            __('telegram.menu.hotels') => 'selectHotel',
+            '🏨 ' . __('telegram.menu.hotels') => 'selectHotel',
 
             // Entertainment
-            __('telegram.menu.entertainment') => 'selectEntertainment',
+            '🎡 ' . __('telegram.menu.entertainment') => 'selectEntertainment',
 
             // Establishment
-            __('telegram.menu.where_to_eat') => 'selectEstablishmentCategory',
+            '🍽️ ' . __('telegram.menu.where_to_eat') => 'selectEstablishmentCategory',
 
             // Currency
-            __('telegram.menu.currency_calculator') => 'selectCurrency',
+            '💱 ' . __('telegram.menu.currency_calculator') => 'selectCurrency',
 
             // Setting
-            __('telegram.menu.settings') => 'settingInformation',
+            '⚙️ ' . __('telegram.menu.settings') => 'settingInformation',
 
             __('telegram.navigation.home') => 'showMainMenu',
         ];
@@ -162,7 +162,7 @@ class TelegramService
                 break;
             case 'show_clinic':
                 if ($text == __('telegram.navigation.back')) {
-                    $stepInfo = $this->user->first()->previousChoice;
+                    $stepInfo = $this->user->previousChoice;
 
                     if ($stepInfo && $stepInfo->previous_specialization_id) {
                         $this->back($chatId, 'show_specializations');
@@ -178,7 +178,7 @@ class TelegramService
                 break;
             case 'show_top_clinic':
                 if ($text == __('telegram.navigation.back')) {
-                    $stepInfo = $this->user->first()->previousChoice;
+                    $stepInfo = $this->user->previousChoice;
 
                     if ($stepInfo && $stepInfo->previous_specialization_id) {
                         $this->back($chatId, 'show_specializations_top_clinic');
@@ -207,7 +207,7 @@ class TelegramService
                 break;
             case 'store_application':
                 if ($text == __('telegram.navigation.back')) {
-                    $userJourney = $this->user->first()->journey()
+                    $userJourney = $this->user->journey()
                         ->whereIn('event_name', ['Выбор клиники', 'Выбор топ клиники'])
                         ->orderBy('created_at', 'desc')
                         ->first();
@@ -424,27 +424,27 @@ class TelegramService
     {
         $keyboard = [
             [
-                __('telegram.menu.clinic_search'),
-                __('telegram.menu.treatment_search'),
+                '🔍 ' . __('telegram.menu.clinic_search'),
+                '💊 ' . __('telegram.menu.treatment_search'),
             ],
             [
-                __('telegram.menu.clinic_catalog'),
-                __('telegram.menu.top_clinics'),
+                '📚 ' . __('telegram.menu.clinic_catalog'),
+                '🌟 ' . __('telegram.menu.top_clinics'),
             ],
             [
-                __('telegram.menu.promotions'),
-                __('telegram.menu.useful_info'),
+                '🎉 ' . __('telegram.menu.promotions'),
+                'ℹ️ ' . __('telegram.menu.useful_info'),
             ],
             [
-                __('telegram.menu.hotels'),
-                __('telegram.menu.entertainment'),
+                '🏨 ' . __('telegram.menu.hotels'),
+                '🎡 ' . __('telegram.menu.entertainment'),
             ],
             [
-                __('telegram.menu.where_to_eat'),
-                __('telegram.menu.currency_calculator'),
+                '🍽️ ' . __('telegram.menu.where_to_eat'),
+                '💱 ' . __('telegram.menu.currency_calculator'),
             ],
             [
-                __('telegram.menu.settings'),
+                '⚙️ ' . __('telegram.menu.settings'),
             ],
         ];
 
@@ -463,8 +463,8 @@ class TelegramService
         ]);
 
 
-        $this->user->first()->previousChoice()->updateOrCreate(
-            ['bot_user_id' => $this->user->first()->id],
+        $this->user->previousChoice()->updateOrCreate(
+            ['bot_user_id' => $this->user->id],
             [
                 'previous_specialization_id' => null,
                 'previous_disease_type_id' => null,
@@ -498,7 +498,7 @@ class TelegramService
             $keyboard[] = [$specialization->name[$this->lang]];
         }
 
-        if ($this->user->first()->step == 'clinic_top' || $this->user->first()->step == 'show_top_clinic') {
+        if ($this->user->step == 'clinic_top' || $this->user->step == 'show_top_clinic') {
             $keyboard[] = [
                 __('telegram.navigation.back')
             ];
@@ -545,7 +545,7 @@ class TelegramService
             $keyboard[] = [$diseaseType->name[$this->lang]];
         }
 
-        if ($this->user->first()->step == 'clinic_top' || $this->user->first()->step == 'show_top_clinic') {
+        if ($this->user->step == 'clinic_top' || $this->user->step == 'show_top_clinic') {
             $keyboard[] = [
                 __('telegram.navigation.back')
             ];
@@ -618,8 +618,8 @@ class TelegramService
                 return;
             }
 
-            $this->user->first()->previousChoice()->updateOrCreate(
-                ['bot_user_id' => $this->user->first()->id],
+            $this->user->previousChoice()->updateOrCreate(
+                ['bot_user_id' => $this->user->id],
                 [
                     'previous_specialization_id' => $specialization->id,
                     'previous_disease_type_id' => null
@@ -642,8 +642,8 @@ class TelegramService
                 return;
             }
 
-            $this->user->first()->previousChoice()->updateOrCreate(
-                ['bot_user_id' => $this->user->first()->id],
+            $this->user->previousChoice()->updateOrCreate(
+                ['bot_user_id' => $this->user->id],
                 [
                     'previous_disease_type_id' => $diseaseType->id,
                     'previous_specialization_id' => null
@@ -710,14 +710,19 @@ class TelegramService
 
         $contacts = '';
         foreach ($clinic->contacts['type'] as $index => $contactType) {
-            $contacts .= "• *{$contactType}:* {$clinic->contacts['type_value'][$index]}\n";
+            if ($contactType) {
+                $contacts .= "• *{$contactType}:* {$clinic->contacts['type_value'][$index]}\n";
+            }
         }
 
+        $contactList = strlen($contacts) > 1 ? "📞 *" . __('telegram.fields.contacts') . "*\n" . $contacts : $contacts;
+
         $description = "*{$clinic->name[$this->lang]}*\n\n"
+            . "⭐ *" . __('telegram.fields.rating') . "* _{$clinic->rating}_\n"
             . "📅 *" . __('telegram.fields.working_hours') . "* _{$clinic->working_hours}_\n"
             . $clinicDescription
             . "📍 *" . __('telegram.fields.location') . "* [" . __('telegram.fields.link') . "]($clinic->location_link)\n\n"
-            . "📞 *" . __('telegram.fields.contacts') . "*\n" . $contacts;
+            . $contactList;
 
 
         $keyboard[] = [
@@ -742,8 +747,8 @@ class TelegramService
         } else {
             $mediaGroup = [];
             foreach ($photos as $index => $photo) {
-            $photoPath = Storage::url('public/' . $photo->url);
-            $fullPhotoUrl = env('APP_URL') . $photoPath;
+                $photoPath = Storage::url('public/' . $photo->url);
+                $fullPhotoUrl = env('APP_URL') . $photoPath;
 
                 $mediaGroup[] = [
                     'type' => 'photo',
@@ -766,8 +771,8 @@ class TelegramService
             ]);
         }
 
-        $this->user->first()->previousChoice()->updateOrCreate(
-            ['bot_user_id' => $this->user->first()->id],
+        $this->user->previousChoice()->updateOrCreate(
+            ['bot_user_id' => $this->user->id],
             ['previous_clinic_id' => $clinic->id]
         );
 
@@ -780,7 +785,7 @@ class TelegramService
     // Application
     private function getApplication($chatId): void
     {
-        if ($this->user->first()->phone) {
+        if ($this->user->phone) {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
                 'text' => "Создайте заявку.",
@@ -800,10 +805,10 @@ class TelegramService
 
     private function storeApplication($chatId, $text): void
     {
-        $clinicId = $this->user->first()->previousChoice->previous_clinic_id;
+        $clinicId = $this->user->previousChoice->previous_clinic_id;
 
         try {
-            $this->user->first()->application()->create([
+            $this->user->application()->create([
                 'clinic_id' => $clinicId,
                 'text' => $text,
             ]);
@@ -897,8 +902,8 @@ class TelegramService
         } else {
             $mediaGroup = [];
             foreach ($photos as $index => $photo) {
-            $photoPath = Storage::url('public/' . $photo->url);
-            $fullPhotoUrl = env('APP_URL') . $photoPath;
+                $photoPath = Storage::url('public/' . $photo->url);
+                $fullPhotoUrl = env('APP_URL') . $photoPath;
 
                 $mediaGroup[] = [
                     'type' => 'photo',
@@ -990,8 +995,8 @@ class TelegramService
         } else {
             $mediaGroup = [];
             foreach ($photos as $index => $photo) {
-            $photoPath = Storage::url('public/' . $photo->url);
-            $fullPhotoUrl = env('APP_URL') . $photoPath;
+                $photoPath = Storage::url('public/' . $photo->url);
+                $fullPhotoUrl = env('APP_URL') . $photoPath;
 
                 $mediaGroup[] = [
                     'type' => 'photo',
@@ -1073,14 +1078,22 @@ class TelegramService
 
         $contacts = '';
         foreach ($hotel->contacts['type'] as $index => $contactType) {
-            $contacts .= "• *{$contactType}:* {$hotel->contacts['type_value'][$index]}\n";
+            if ($contactType) {
+                $contacts .= "• *{$contactType}:* {$hotel->contacts['type_value'][$index]}\n";
+            }
         }
+
+        $contactList = strlen($contacts) > 1 ? "📞 *" . __('telegram.fields.contacts') . "*\n" . $contacts : $contacts;
+
+        $priceFrom = round($hotel->price_from);
+        $priceTo = round($hotel->price_to);
 
         $description = "*{$hotel->name[$this->lang]}*\n\n"
             . "📅 *" . __('telegram.fields.working_hours') . "* _{$hotel->working_hours}_\n"
             . $clinicDescription
             . "📍 *" . __('telegram.fields.location') . "* [" . __('telegram.fields.link') . "]($hotel->location_link)\n\n"
-            . "📞 *" . __('telegram.fields.contacts') . "*\n" . $contacts;
+            . "💰 *" . __('telegram.fields.price_range') . "* _{$priceFrom} - {$priceTo}_\n\n"
+            . $contactList;
 
         if (count($photos) === 0) {
             $this->telegram->sendMessage([
@@ -1091,8 +1104,8 @@ class TelegramService
         } else {
             $mediaGroup = [];
             foreach ($photos as $index => $photo) {
-            $photoPath = Storage::url('public/' . $photo->url);
-            $fullPhotoUrl = env('APP_URL') . $photoPath;
+                $photoPath = Storage::url('public/' . $photo->url);
+                $fullPhotoUrl = env('APP_URL') . $photoPath;
 
                 $mediaGroup[] = [
                     'type' => 'photo',
@@ -1167,19 +1180,25 @@ class TelegramService
         }
         $photos = $entertainment->images;
 
-
         $entertainmentDescription = $entertainment->description ? "*📝 Описание:* _{$entertainment->description[$this->lang]}_\n" : '';
 
         $contacts = '';
         foreach ($entertainment->contacts['type'] as $index => $contactType) {
-            $contacts .= "• *{$contactType}:* {$entertainment->contacts['type_value'][$index]}\n";
+            if ($contactType) {
+                $contacts .= "• *{$contactType}:* {$entertainment->contacts['type_value'][$index]}\n";
+            }
         }
+        $contactList = strlen($contacts) > 1 ? "📞 *" . __('telegram.fields.contacts') . "*\n" . $contacts : $contacts;
+
+        $priceFrom = round($entertainment->price_from);
+        $priceTo = round($entertainment->price_to);
 
         $description = "*{$entertainment->name[$this->lang]}*\n\n"
             . "📅 *" . __('telegram.fields.working_hours') . "* _{$entertainment->working_hours}_\n"
             . $entertainmentDescription
             . "📍 *" . __('telegram.fields.location') . "* [" . __('telegram.fields.link') . "]($entertainment->location_link)\n\n"
-            . "📞 *" . __('telegram.fields.contacts') . "*\n" . $contacts;
+            . "💰 *" . __('telegram.fields.price_range') . "* _{$priceFrom} - {$priceTo}_\n\n"
+            . $contactList;
 
         if (count($photos) === 0) {
             $this->telegram->sendMessage([
@@ -1190,8 +1209,8 @@ class TelegramService
         } else {
             $mediaGroup = [];
             foreach ($photos as $index => $photo) {
-            $photoPath = Storage::url('public/' . $photo->url);
-            $fullPhotoUrl = env('APP_URL') . $photoPath;
+                $photoPath = Storage::url('public/' . $photo->url);
+                $fullPhotoUrl = env('APP_URL') . $photoPath;
 
                 $mediaGroup[] = [
                     'type' => 'photo',
@@ -1309,19 +1328,26 @@ class TelegramService
         }
         $photos = $establishment->images;
 
-
         $establishmentDescription = $establishment->description ? "*📝 Описание:* _{$establishment->description[$this->lang]}_\n" : '';
 
         $contacts = '';
         foreach ($establishment->contacts['type'] as $index => $contactType) {
-            $contacts .= "• *{$contactType}:* {$establishment->contacts['type_value'][$index]}\n";
+            if ($contactType) {
+                $contacts .= "• *{$contactType}:* {$establishment->contacts['type_value'][$index]}\n";
+            }
         }
+
+        $contactList = strlen($contacts) > 1 ? "📞 *" . __('telegram.fields.contacts') . "*\n" . $contacts : $contacts;
+
+        $priceFrom = round($establishment->price_from);
+        $priceTo = round($establishment->price_to);
 
         $description = "*{$establishment->name[$this->lang]}*\n\n"
             . "📅 *" . __('telegram.fields.working_hours') . "* _{$establishment->working_hours}_\n"
             . $establishmentDescription
             . "📍 *" . __('telegram.fields.location') . "* [" . __('telegram.fields.link') . "]($establishment->location_link)\n\n"
-            . "📞 *" . __('telegram.fields.contacts') . "*\n" . $contacts;
+            . "💰 *" . __('telegram.fields.price_range') . "* _{$priceFrom} - {$priceTo}_\n\n"
+            . $contactList;
 
         if (count($photos) === 0) {
             $this->telegram->sendMessage([
@@ -1331,9 +1357,10 @@ class TelegramService
             ]);
         } else {
             $mediaGroup = [];
+
             foreach ($photos as $index => $photo) {
-            $photoPath = Storage::url('public/' . $photo->url);
-            $fullPhotoUrl = env('APP_URL') . $photoPath;
+                $photoPath = Storage::url('public/' . $photo->url);
+                $fullPhotoUrl = env('APP_URL') . $photoPath;
 
                 $mediaGroup[] = [
                     'type' => 'photo',
@@ -1443,9 +1470,9 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => '*' . __('telegram.menu.settings') . '*' . PHP_EOL .
+            'text' => '*' . '⚙️ ' . __('telegram.menu.settings') . '*' . PHP_EOL .
                 __('telegram.settings.language') . ': ' . $lang[$this->lang] . PHP_EOL .
-                __('telegram.settings.phone_number') . ': ' . $this->user->first()->phone ?? '-',
+                __('telegram.settings.phone_number') . ': ' . $this->user->phone ?? '-',
             'reply_markup' => $reply_markup,
             'parse_mode' => 'Markdown'
         ]);
@@ -1462,7 +1489,7 @@ class TelegramService
     // Back
     private function back($chatId, $step): void
     {
-        $stepInfo = $this->user->first()->previousChoice;
+        $stepInfo = $this->user->previousChoice;
 
         $commands = [
             'show_specializations' => 'selectSpecialization',
@@ -1533,6 +1560,6 @@ class TelegramService
 
     private function storeUserJourney($event): void
     {
-        $this->user->first()->journey()->create(['event_name' => $event]);
+        $this->user->journey()->create(['event_name' => $event]);
     }
 }

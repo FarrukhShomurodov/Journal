@@ -160,8 +160,8 @@ class StatisticsRepository
             $useFullInformationView = $botUser->journey()->where('event_name', 'LIKE', '%Просмотр полезной ифнормации%')->exists();
             $hotelView = $botUser->journey()->where('event_name', 'LIKE', '%Просмотр отеля%')->exists();
             $entertainmentView = $botUser->journey()->where('event_name', 'LIKE', '%Просмотр развлечения%')->exists();
-            $establishmentView = $botUser->journey()->where('event_name', 'LIKE', '%Просмотр информации об заведении%')->exists();
-            $currencyView = $botUser->journey()->where('event_name', 'LIKE', '%ц%')->exists();
+            $establishmentView = $botUser->journey()->where('event_name', 'LIKE', '%Просмотр информации об заведение%')->exists();
+            $currencyView = $botUser->journey()->where('event_name', 'LIKE', '%Просмотр валюты%')->exists();
 
             if ($application) {
                 $applicationsCount++;

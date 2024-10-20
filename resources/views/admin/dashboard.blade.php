@@ -166,7 +166,7 @@
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card stat-card shadow-sm border-0 text-center hover-scale">
                     <div class="card-body">
-                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['application'] }}
+                        <h4 class="card-title mb-1">{{ round($statistics['active_users']['user_journey_completion_rate']['application'], 1) }}
                             %</h4>
                         <p class="text-muted">Завершение подачи заявки</p>
                     </div>
@@ -175,7 +175,7 @@
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card stat-card shadow-sm border-0 text-center hover-scale">
                     <div class="card-body">
-                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['promotionViewCount'] }}
+                        <h4 class="card-title mb-1">{{ round($statistics['active_users']['user_journey_completion_rate']['promotionViewCount'], 1) }}
                             %</h4>
                         <p class="text-muted">Просмотр акций</p>
                     </div>
@@ -184,7 +184,7 @@
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card stat-card shadow-sm border-0 text-center hover-scale">
                     <div class="card-body p-4">
-                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['useFullInformationViewCount'] }}
+                        <h4 class="card-title mb-1">{{ round($statistics['active_users']['user_journey_completion_rate']['useFullInformationViewCount'], 1) }}
                             %</h4>
                         <p class="text-muted">Просмотр полезной информации</p>
                     </div>
@@ -193,7 +193,7 @@
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card stat-card shadow-sm border-0 text-center hover-scale">
                     <div class="card-body p-4">
-                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['hotelViewCount'] }}
+                        <h4 class="card-title mb-1">{{ round($statistics['active_users']['user_journey_completion_rate']['hotelViewCount'], 1) }}
                             %</h4>
                         <p class="mb-0 text-muted">Просмотр отелей</p>
                     </div>
@@ -202,7 +202,7 @@
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card stat-card shadow-sm border-0 text-center hover-scale">
                     <div class="card-body p-4">
-                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['establishmentViewCount'] }}
+                        <h4 class="card-title mb-1">{{ round($statistics['active_users']['user_journey_completion_rate']['establishmentViewCount'], 1) }}
                             %</h4>
                         <p class="mb-0 text-muted">Просмотр заведений</p>
                     </div>
@@ -211,7 +211,7 @@
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card stat-card shadow-sm border-0 text-center hover-scale">
                     <div class="card-body p-4">
-                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['currencyViewCount'] }}
+                        <h4 class="card-title mb-1">{{ round($statistics['active_users']['user_journey_completion_rate']['currencyViewCount'], 1) }}
                             %</h4>
                         <p class="mb-0 text-muted">Просмотр валютных данных</p>
                     </div>
@@ -220,7 +220,7 @@
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card stat-card shadow-sm border-0 text-center hover-scale">
                     <div class="card-body p-4">
-                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['entertainmentViewCount'] }}
+                        <h4 class="card-title mb-1">{{ round($statistics['active_users']['user_journey_completion_rate']['entertainmentViewCount'], 1) }}
                             %</h4>
                         <p class="mb-0 text-muted">Просмотр развлечений</p>
                     </div>

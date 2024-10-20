@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('working_hours');
             $table->string('location_link');
             $table->json('contacts');
-            $table->decimal('rating');
+            $table->decimal('rating', 8, 1);
             $table->timestamps();
         });
     }

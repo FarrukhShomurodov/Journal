@@ -39,8 +39,8 @@ return [
 
     // Navigatsiya
     'navigation' => [
-        'back' => 'Orqaga',
-        'home' => 'Bosh sahifa',
+        'back' => '◀️ Orqaga',
+        'home' => '🏠 Bosh sahifa',
     ],
 
     // Sozlamalar
@@ -75,5 +75,7 @@ return [
         'location' => 'Joylashuv:',
         'contacts' => 'Kontaktlar:',
         'link' => 'Havola',
+        'price_range' => 'Narx oraligʻi',
+        'uz' => 'Reyting',
     ],
 ];
