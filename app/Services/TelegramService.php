@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\BotUser;
+use App\Models\BotUserJourney;
 use App\Models\Category;
 use App\Models\City;
 use App\Models\Clinic;
@@ -16,7 +17,10 @@ use App\Models\Promotion;
 use App\Models\Specialization;
 use App\Models\UsefulInformation;
 use Exception;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Telegram\Bot\Api;
 use Telegram\Bot\Keyboard\Keyboard;
 
@@ -24,52 +28,54 @@ class TelegramService
 {
     protected Api $telegram;
     protected $user;
+    protected string $lang;
 
     public function __construct()
     {
         $this->telegram = new Api(config('telegram.bot_token'));
     }
 
-    public function processMessage($chatId, $text, $step, $message)
+    public function processMessage($chatId, $text, $step, $message, $user): void
     {
-        $this->user = BotUser::query()->where('chat_id', $chatId);
+        $this->user = $user;
+        $this->lang = $user->lang;
 
         $commands = [
             // Clinic
-            'Поиск клиники' => 'selectSpecialization',
-            'Поиск лечения' => 'selectDiseaseType',
-            'Каталог клиник' => 'clinicList',
-            'Топ клиники' => 'clinicTop',
-            'По специализации' => function () use ($chatId) {
+            __('telegram.menu.clinic_search') => 'selectSpecialization',
+            __('telegram.menu.treatment_search') => 'selectDiseaseType',
+            __('telegram.menu.clinic_catalog') => 'clinicList',
+            __('telegram.menu.top_clinics') => 'clinicTop',
+            __('telegram.menu.by_specialization') => function () use ($chatId) {
                 $this->selectSpecialization($chatId, true);
             },
-            'По типу болезни' => function () use ($chatId) {
+            __('telegram.menu.by_disease_type') => function () use ($chatId) {
                 $this->selectDiseaseType($chatId, true);
             },
-            'Оставить заявку' => 'getApplication',
+            __('telegram.menu.submit_application') => 'getApplication',
 
             // Promotion
-            'Акции' => 'selectPromotion',
+            __('telegram.menu.promotions') => 'selectPromotion',
 
             // Useful Information
-            'Полезная информация' => 'selectUsefulInfo',
+            __('telegram.menu.useful_info') => 'selectUsefulInfo',
 
             // Hotel
-            'Отели' => 'selectHotel',
+            __('telegram.menu.hotels') => 'selectHotel',
 
             // Entertainment
-            'Отдых/развлечения' => 'selectEntertainment',
+            __('telegram.menu.entertainment') => 'selectEntertainment',
 
             // Establishment
-            'Где поесть?' => 'selectEstablishmentCategory',
+            __('telegram.menu.where_to_eat') => 'selectEstablishmentCategory',
 
             // Currency
-            'Калькулятор валют' => 'selectCurrency',
+            __('telegram.menu.currency_calculator') => 'selectCurrency',
 
             // Setting
-            'Настройки' => 'settingInformation',
+            __('telegram.menu.settings') => 'settingInformation',
 
-            'На главную' => 'showMainMenu',
+            __('telegram.navigation.home') => 'showMainMenu',
         ];
 
         if (array_key_exists($text, $commands)) {
@@ -93,14 +99,14 @@ class TelegramService
                 $this->processSelectCity($chatId, $text);
                 break;
             case 'select_city':
-                $city = City::query()->where('name->ru', $text)->first();
+                $city = City::query()->where("name->{$this->lang}", $text)->first();
 
                 if (!$city) {
                     $this->updateUserStep($chatId, 'select_country');
 
                     $this->telegram->sendMessage([
                         'chat_id' => $chatId,
-                        'text' => 'Возникла ошибка. Пожалуйста, повторите попытку.',
+                        'text' => __('telegram.errors.generic_error'),
                     ]);
 
                     return;
@@ -115,47 +121,47 @@ class TelegramService
 
             // Clinic
             case 'show_specializations':
-                if ($text == 'Назад') {
+                if ($text == __('telegram.navigation.back')) {
                     $this->clinicTop($chatId);
                     break;
                 }
-                if ($text !== 'На главную') {
+                if ($text !== __('telegram.navigation.home')) {
                     $this->clinicList($chatId, $text, 'specialization');
                 }
                 break;
             case 'show_top_specializations':
-                if ($text == 'Назад') {
+                if ($text == __('telegram.navigation.back')) {
                     $this->clinicTop($chatId);
                     break;
                 }
-                if ($text !== 'На главную') {
+                if ($text !== __('telegram.navigation.home')) {
                     $this->clinicList($chatId, $text, 'specialization', true);
                 }
                 break;
             case 'show_disease_types':
-                if ($text == 'Назад') {
+                if ($text == __('telegram.navigation.back')) {
                     $this->clinicTop($chatId);
                     break;
                 }
 
-                if ($text !== 'На главную') {
+                if ($text !== __('telegram.navigation.home')) {
                     $this->clinicList($chatId, $text, 'disease_type');
                 }
 
                 break;
             case 'show_top_disease_types':
-                if ($text == 'Назад') {
+                if ($text == __('telegram.navigation.back')) {
                     $this->clinicTop($chatId);
                     break;
                 }
 
-                if ($text !== 'На главную') {
+                if ($text !== __('telegram.navigation.home')) {
                     $this->clinicList($chatId, $text, 'disease_type', true);
                 }
 
                 break;
             case 'show_clinic':
-                if ($text == 'Назад') {
+                if ($text == __('telegram.navigation.back')) {
                     $stepInfo = $this->user->first()->previousChoice;
 
                     if ($stepInfo && $stepInfo->previous_specialization_id) {
@@ -171,7 +177,7 @@ class TelegramService
                 }
                 break;
             case 'show_top_clinic':
-                if ($text == 'Назад') {
+                if ($text == __('telegram.navigation.back')) {
                     $stepInfo = $this->user->first()->previousChoice;
 
                     if ($stepInfo && $stepInfo->previous_specialization_id) {
@@ -187,12 +193,12 @@ class TelegramService
                 }
                 break;
             case 'show_clinic_information':
-                if ($text == 'Назад') {
+                if ($text == __('telegram.navigation.back')) {
                     $this->back($chatId, 'show_clinic');
                 }
                 break;
             case 'show_top_clinic_information':
-                if ($text == 'Назад') {
+                if ($text == __('telegram.navigation.back')) {
                     $this->back($chatId, 'show_top_clinic');
                 }
                 break;
@@ -200,7 +206,7 @@ class TelegramService
                 $this->getApplication($chatId);
                 break;
             case 'store_application':
-                if ($text == 'Назад') {
+                if ($text == __('telegram.navigation.back')) {
                     $userJourney = $this->user->first()->journey()
                         ->whereIn('event_name', ['Выбор клиники', 'Выбор топ клиники'])
                         ->orderBy('created_at', 'desc')
@@ -212,49 +218,50 @@ class TelegramService
                         } elseif ($userJourney->event_name === 'Выбор топ клиники') {
                             $this->back($chatId, 'show_top_clinic');
                         }
+                    } else {
+                        $this->showMainMenu($chatId);
                     }
                 } else {
                     $this->storeApplication($chatId, $text);
-
                 }
                 break;
 
             // Promotions
             case 'show_promotions':
-                if ($text !== 'На главную') {
+                if ($text !== __('telegram.navigation.home')) {
                     $this->showPromotionInformation($chatId, $text);
                 }
                 break;
 
             // Useful Information
             case 'show_usefulInformation':
-                if ($text !== 'На главную') {
+                if ($text !== __('telegram.navigation.home')) {
                     $this->showUsefulInfoInformation($chatId, $text);
                 }
                 break;
 
             // Hotel
             case 'show_hotel':
-                if ($text !== 'На главную') {
+                if ($text !== __('telegram.navigation.home')) {
                     $this->showHotelInformation($chatId, $text);
                 }
                 break;
 
             // Entertainment
             case 'show_entertainment':
-                if ($text !== 'На главную') {
+                if ($text !== __('telegram.navigation.home')) {
                     $this->showEntertainmentInformation($chatId, $text);
                 }
                 break;
 
             // Establishment
             case 'show_establishment_category':
-                if ($text !== 'На главную') {
+                if ($text !== __('telegram.navigation.home')) {
                     $this->establishmentList($chatId, $text);
                 }
                 break;
             case 'show_establishment':
-                if ($text === 'Назад') {
+                if ($text === __('telegram.navigation.back')) {
                     $this->back($chatId, 'show_establishment_category');
                 } else {
                     $this->showEstablishmentInformation($chatId, $text);
@@ -263,7 +270,7 @@ class TelegramService
 
             // Currency
             case 'show_currency':
-                if ($text !== 'На главную') {
+                if ($text !== __('telegram.navigation.home')) {
                     $this->showCurrencyInformation($chatId, $text);
                 }
                 break;
@@ -274,7 +281,7 @@ class TelegramService
                 break;
 
             case 'settings':
-                if ($text === 'Язык') {
+                if ($text === __('telegram.settings.language')) {
                     $this->user->update(['step' => 'edit_language']);
 
                     $keyboard = [
@@ -294,10 +301,10 @@ class TelegramService
                         'text' => "🇷🇺Пожалуйста, выберите язык.\n\n🇺🇿Iltimos, tilni tanlang.\n\n🇬🇧Please choose a language.\n\n🇰🇿Тілді таңдаңыз.\n\n🇹🇯Лутфан забонро интихоб кунед.",
                         'reply_markup' => $reply_markup
                     ]);
-                } elseif ($text === 'Номер телефона') {
+                } elseif ($text === __('telegram.settings.phone_number')) {
                     $this->telegram->sendMessage([
                         'chat_id' => $chatId,
-                        'text' => "Введите номер телефона",
+                        'text' => __('telegram.settings.enter_phone'),
                         'reply_markup' => $this->requestPhoneKeyboard(),
                     ]);
                     $this->updateUserStep($chatId, 'change_phone');
@@ -322,12 +329,13 @@ class TelegramService
 
         if (array_key_exists($text, $lang)) {
             $this->updateUserLang($lang[$text]);
+
             $this->storeUserJourney('Выбор языка');
             $isEdit ? $this->settingInformation($chatId) : $this->processSelectCountry($chatId);
         } else {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Возникла ошибка. Пожалуйста, повторите попытку.'
+                'text' => __('telegram.errors.generic_error')
             ]);
         }
 
@@ -342,7 +350,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Пусто',
+                'text' => __('telegram.errors.empty_data'),
             ]);
 
             return;
@@ -351,7 +359,7 @@ class TelegramService
         $keyboard = [];
 
         foreach ($countries as $country) {
-            $keyboard[] = [$country->name['ru']];
+            $keyboard[] = [$country->name[$this->lang]];
         }
 
         $reply_markup = Keyboard::make([
@@ -362,7 +370,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Откуда вы? Выберите вашу страну из списка.',
+            'text' => __('telegram.messages.select_country'),
             'reply_markup' => $reply_markup
         ]);
 
@@ -372,14 +380,14 @@ class TelegramService
 
     private function processSelectCity($chatId, $text): void
     {
-        $country = Country::query()->where('name->ru', $text)->first();
+        $country = Country::query()->where("name->{$this->lang}", $text)->first();
 
         if (!$country) {
             $this->updateUserStep($chatId, 'choose_language');
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Возникла ошибка. Пожалуйста, повторите попытку.',
+                'text' => __('telegram.errors.generic_error'),
             ]);
 
             return;
@@ -392,7 +400,7 @@ class TelegramService
         $keyboard = [];
 
         foreach ($country->city as $city) {
-            $keyboard[] = [$city->name['ru']];
+            $keyboard[] = [$city->name[$this->lang]];
         }
 
         $reply_markup = Keyboard::make([
@@ -404,7 +412,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Пожалуйста, выберите ваш город из списка.',
+            'text' => __('telegram.messages.select_city'),
             'reply_markup' => $reply_markup
         ]);
 
@@ -416,27 +424,27 @@ class TelegramService
     {
         $keyboard = [
             [
-                'Поиск клиники',
-                'Поиск лечения',
+                __('telegram.menu.clinic_search'),
+                __('telegram.menu.treatment_search'),
             ],
             [
-                'Каталог клиник',
-                'Топ клиники',
+                __('telegram.menu.clinic_catalog'),
+                __('telegram.menu.top_clinics'),
             ],
             [
-                'Акции',
-                'Полезная информация',
+                __('telegram.menu.promotions'),
+                __('telegram.menu.useful_info'),
             ],
             [
-                'Отели',
-                'Отдых/развлечения',
+                __('telegram.menu.hotels'),
+                __('telegram.menu.entertainment'),
             ],
             [
-                'Где поесть?',
-                'Калькулятор валют',
+                __('telegram.menu.where_to_eat'),
+                __('telegram.menu.currency_calculator'),
             ],
             [
-                'Настройки',
+                __('telegram.menu.settings'),
             ],
         ];
 
@@ -450,7 +458,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Главное меню',
+            'text' => __('telegram.menu.main_menu'),
             'reply_markup' => $reply_markup
         ]);
 
@@ -478,7 +486,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Пусто',
+                'text' => __('telegram.errors.empty_data'),
             ]);
 
             return;
@@ -487,16 +495,16 @@ class TelegramService
         $keyboard = [];
 
         foreach ($specializations as $specialization) {
-            $keyboard[] = [$specialization->name['ru']];
+            $keyboard[] = [$specialization->name[$this->lang]];
         }
 
         if ($this->user->first()->step == 'clinic_top' || $this->user->first()->step == 'show_top_clinic') {
             $keyboard[] = [
-                'Назад'
+                __('telegram.navigation.back')
             ];
         } else {
             $keyboard[] = [
-                'На главную'
+                __('telegram.navigation.home')
             ];
         }
 
@@ -509,7 +517,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Выберите специализацию, чтобы узнать больше о клинике.',
+            'text' => __('telegram.messages.select_specialization'),
             'reply_markup' => $reply_markup
         ]);
 
@@ -526,7 +534,7 @@ class TelegramService
             $this->updateUserStep($chatId, 'show_main_menu');
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Пусто',
+                'text' => __('telegram.errors.empty_data'),
             ]);
             return;
         }
@@ -534,16 +542,16 @@ class TelegramService
         $keyboard = [];
 
         foreach ($diseaseTypes as $diseaseType) {
-            $keyboard[] = [$diseaseType->name['ru']];
+            $keyboard[] = [$diseaseType->name[$this->lang]];
         }
 
         if ($this->user->first()->step == 'clinic_top' || $this->user->first()->step == 'show_top_clinic') {
             $keyboard[] = [
-                'Назад'
+                __('telegram.navigation.back')
             ];
         } else {
             $keyboard[] = [
-                'На главную'
+                __('telegram.navigation.home')
             ];
         }
 
@@ -555,7 +563,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Чтобы помочь вам дальше, выберите тип болезни.',
+            'text' => __('telegram.messages.select_disease_type'),
             'reply_markup' => $reply_markup
         ]);
 
@@ -567,12 +575,12 @@ class TelegramService
     private function clinicTop($chatId): void
     {
         $keyboard[] = [
-            'По типу болезни',
-            'По специализации'
+            __('telegram.menu.by_disease_type'),
+            __('telegram.menu.by_specialization')
         ];
 
         $keyboard[] = [
-            'На главную'
+            __('telegram.navigation.home')
         ];
 
         $reply_markup = Keyboard::make([
@@ -584,12 +592,12 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Наш рейтинг: лучшие клиники по вашему запросу.',
+            'text' => __('telegram.messages.top_clinics'),
             'reply_markup' => $reply_markup
         ]);
 
         $this->updateUserStep($chatId, 'clinic_top');
-        $this->storeUserJourney('Топ клиники');
+        $this->storeUserJourney('Выбор топ клиники');
 
     }
 
@@ -599,13 +607,13 @@ class TelegramService
             if (is_integer($text)) {
                 $specialization = Specialization::query()->find($text);
             } else {
-                $specialization = Specialization::query()->whereJsonContains('name->ru', $text)->first();
+                $specialization = Specialization::query()->whereJsonContains("name->{$this->lang}", $text)->first();
             }
 
             if (!$specialization) {
                 $this->telegram->sendMessage([
                     'chat_id' => $chatId,
-                    'text' => 'Мы не смогли найти клиники по данной специализации. Попробуйте изменить поиск.',
+                    'text' => __('telegram.errors.specialization_not_found'),
                 ]);
                 return;
             }
@@ -623,13 +631,13 @@ class TelegramService
             if (is_integer($text)) {
                 $diseaseType = DiseaseType::query()->find($text);
             } else {
-                $diseaseType = DiseaseType::query()->whereJsonContains('name->ru', $text)->first();
+                $diseaseType = DiseaseType::query()->whereJsonContains("name->{$this->lang}", $text)->first();
             }
 
             if (!$diseaseType) {
                 $this->telegram->sendMessage([
                     'chat_id' => $chatId,
-                    'text' => 'Мы не нашли клиники по этому типу болезни. Попробуйте изменить критерии поиска.',
+                    'text' => __('telegram.errors.disease_type_not_found'),
                 ]);
                 return;
             }
@@ -650,17 +658,17 @@ class TelegramService
         if ($clinics->isEmpty()) {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Мы не смогли найти клиники по данной специализации. Попробуйте изменить поиск.',
+                'text' => __('telegram.errors.specialization_not_found'),
             ]);
         } else {
             $keyboard = [];
 
             foreach ($clinics as $clinic) {
-                $keyboard[] = [$clinic->name['ru']];
+                $keyboard[] = [$clinic->name[$this->lang]];
             }
 
             $keyboard[] = [
-                'Назад'
+                __('telegram.navigation.back')
             ];
 
             $reply_markup = Keyboard::make([
@@ -672,7 +680,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Ниже представлен список клиник, соответствующих вашему запросу:',
+                'text' => __('telegram.messages.clinic_list'),
                 'reply_markup' => $reply_markup
             ]);
 
@@ -686,35 +694,35 @@ class TelegramService
 
     private function showClinicInformation($chatId, $text, $isTop = false): void
     {
-        $clinic = Clinic::query()->whereJsonContains('name->ru', $text)->first();
+        $clinic = Clinic::query()->whereJsonContains("name->{$this->lang}", $text)->first();
 
         if (!$clinic) {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Информация по клинике не найдено.',
+                'text' => __('telegram.errors.clinic_info_not_found'),
             ]);
             return;
         }
         $photos = $clinic->images;
 
 
-        $clinicDescription = $clinic->description ? "*📝 Описание:* _{$clinic->description['ru']}_\n" : '';
+        $clinicDescription = $clinic->description ? "*📝 Описание:* _{$clinic->description[$this->lang]}_\n" : '';
 
         $contacts = '';
         foreach ($clinic->contacts['type'] as $index => $contactType) {
             $contacts .= "• *{$contactType}:* {$clinic->contacts['type_value'][$index]}\n";
         }
 
-        $description = "*{$clinic->name['ru']}*\n\n"
-            . "📅 *График работы:* _{$clinic->working_hours}_\n"
+        $description = "*{$clinic->name[$this->lang]}*\n\n"
+            . "📅 *" . __('telegram.fields.working_hours') . "* _{$clinic->working_hours}_\n"
             . $clinicDescription
-            . "📍 *Локация:* [Сылка]($clinic->location_link)\n\n"
-            . "📞 *Контакты:*\n" . $contacts;
+            . "📍 *" . __('telegram.fields.location') . "* [" . __('telegram.fields.link') . "]($clinic->location_link)\n\n"
+            . "📞 *" . __('telegram.fields.contacts') . "*\n" . $contacts;
 
 
         $keyboard[] = [
-            'Оставить заявку',
-            'Назад'
+            __('telegram.menu.submit_application'),
+            __('telegram.navigation.back')
         ];
 
         $reply_markup = Keyboard::make([
@@ -734,12 +742,12 @@ class TelegramService
         } else {
             $mediaGroup = [];
             foreach ($photos as $index => $photo) {
-//            $photoPath = Storage::url('public/' . $photo->url);
-//            $fullPhotoUrl = env('APP_URL') . $photoPath;
+            $photoPath = Storage::url('public/' . $photo->url);
+            $fullPhotoUrl = env('APP_URL') . $photoPath;
 
                 $mediaGroup[] = [
                     'type' => 'photo',
-                    'media' => 'https://sitspaceuz.uz/storage/stadium_photos/Ds3Oveiw6IWb43t2V60iX7T0axg1iusDVX6i6voK.jpg',
+                    'media' => $fullPhotoUrl,
                     'caption' => $index === 0 ? $description : '',
                     'parse_mode' => 'Markdown'
                 ];
@@ -752,7 +760,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Оставить заявку',
+                'text' => __('telegram.messages.submit_application'),
                 'reply_markup' => $reply_markup,
                 'parse_mode' => 'Markdown'
             ]);
@@ -786,7 +794,7 @@ class TelegramService
                 'reply_markup' => $this->requestPhoneKeyboard(),
             ]);
             $this->updateUserStep($chatId, 'get_application');
-            $this->storeUserJourney("Введите номер телефона");
+            $this->storeUserJourney(__('telegram.settings.enter_phone'));
         }
     }
 
@@ -802,7 +810,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Ваша заявка успешно принята. Мы свяжемся с вами как можно скорее.'
+                'text' => __('telegram.messages.application_submitted')
             ]);
             $this->storeUserJourney("Заявка сохранена");
         } catch (Exception $e) {
@@ -810,7 +818,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Возникла ошибка. Пожалуйста, повторите попытку.'
+                'text' => __('telegram.errors.generic_error')
             ]);
         }
 
@@ -827,7 +835,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'На данный момент акции не найдены. Рекомендуем периодически проверять наличие обновлений.',
+                'text' => __('telegram.errors.promotions_not_found'),
             ]);
 
             return;
@@ -836,11 +844,11 @@ class TelegramService
         $keyboard = [];
 
         foreach ($promotions as $promotion) {
-            $keyboard[] = [$promotion->name['ru']];
+            $keyboard[] = [$promotion->name[$this->lang]];
         }
 
         $keyboard[] = [
-            'На главную'
+            __('telegram.navigation.home')
         ];
 
         $reply_markup = Keyboard::make([
@@ -852,7 +860,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Пожалуйста, выберите акцию, чтобы узнать больше.',
+            'text' => __('telegram.messages.select_promotion'),
             'reply_markup' => $reply_markup
         ]);
 
@@ -862,21 +870,21 @@ class TelegramService
 
     private function showPromotionInformation($chatId, $text): void
     {
-        $promotion = Promotion::query()->whereJsonContains('name->ru', $text)->first();
+        $promotion = Promotion::query()->whereJsonContains("name->{$this->lang}", $text)->first();
 
         if (!$promotion) {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Информация по акции не найдено.',
+                'text' => __('telegram.errors.promotion_info_not_found'),
             ]);
             return;
         }
         $photos = $promotion->images;
 
 
-        $promotionDescription = $promotion->description ? "*📝 Описание:* _{$promotion->description['ru']}_\n" : '';
+        $promotionDescription = $promotion->description ? "*📝 Описание:* _{$promotion->description[$this->lang]}_\n" : '';
 
-        $description = "*{$promotion->name['ru']}*\n\n"
+        $description = "*{$promotion->name[$this->lang]}*\n\n"
             . $promotionDescription;
 
 
@@ -889,12 +897,12 @@ class TelegramService
         } else {
             $mediaGroup = [];
             foreach ($photos as $index => $photo) {
-//            $photoPath = Storage::url('public/' . $photo->url);
-//            $fullPhotoUrl = env('APP_URL') . $photoPath;
+            $photoPath = Storage::url('public/' . $photo->url);
+            $fullPhotoUrl = env('APP_URL') . $photoPath;
 
                 $mediaGroup[] = [
                     'type' => 'photo',
-                    'media' => 'https://sitspaceuz.uz/storage/stadium_photos/Ds3Oveiw6IWb43t2V60iX7T0axg1iusDVX6i6voK.jpg',
+                    'media' => $fullPhotoUrl,
                     'caption' => $index === 0 ? $description : '',
                     'parse_mode' => 'Markdown'
                 ];
@@ -906,7 +914,7 @@ class TelegramService
             ]);
         }
 
-        $this->storeUserJourney("Просмотр акции " . $promotion->name['ru']);
+        $this->storeUserJourney("Просмотр акции " . $promotion->name[$this->lang]);
     }
 
     // UsefulInfo
@@ -919,7 +927,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'К сожалению, полезная информация не найдена. Попробуйте поискать позже!',
+                'text' => __('telegram.errors.useful_info_not_found'),
             ]);
 
             return;
@@ -928,11 +936,11 @@ class TelegramService
         $keyboard = [];
 
         foreach ($usefulInformations as $usefulInformation) {
-            $keyboard[] = [$usefulInformation->name['ru']];
+            $keyboard[] = [$usefulInformation->name[$this->lang]];
         }
 
         $keyboard[] = [
-            'На главную'
+            __('telegram.navigation.home')
         ];
 
 
@@ -945,7 +953,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Выберите статью',
+            'text' => __('telegram.messages.select_article'),
             'reply_markup' => $reply_markup
         ]);
 
@@ -955,21 +963,21 @@ class TelegramService
 
     private function showUsefulInfoInformation($chatId, $text): void
     {
-        $usefulInformation = UsefulInformation::query()->whereJsonContains('name->ru', $text)->first();
+        $usefulInformation = UsefulInformation::query()->whereJsonContains("name->{$this->lang}", $text)->first();
 
         if (!$usefulInformation) {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'К сожалению, мы не смогли найти информацию по полезным вопросам. Попробуйте позже!',
+                'text' => __('telegram.errors.faq_not_found'),
             ]);
             return;
         }
         $photos = $usefulInformation->images;
 
 
-        $promotionDescription = $usefulInformation->description ? "*📝 Описание:* _{$usefulInformation->description['ru']}_\n" : '';
+        $promotionDescription = $usefulInformation->description ? "*📝 Описание:* _{$usefulInformation->description[$this->lang]}_\n" : '';
 
-        $description = "*{$usefulInformation->name['ru']}*\n\n"
+        $description = "*{$usefulInformation->name[$this->lang]}*\n\n"
             . $promotionDescription;
 
 
@@ -982,12 +990,12 @@ class TelegramService
         } else {
             $mediaGroup = [];
             foreach ($photos as $index => $photo) {
-//            $photoPath = Storage::url('public/' . $photo->url);
-//            $fullPhotoUrl = env('APP_URL') . $photoPath;
+            $photoPath = Storage::url('public/' . $photo->url);
+            $fullPhotoUrl = env('APP_URL') . $photoPath;
 
                 $mediaGroup[] = [
                     'type' => 'photo',
-                    'media' => 'https://sitspaceuz.uz/storage/stadium_photos/Ds3Oveiw6IWb43t2V60iX7T0axg1iusDVX6i6voK.jpg',
+                    'media' => $fullPhotoUrl,
                     'caption' => $index === 0 ? $description : '',
                     'parse_mode' => 'Markdown'
                 ];
@@ -1012,7 +1020,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Похоже, в данный момент нет доступных отелей. Попробуйте поискать позже',
+                'text' => __('telegram.errors.hotels_not_found'),
             ]);
 
             return;
@@ -1021,11 +1029,11 @@ class TelegramService
         $keyboard = [];
 
         foreach ($hotels as $hotel) {
-            $keyboard[] = [$hotel->name['ru']];
+            $keyboard[] = [$hotel->name[$this->lang]];
         }
 
         $keyboard[] = [
-            'На главную'
+            __('telegram.navigation.home')
         ];
 
 
@@ -1038,7 +1046,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Выберите Отель',
+            'text' => __('telegram.messages.select_hotel'),
             'reply_markup' => $reply_markup
         ]);
 
@@ -1049,30 +1057,30 @@ class TelegramService
 
     private function showHotelInformation($chatId, $text): void
     {
-        $hotel = Hotel::query()->whereJsonContains('name->ru', $text)->first();
+        $hotel = Hotel::query()->whereJsonContains("name->{$this->lang}", $text)->first();
 
         if (!$hotel) {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Похоже, в данный момент нет доступных отелей. Попробуйте поискать позже',
+                'text' => __('telegram.errors.hotels_not_found'),
             ]);
             return;
         }
         $photos = $hotel->images;
 
 
-        $clinicDescription = $hotel->description ? "*📝 Описание:* _{$hotel->description['ru']}_\n" : '';
+        $clinicDescription = $hotel->description ? "*📝 Описание:* _{$hotel->description[$this->lang]}_\n" : '';
 
         $contacts = '';
         foreach ($hotel->contacts['type'] as $index => $contactType) {
             $contacts .= "• *{$contactType}:* {$hotel->contacts['type_value'][$index]}\n";
         }
 
-        $description = "*{$hotel->name['ru']}*\n\n"
-            . "📅 *График работы:* _{$hotel->working_hours}_\n"
+        $description = "*{$hotel->name[$this->lang]}*\n\n"
+            . "📅 *" . __('telegram.fields.working_hours') . "* _{$hotel->working_hours}_\n"
             . $clinicDescription
-            . "📍 *Локация:* [Сылка]($hotel->location_link)\n\n"
-            . "📞 *Контакты:*\n" . $contacts;
+            . "📍 *" . __('telegram.fields.location') . "* [" . __('telegram.fields.link') . "]($hotel->location_link)\n\n"
+            . "📞 *" . __('telegram.fields.contacts') . "*\n" . $contacts;
 
         if (count($photos) === 0) {
             $this->telegram->sendMessage([
@@ -1083,12 +1091,12 @@ class TelegramService
         } else {
             $mediaGroup = [];
             foreach ($photos as $index => $photo) {
-//            $photoPath = Storage::url('public/' . $photo->url);
-//            $fullPhotoUrl = env('APP_URL') . $photoPath;
+            $photoPath = Storage::url('public/' . $photo->url);
+            $fullPhotoUrl = env('APP_URL') . $photoPath;
 
                 $mediaGroup[] = [
                     'type' => 'photo',
-                    'media' => 'https://sitspaceuz.uz/storage/stadium_photos/Ds3Oveiw6IWb43t2V60iX7T0axg1iusDVX6i6voK.jpg',
+                    'media' => $fullPhotoUrl,
                     'caption' => $index === 0 ? $description : '',
                     'parse_mode' => 'Markdown'
                 ];
@@ -1113,7 +1121,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Похоже, в данный момент нет доступных развлечений. Попробуйте поискать позже!',
+                'text' => __('telegram.errors.entertainment_not_found'),
             ]);
 
             return;
@@ -1122,11 +1130,11 @@ class TelegramService
         $keyboard = [];
 
         foreach ($entertainments as $entertainment) {
-            $keyboard[] = [$entertainment->name['ru']];
+            $keyboard[] = [$entertainment->name[$this->lang]];
         }
 
         $keyboard[] = [
-            'На главную'
+            __('telegram.navigation.home')
         ];
 
         $reply_markup = Keyboard::make([
@@ -1138,7 +1146,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Пожалуйста, выберите развлечения, чтобы узнать больше.',
+            'text' => __('telegram.messages.select_entertainment'),
             'reply_markup' => $reply_markup
         ]);
 
@@ -1148,30 +1156,30 @@ class TelegramService
 
     private function showEntertainmentInformation($chatId, $text): void
     {
-        $entertainment = Entertainment::query()->whereJsonContains('name->ru', $text)->first();
+        $entertainment = Entertainment::query()->whereJsonContains("name->{$this->lang}", $text)->first();
 
         if (!$entertainment) {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Похоже, в данный момент нет доступных развлечений. Попробуйте поискать позже!',
+                'text' => __('telegram.errors.entertainment_not_found'),
             ]);
             return;
         }
         $photos = $entertainment->images;
 
 
-        $entertainmentDescription = $entertainment->description ? "*📝 Описание:* _{$entertainment->description['ru']}_\n" : '';
+        $entertainmentDescription = $entertainment->description ? "*📝 Описание:* _{$entertainment->description[$this->lang]}_\n" : '';
 
         $contacts = '';
         foreach ($entertainment->contacts['type'] as $index => $contactType) {
             $contacts .= "• *{$contactType}:* {$entertainment->contacts['type_value'][$index]}\n";
         }
 
-        $description = "*{$entertainment->name['ru']}*\n\n"
-            . "📅 *График работы:* _{$entertainment->working_hours}_\n"
+        $description = "*{$entertainment->name[$this->lang]}*\n\n"
+            . "📅 *" . __('telegram.fields.working_hours') . "* _{$entertainment->working_hours}_\n"
             . $entertainmentDescription
-            . "📍 *Локация:* [Сылка]($entertainment->location_link)\n\n"
-            . "📞 *Контакты:*\n" . $contacts;
+            . "📍 *" . __('telegram.fields.location') . "* [" . __('telegram.fields.link') . "]($entertainment->location_link)\n\n"
+            . "📞 *" . __('telegram.fields.contacts') . "*\n" . $contacts;
 
         if (count($photos) === 0) {
             $this->telegram->sendMessage([
@@ -1182,12 +1190,12 @@ class TelegramService
         } else {
             $mediaGroup = [];
             foreach ($photos as $index => $photo) {
-//            $photoPath = Storage::url('public/' . $photo->url);
-//            $fullPhotoUrl = env('APP_URL') . $photoPath;
+            $photoPath = Storage::url('public/' . $photo->url);
+            $fullPhotoUrl = env('APP_URL') . $photoPath;
 
                 $mediaGroup[] = [
                     'type' => 'photo',
-                    'media' => 'https://sitspaceuz.uz/storage/stadium_photos/Ds3Oveiw6IWb43t2V60iX7T0axg1iusDVX6i6voK.jpg',
+                    'media' => $fullPhotoUrl,
                     'caption' => $index === 0 ? $description : '',
                     'parse_mode' => 'Markdown'
                 ];
@@ -1211,7 +1219,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Похоже, в данный момент нет доступных заведений. Попробуйте поискать позже!',
+                'text' => __('telegram.errors.establishments_not_found'),
             ]);
 
             return;
@@ -1220,11 +1228,11 @@ class TelegramService
         $keyboard = [];
 
         foreach ($categories as $category) {
-            $keyboard[] = [$category->name['ru']];
+            $keyboard[] = [$category->name[$this->lang]];
         }
 
         $keyboard[] = [
-            'На главную'
+            __('telegram.navigation.home')
         ];
 
 
@@ -1236,7 +1244,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Пожалуйста, выберите категорию, чтобы продолжить.',
+            'text' => __('telegram.messages.select_category'),
             'reply_markup' => $reply_markup
         ]);
 
@@ -1247,7 +1255,7 @@ class TelegramService
 
     private function establishmentList($chatId, $text): void
     {
-        $category = Category::query()->whereJsonContains('name->ru', $text)->first();
+        $category = Category::query()->whereJsonContains("name->{$this->lang}", $text)->first();
         $establishments = $category->establishments;
 
         if ($establishments->isEmpty()) {
@@ -1255,17 +1263,17 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Похоже, в данный момент нет доступных заведений. Попробуйте поискать позже!',
+                'text' => __('telegram.errors.establishments_not_found'),
             ]);
         } else {
             $keyboard = [];
 
             foreach ($establishments as $establishment) {
-                $keyboard[] = [$establishment->name['ru']];
+                $keyboard[] = [$establishment->name[$this->lang]];
             }
 
             $keyboard[] = [
-                'Назад'
+                __('telegram.navigation.back')
             ];
 
             $reply_markup = Keyboard::make([
@@ -1277,7 +1285,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Ниже представлен список заведений, соответствующих вашему запросу:',
+                'text' => __('telegram.messages.establishment_list'),
                 'reply_markup' => $reply_markup
             ]);
 
@@ -1290,30 +1298,30 @@ class TelegramService
 
     private function showEstablishmentInformation($chatId, $text): void
     {
-        $establishment = Establishment::query()->whereJsonContains('name->ru', $text)->first();
+        $establishment = Establishment::query()->whereJsonContains("name->{$this->lang}", $text)->first();
 
         if (!$establishment) {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Похоже, в данный момент нет доступных заведений. Попробуйте поискать позже!',
+                'text' => __('telegram.errors.establishments_not_found'),
             ]);
             return;
         }
         $photos = $establishment->images;
 
 
-        $establishmentDescription = $establishment->description ? "*📝 Описание:* _{$establishment->description['ru']}_\n" : '';
+        $establishmentDescription = $establishment->description ? "*📝 Описание:* _{$establishment->description[$this->lang]}_\n" : '';
 
         $contacts = '';
         foreach ($establishment->contacts['type'] as $index => $contactType) {
             $contacts .= "• *{$contactType}:* {$establishment->contacts['type_value'][$index]}\n";
         }
 
-        $description = "*{$establishment->name['ru']}*\n\n"
-            . "📅 *График работы:* _{$establishment->working_hours}_\n"
+        $description = "*{$establishment->name[$this->lang]}*\n\n"
+            . "📅 *" . __('telegram.fields.working_hours') . "* _{$establishment->working_hours}_\n"
             . $establishmentDescription
-            . "📍 *Локация:* [Сылка]($establishment->location_link)\n\n"
-            . "📞 *Контакты:*\n" . $contacts;
+            . "📍 *" . __('telegram.fields.location') . "* [" . __('telegram.fields.link') . "]($establishment->location_link)\n\n"
+            . "📞 *" . __('telegram.fields.contacts') . "*\n" . $contacts;
 
         if (count($photos) === 0) {
             $this->telegram->sendMessage([
@@ -1324,12 +1332,12 @@ class TelegramService
         } else {
             $mediaGroup = [];
             foreach ($photos as $index => $photo) {
-//            $photoPath = Storage::url('public/' . $photo->url);
-//            $fullPhotoUrl = env('APP_URL') . $photoPath;
+            $photoPath = Storage::url('public/' . $photo->url);
+            $fullPhotoUrl = env('APP_URL') . $photoPath;
 
                 $mediaGroup[] = [
                     'type' => 'photo',
-                    'media' => 'https://sitspaceuz.uz/storage/stadium_photos/Ds3Oveiw6IWb43t2V60iX7T0axg1iusDVX6i6voK.jpg',
+                    'media' => $fullPhotoUrl,
                     'caption' => $index === 0 ? $description : '',
                     'parse_mode' => 'Markdown'
                 ];
@@ -1355,7 +1363,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Похоже, в данный момент нет доступных валют. Попробуйте поискать позже!',
+                'text' => __('telegram.errors.currency_not_found'),
             ]);
 
             return;
@@ -1368,7 +1376,7 @@ class TelegramService
         }
 
         $keyboard[] = [
-            'На главную'
+            __('telegram.navigation.home')
         ];
 
         $reply_markup = Keyboard::make([
@@ -1380,7 +1388,7 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Пожалуйста, выберите валюту, чтобы продолжить.',
+            'text' => __('telegram.messages.select_currency'),
             'reply_markup' => $reply_markup
         ]);
 
@@ -1410,12 +1418,12 @@ class TelegramService
     private function settingInformation($chatId): void
     {
         $keyboard[] = [
-            'Язык',
-            'Номер телефона',
+            __('telegram.settings.language'),
+            __('telegram.settings.phone_number'),
         ];
 
         $keyboard[] = [
-            'На главную',
+            __('telegram.navigation.home'),
         ];
 
         $reply_markup = Keyboard::make([
@@ -1435,9 +1443,9 @@ class TelegramService
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => '*Настройки*' . PHP_EOL .
-                'Язык' . ': ' . $lang[$this->user->first()->lang] . PHP_EOL .
-                'Номер телефона' . ': ' . $this->user->first()->phone ?? '-',
+            'text' => '*' . __('telegram.menu.settings') . '*' . PHP_EOL .
+                __('telegram.settings.language') . ': ' . $lang[$this->lang] . PHP_EOL .
+                __('telegram.settings.phone_number') . ': ' . $this->user->first()->phone ?? '-',
             'reply_markup' => $reply_markup,
             'parse_mode' => 'Markdown'
         ]);
@@ -1512,6 +1520,10 @@ class TelegramService
     private function updateUserLang($lang): void
     {
         $this->user->update(['lang' => $lang]);
+
+        $this->lang = $this->user->lang;
+        Session::put('locale', $lang);
+        App::setLocale($lang);
     }
 
     private function updateUserStep($chatId, $step): void

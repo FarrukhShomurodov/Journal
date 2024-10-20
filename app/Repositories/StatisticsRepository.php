@@ -5,6 +5,8 @@ namespace App\Repositories;
 use App\Models\BotUser;
 use App\Models\BotUserJourney;
 use App\Models\BotUserSession;
+use App\Models\City;
+use App\Models\Country;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +23,8 @@ class StatisticsRepository
             'drop_off_point' => $this->dropOffPoint() ?? '-',
             'user_counts_by_menu_section' => $this->getUniqueUserCountsByMenuSection(),
             'user_journey_completion_rate' => $this->UserJourneyCompletionRate(),
+            'most_frequent_сountry' => $this->mostFrequentCountry(),
+            'most_frequent_city' => $this->mostFrequentCity(),
         ];
     }
 
@@ -51,14 +55,14 @@ class StatisticsRepository
         return (100 * $usersActive) / $userCount;
     }
 
-//    public function getAverageSessionLength(): int|null
-//    {
-//        return BotUserSession::query()
-//            ->whereNotNull('session_end')
-//            ->select(DB::raw('AVG(EXTRACT(EPOCH FROM (session_end - session_start))) as avg_session_length'))
-//            ->first()
-//            ->avg_session_length;
-//    }
+    public function getAverageSessionLength(): int|null
+    {
+        return BotUserSession::query()
+            ->whereNotNull('session_end')
+            ->select(DB::raw('AVG(EXTRACT(EPOCH FROM (session_end - session_start))) as avg_session_length'))
+            ->first()
+            ->avg_session_length;
+    }
 
     public function getAverageSessionLength(): int|null
     {
@@ -70,20 +74,20 @@ class StatisticsRepository
     }
 
 
-    public function getAverageSessionFrequency($dateTo, $dateFrom): float|int|null
-    {
-        $sessionCounts = BotUserSession::query()
-            ->whereBetween('session_start', [Carbon::parse($dateTo), Carbon::parse($dateFrom)])
-            ->groupBy('bot_user_id')
-            ->selectRaw('count(id) as session_count')
-            ->pluck('session_count');
-
-        if ($sessionCounts->isEmpty()) {
-            return 0;
-        }
-
-        return $sessionCounts->average();
-    }
+//    public function getAverageSessionFrequency($dateTo, $dateFrom): float|int|null
+//    {
+//        $sessionCounts = BotUserSession::query()
+//            ->whereBetween('session_start', [Carbon::parse($dateTo), Carbon::parse($dateFrom)])
+//            ->groupBy('bot_user_id')
+//            ->selectRaw('count(id) as session_count')
+//            ->pluck('session_count');
+//
+//        if ($sessionCounts->isEmpty()) {
+//            return 0;
+//        }
+//
+//        return $sessionCounts->average();
+//    }
 
     public function calculateChurnRate($dateTo, $dateFrom): float|int
     {
@@ -199,5 +203,43 @@ class StatisticsRepository
             ->selectRaw('DATE(last_activity) as date, COUNT(*) as count')
             ->groupBy('last_activity')
             ->get();
+    }
+
+    public function mostFrequentCountry(): string
+    {
+        $countryId = BotUser::query()->select('country_id', DB::raw('COUNT(*) as user_count'))
+            ->groupBy('country_id')
+            ->orderBy('user_count', 'desc')
+            ->first();
+
+        $country = null;
+        if ($countryId) {
+            $country = Country::query()->find($countryId->country_id);
+        }
+
+        if ($country) {
+            return $country->name['ru'];
+        } else {
+            return "Нет данных о пользователях.";
+        }
+    }
+
+    public function mostFrequentCity(): string
+    {
+        $cityId = BotUser::query()->select('city_id', DB::raw('COUNT(*) as user_count'))
+            ->groupBy('city_id')
+            ->orderBy('user_count', 'desc')
+            ->first();
+
+        $city = null;
+        if ($cityId) {
+            $city = City::query()->find($cityId->city_id);
+        }
+
+        if ($city) {
+            return $city->name['ru'];
+        } else {
+            return "Нет данных о пользователях.";
+        }
     }
 }

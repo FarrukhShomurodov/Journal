@@ -7,6 +7,7 @@ use App\Models\BotUser;
 use App\Models\BotUserSession;
 use App\Services\TelegramService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
 use Telegram\Bot\Api;
 use Telegram\Bot\Keyboard\Keyboard;
 
@@ -32,9 +33,9 @@ class TelegramController extends Controller
             $chatId = $message->getChat()->getId();
             $text = $message->getText();
 
-            $user = BotUser::query()->firstOrCreate(['chat_id' => $chatId]);
+            $user = BotUser::query()->firstOrCreate(['chat_id' => $chatId, 'isactive' => true]);
 
-            if (!$user->isactive){
+            if (!$user->isactive) {
                 $this->telegram->sendMessage([
                     'chat_id' => $chatId,
                     'text' => "К сожалению, ваш доступ заблокирован. Пожалуйста, свяжитесь с поддержкой для получения дополнительной информации. Вы можете написать пользователю @support_team.",
@@ -123,7 +124,11 @@ class TelegramController extends Controller
                 }
             }
 
-            $this->telegramService->processMessage($chatId, $text, $user->step, $message);
+            if ($user->lang) {
+                App::setLocale($user->lang);
+            }
+
+            $this->telegramService->processMessage($chatId, $text, $user->step, $message, $user);
         }
     }
 

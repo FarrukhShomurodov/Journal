@@ -141,60 +141,87 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card stat-card shadow-sm border-0 text-center hover-scale">
+                    <div class="card-body">
+                        <h4 class="card-title mb-1">{{ $statistics['active_users']['most_frequent_сountry'] }}</h4>
+                        <p class="text-muted">Самая часто выбираемая страна</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card stat-card shadow-sm border-0 text-center hover-scale">
+                    <div class="card-body">
+                        <h4 class="card-title mb-1">{{ $statistics['active_users']['most_frequent_city'] }}</h4>
+                        <p class="text-muted">Самый часто выбираемый город</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row mt-5">
             <h2>Процент пользователей, которые прошли весь путь от начала до конца (по пунктам)</h2>
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card stat-card shadow-sm border-0 text-center hover-scale">
                     <div class="card-body">
-                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['application'] }}%</h4>
+                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['application'] }}
+                            %</h4>
                         <p class="text-muted">Завершение подачи заявки</p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card stat-card shadow-sm border-0 text-center hover-scale">
-                <div class="card-body">
-                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['promotionViewCount'] }}%</h4>
+                    <div class="card-body">
+                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['promotionViewCount'] }}
+                            %</h4>
                         <p class="text-muted">Просмотр акций</p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card stat-card shadow-sm border-0 text-center hover-scale">
-                <div class="card-body p-4">
-                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['useFullInformationViewCount'] }}%</h4>
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['useFullInformationViewCount'] }}
+                            %</h4>
                         <p class="text-muted">Просмотр полезной информации</p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card stat-card shadow-sm border-0 text-center hover-scale">
-                <div class="card-body p-4">
-                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['hotelViewCount'] }}%</h4>
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['hotelViewCount'] }}
+                            %</h4>
                         <p class="mb-0 text-muted">Просмотр отелей</p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card stat-card shadow-sm border-0 text-center hover-scale">
-                <div class="card-body p-4">
-                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['establishmentViewCount'] }}%</h4>
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['establishmentViewCount'] }}
+                            %</h4>
                         <p class="mb-0 text-muted">Просмотр заведений</p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card stat-card shadow-sm border-0 text-center hover-scale">
-                <div class="card-body p-4">
-                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['currencyViewCount'] }}%</h4>
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['currencyViewCount'] }}
+                            %</h4>
                         <p class="mb-0 text-muted">Просмотр валютных данных</p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card stat-card shadow-sm border-0 text-center hover-scale">
-                <div class="card-body p-4">
-                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['entertainmentViewCount'] }}%</h4>
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_journey_completion_rate']['entertainmentViewCount'] }}
+                            %</h4>
                         <p class="mb-0 text-muted">Просмотр развлечений</p>
                     </div>
                 </div>
