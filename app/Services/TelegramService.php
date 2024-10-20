@@ -38,7 +38,7 @@ class TelegramService
     public function processMessage($chatId, $text, $step, $message, $user): void
     {
         $this->user = $user;
-        $this->lang = $user->lang;
+        $this->lang = $user->lang ?? 'en';
 
         $commands = [
             // Clinic
