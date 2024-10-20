@@ -55,14 +55,14 @@ class StatisticsRepository
         return (100 * $usersActive) / $userCount;
     }
 
-    public function getAverageSessionLength(): int|null
-    {
-        return BotUserSession::query()
-            ->whereNotNull('session_end')
-            ->select(DB::raw('AVG(EXTRACT(EPOCH FROM (session_end - session_start))) as avg_session_length'))
-            ->first()
-            ->avg_session_length;
-    }
+//    public function getAverageSessionLength(): int|null
+//    {
+//        return BotUserSession::query()
+//            ->whereNotNull('session_end')
+//            ->select(DB::raw('AVG(EXTRACT(EPOCH FROM (session_end - session_start))) as avg_session_length'))
+//            ->first()
+//            ->avg_session_length;
+//    }
 
     public function getAverageSessionLength(): int|null
     {
@@ -74,20 +74,20 @@ class StatisticsRepository
     }
 
 
-//    public function getAverageSessionFrequency($dateTo, $dateFrom): float|int|null
-//    {
-//        $sessionCounts = BotUserSession::query()
-//            ->whereBetween('session_start', [Carbon::parse($dateTo), Carbon::parse($dateFrom)])
-//            ->groupBy('bot_user_id')
-//            ->selectRaw('count(id) as session_count')
-//            ->pluck('session_count');
-//
-//        if ($sessionCounts->isEmpty()) {
-//            return 0;
-//        }
-//
-//        return $sessionCounts->average();
-//    }
+    public function getAverageSessionFrequency($dateTo, $dateFrom): float|int|null
+    {
+        $sessionCounts = BotUserSession::query()
+            ->whereBetween('session_start', [Carbon::parse($dateTo), Carbon::parse($dateFrom)])
+            ->groupBy('bot_user_id')
+            ->selectRaw('count(id) as session_count')
+            ->pluck('session_count');
+
+        if ($sessionCounts->isEmpty()) {
+            return 0;
+        }
+
+        return $sessionCounts->average();
+    }
 
     public function calculateChurnRate($dateTo, $dateFrom): float|int
     {
