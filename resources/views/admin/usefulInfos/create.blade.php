@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    <title>Journal - Создать полезная информация</title>
+    <title>Journal - Создать полезная информацию</title>
 @endsection
 
 @section('content')

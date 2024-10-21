@@ -7,7 +7,7 @@
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
         <span class="text-muted fw-light"><a class="text-muted"
-                                             href="{{ route('hotels.index') }}">Отель</a> /</span>Создать
+                                             href="{{ route('hotels.index') }}">Отели</a> /</span>Создать
     </h6>
 
     @if ($errors->any())
@@ -125,7 +125,7 @@
                     <label class="form-label" for="working_hours">График работы</label>
                     <input type="text" name="working_hours"
                            class="form-control @error('working_hours') is-invalid @enderror" id="working_hours"
-                           placeholder="График работы">
+                           placeholder="График работы" required>
                     @error('working_hours')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -134,7 +134,7 @@
                     <label class="form-label" for="price_from">Цена от</label>
                     <input type="number" step="0.01" name="price_from"
                            class="form-control @error('price_from') is-invalid @enderror" id="price_from"
-                           placeholder="Цена от">
+                           placeholder="Цена от" required>
                     @error('price_from')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -143,7 +143,7 @@
                     <label class="form-label" for="price_to">Цена до</label>
                     <input type="number" step="0.01" name="price_to"
                            class="form-control @error('price_to') is-invalid @enderror" id="price_to"
-                           placeholder="Цена до">
+                           placeholder="Цена до" required>
                     @error('price_to')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -152,7 +152,7 @@
                     <label class="form-label" for="location_link">Локация (ссылка)</label>
                     <input type="text" name="location_link"
                            class="form-control @error('location_link') is-invalid @enderror" id="location_link"
-                           placeholder="Локация (ссылка)">
+                           placeholder="Локация (ссылка)" required>
                     @error('location_link')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -174,7 +174,7 @@
                                     <input type="text" name="contacts[type][1]"
                                            id="type"
                                            class="form-control @error('contacts.phone') is-invalid @enderror"
-                                           placeholder="(e.g., Phone)">
+                                           placeholder="(e.g., Phone)" required>
                                     @error('contacts.type')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -184,7 +184,7 @@
                                     <input type="text" name="contacts[type_value][1]"
                                            id="type_val"
                                            class="form-control @error('contacts.phone_value') is-invalid @enderror"
-                                           placeholder="(e.g., 99890000000)">
+                                           placeholder="(e.g., 99890000000)" required>
                                     @error('contacts.type_value')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror

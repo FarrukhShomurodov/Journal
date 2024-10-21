@@ -7,7 +7,7 @@
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
         <span class="text-muted fw-light"><a class="text-muted"
-                                             href="{{ route('clinics.index') }}">Клиника</a> /</span>Редактировать
+                                             href="{{ route('clinics.index') }}">Клиники</a> /</span>Редактировать
     </h6>
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
@@ -136,7 +136,7 @@
                     <input type="text" name="working_hours"
                            class="form-control @error('working_hours') is-invalid @enderror" id="working_hours"
                            placeholder="График работы"
-                           value="{{ $clinic->working_hours }}">
+                           value="{{ $clinic->working_hours }}" required>
                     @error('working_hours')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -147,7 +147,7 @@
                     <input type="text" name="location_link"
                            class="form-control @error('location_link') is-invalid @enderror" id="location_link"
                            value="{{$clinic->location_link}}"
-                           placeholder="Локация (ссылка)">
+                           placeholder="Локация (ссылка)" required>
                     @error('location_link')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -230,7 +230,7 @@
                                                id="type"
                                                class="form-control @error('contacts.type.' . $index) is-invalid @enderror"
                                                placeholder="(e.g., Phone)"
-                                               value="{{ $contactType }}">
+                                               value="{{ $contactType }}" required>
                                         @error('contacts.type.' . $index)
                                         <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -241,7 +241,7 @@
                                                id="type_value"
                                                class="form-control @error('contacts.type_value.' . $index) is-invalid @enderror"
                                                placeholder="(e.g., 99890000000)"
-                                               value="{{ $clinic->contacts['type_value'][$index] }}">
+                                               value="{{ $clinic->contacts['type_value'][$index] }}" required>
                                         @error('contacts.type_value.' . $index)
                                         <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror

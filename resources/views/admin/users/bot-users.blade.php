@@ -15,14 +15,16 @@
             <form method="GET" action="">
                 <div class="d-flex">
                     <div class="d-flex flex-row align-items-center " style="margin-right: 10px">
-                        <label class="me-2">От: </label>
-                        <input onchange="this.form.submit()" name="date_from" type="date" class="form-control"
-                               value="{{ request('date_from') }}">
+                        <label for="date_from" class="me-2">От: </label>
+                        <input id="date_from" onchange="this.form.submit()" name="date_from" type="date"
+                               class="form-control"
+                               value="{{$dateFrom }}">
                     </div>
                     <div class="d-flex flex-row align-items-center " style="margin-right: 10px">
-                        <label class="me-2">До: </label>
-                        <input onchange="this.form.submit()" name="date_to" type="date" class="form-control"
-                               value="{{ request('date_to') }}">
+                        <label for="date_to" class="me-2">До: </label>
+                        <input id="date_to" onchange="this.form.submit()" name="date_to" type="date"
+                               class="form-control"
+                               value="{{ $dateTo }}">
                     </div>
                 </div>
             </form>

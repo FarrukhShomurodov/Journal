@@ -33,7 +33,7 @@ class TelegramController extends Controller
             $chatId = $message->getChat()->getId();
             $text = $message->getText();
 
-            $user = BotUser::query()->firstOrCreate(['chat_id' => $chatId, 'isactive' => true]);
+            $user = BotUser::query()->firstOrCreate(['chat_id' => $chatId], ['isactive' => true]);
 
             if (!$user->isactive) {
                 $this->telegram->sendMessage([
@@ -72,6 +72,10 @@ class TelegramController extends Controller
                         'previous_clinic_id ' => null
                     ]
                 );
+
+                $user->journey()->create([
+                    'event_name' => 'Старт'
+                ]);
 
                 $keyboard = [
                     ["🇷🇺 Русский", "🇬🇧 English"],

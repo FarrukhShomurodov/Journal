@@ -6,7 +6,7 @@
 
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
-        <span class="text-muted fw-light"><a class="text-muted" href="{{ route('specializations.index') }}">Специализация</a> /</span>Создать
+        <span class="text-muted fw-light"><a class="text-muted" href="{{ route('specializations.index') }}">Специализации</a> /</span>Создать
     </h6>
     @if ($errors->any())
         @foreach ($errors->all() as $error)

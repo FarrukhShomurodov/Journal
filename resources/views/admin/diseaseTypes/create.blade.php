@@ -1,13 +1,13 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    <title>Journal - Тип болезни</title>
+    <title>Journal - Создать тип заболеваний</title>
 @endsection
 
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
         <span class="text-muted fw-light"><a class="text-muted"
-                                             href="{{ route('diseaseTypes.index') }}">Тип болезни</a> /</span>Создать
+                                             href="{{ route('diseaseTypes.index') }}">Типы заболеваний</a> /</span>Создать
     </h6>
     @if ($errors->any())
         @foreach ($errors->all() as $error)

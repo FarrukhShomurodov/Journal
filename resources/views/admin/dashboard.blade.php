@@ -1,18 +1,27 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    <title>Dashboard - Analytics | Journal - Bootstrap Admin</title>
+    <title>Dashboard - Analytics | Journal</title>
 @endsection
 
 @section('content')
     <div class="container-fluid">
-        <div class="row mb-4">
-            <div class="col">
-                <h1 class="display-4">Аналитика</h1>
-                <p class="lead">Добро пожаловать на панель управления, следите за активностью пользователей и
-                    метриками.</p>
+        <div class="row mb-4 align-items-center justify-content-between">
+            <div class="col-md-6">
+                <h1 class="display-4 fw-bold text-primary">Аналитика</h1>
+                <p class="lead text-muted">Добро пожаловать на панель управления. Следите за активностью пользователей и основными метриками вашего бота.</p>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card shadow-sm border-0 text-center hover-scale">
+                    <div class="card-body">
+                        <i class="fas fa-users text-primary mb-3" style="font-size: 2rem;"></i>
+                        <h4 class="card-title mb-1">{{ $statistics['active_users']['user_count'] }}</h4>
+                        <p class="text-muted">Пользователи бота</p>
+                    </div>
+                </div>
             </div>
         </div>
+
 
         <!-- Статистика -->
         <div class="row">
@@ -22,7 +31,7 @@
                     <div class="card-body">
                         <i class="fas fa-user-clock fa-3x text-primary mb-3"></i>
                         <h4 class="card-title mb-1">{{ $statistics['active_users']['dau'] }}</h4>
-                        <p class="text-muted">Ежедневные активные пользователи</p>
+                        <p class="text-muted">Ежедневные уникальные пользователи</p>
                     </div>
                 </div>
             </div>
@@ -32,7 +41,7 @@
                     <div class="card-body">
                         <i class="fas fa-users fa-3x text-success mb-3"></i>
                         <h4 class="card-title mb-1">{{ $statistics['active_users']['wau'] }}</h4>
-                        <p class="text-muted">Еженедельные активные пользователи</p>
+                        <p class="text-muted">Еженедельные уникальные пользователи</p>
                     </div>
                 </div>
             </div>
@@ -42,7 +51,7 @@
                     <div class="card-body">
                         <i class="fas fa-users fa-3x text-warning mb-3"></i>
                         <h4 class="card-title mb-1">{{ $statistics['active_users']['mau'] }}</h4>
-                        <p class="text-muted">Ежемесячные активные пользователи</p>
+                        <p class="text-muted">Ежемесячные уникальные пользователи</p>
                     </div>
                 </div>
             </div>
@@ -59,9 +68,9 @@
                         <form method="GET" action="" class="mt-3">
                             <div class="d-flex justify-content-center">
                                 <input onchange="this.form.submit()" name="date_from" type="date"
-                                       class="form-control me-2" value="{{ request('date_from') }}">
+                                       class="form-control me-2" value="{{ $dateFrom }}">
                                 <input onchange="this.form.submit()" name="date_to" type="date" class="form-control"
-                                       value="{{ request('date_to') }}">
+                                       value="{{ $dateTo }}">
                             </div>
                         </form>
                     </div>
@@ -78,9 +87,9 @@
                         <form method="GET" action="" class="mt-3">
                             <div class="d-flex justify-content-center">
                                 <input onchange="this.form.submit()" name="date_from_session_frequency" type="date"
-                                       class="form-control me-2" value="{{ request('date_from_session_frequency') }}">
+                                       class="form-control me-2" value="{{ $dateFromFrequency }}">
                                 <input onchange="this.form.submit()" name="date_to_session_frequency" type="date"
-                                       class="form-control" value="{{ request('date_to_session_frequency') }}">
+                                       class="form-control" value="{{ $dateToFrequency }}">
                             </div>
                         </form>
                     </div>
@@ -97,9 +106,9 @@
                         <form method="GET" action="" class="mt-3">
                             <div class="d-flex justify-content-center">
                                 <input onchange="this.form.submit()" name="date_from_session_churn" type="date"
-                                       class="form-control me-2" value="{{ request('date_from_session_churn') }}">
+                                       class="form-control me-2" value="{{ $dateFromChurn }}">
                                 <input onchange="this.form.submit()" name="date_to_session_churn" type="date"
-                                       class="form-control" value="{{ request('date_to_session_churn') }}">
+                                       class="form-control" value="{{ $dateToChurn }}">
                             </div>
                         </form>
                     </div>

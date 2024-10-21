@@ -1,12 +1,12 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    <title> Journal - Специализация</title>
+    <title> Journal - Специализации</title>
 @endsection
 
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
-        <span class="text-muted fw-light">Специализация</span>
+        <span class="text-muted fw-light">Специализации</span>
     </h6>
 
     @if ($errors->any())
@@ -28,7 +28,7 @@
 
     <div class="card">
         <div class="d-flex justify-content-between align-items-center">
-            <h5 class="card-header">Специализация</h5>
+            <h5 class="card-header">Специализации</h5>
             <a href="{{  route('specializations.create') }}" class="btn btn-primary"
                style="margin-right: 22px;">Создать</a>
         </div>

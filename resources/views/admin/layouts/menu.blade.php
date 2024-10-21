@@ -18,7 +18,7 @@
         <li class="menu-item {{ Request::is('/') || Request::is('statistics*') ? 'active' : '' }}">
             <a href="{{route('dashboard')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Панел управление">Панел управление</div>
+                <div data-i18n="Панели управления">Панели управления</div>
             </a>
         </li>
         <li class="menu-item {{ Request::is('bot-users*') ||  Request::is('bot-user*')? 'active' : '' }}">
@@ -37,12 +37,12 @@
             <ul class="menu-sub">
                 <li class="menu-item {{ Request::is('/countries') || Request::is('countries*') ? 'active' : '' }}">
                     <a href="{{route('countries.index')}}" class="menu-link">
-                        <div data-i18n="Старана">Старана</div>
+                        <div data-i18n="Страны">Страны</div>
                     </a>
                 </li>
                 <li class="menu-item {{ Request::is('/cities') || Request::is('cities*') ? 'active' : '' }}">
                     <a href="{{route('cities.index')}}" class="menu-link">
-                        <div data-i18n="Город">Город</div>
+                        <div data-i18n="Города">Города</div>
                     </a>
                 </li>
             </ul>
@@ -57,25 +57,25 @@
         <li class="menu-item {{ Request::is('/currencies') || Request::is('currencies*') ? 'active' : '' }}">
             <a href="{{route('currencies.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-money"></i>
-                <div data-i18n="Валюта">Валюта</div>
+                <div data-i18n="Валюты">Валюты</div>
             </a>
         </li>
 
         <li class="menu-item {{ Request::is('establishments*') || Request::is('categories*') ? 'open' : '' }}" style="">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-building"></i>
-                <div data-i18n="Заведение">Заведение</div>
+                <div data-i18n="Заведения">Заведения</div>
             </a>
             <ul class="menu-sub">
                 <li class="menu-item {{ Request::is('/establishments') || Request::is('establishments*') ? 'active' : '' }}">
                     <a href="{{route('establishments.index')}}" class="menu-link">
 
-                        <div data-i18n="Заведение">Управлять</div>
+                        <div data-i18n="Заведение">Список</div>
                     </a>
                 </li>
                 <li class="menu-item {{ Request::is('/categories') || Request::is('categories*') ? 'active' : '' }}">
                     <a href="{{route('categories.index')}}" class="menu-link">
-                        <div data-i18n="Категория">Категория</div>
+                        <div data-i18n="Категории">Категории</div>
                     </a>
                 </li>
             </ul>
@@ -115,7 +115,7 @@
             <ul class="menu-sub">
                 <li class="menu-item {{ Request::is('/clinics') || Request::is('clinics*') ? 'active' : '' }}">
                     <a href="{{route('clinics.index')}}" class="menu-link">
-                        <div data-i18n="Клиники">Управлять</div>
+                        <div data-i18n="Клиники">Список</div>
                     </a>
                 </li>
                 <li class="menu-item {{ Request::is('/diseaseTypes') || Request::is('diseaseTypes*') ? 'active' : '' }}">

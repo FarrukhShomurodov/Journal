@@ -1,13 +1,13 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    <title>Journal - Редактировать тип болезни</title>
+    <title>Journal - Редактировать тип заболеваний</title>
 @endsection
 
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
         <span class="text-muted fw-light"><a class="text-muted"
-                                             href="{{ route('diseaseTypes.index') }}">Тип болезни</a> /</span>Редактировать
+                                             href="{{ route('diseaseTypes.index') }}">Типы заболеваний</a> /</span>Редактировать
     </h6>
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">

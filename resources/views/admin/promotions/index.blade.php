@@ -6,7 +6,7 @@
 
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
-        <span class="text-muted fw-light">Акция</span>
+        <span class="text-muted fw-light">Акции</span>
     </h6>
 
     @if ($errors->any())

@@ -11,8 +11,9 @@ class BotUserController extends Controller
 {
     public function index(Request $request): View
     {
-        $dateTo = $request->input('date_to');
-        $dateFrom = $request->input('date_from');
+        $dateFrom = $request->input('date_from', now()->startOfMonth()->format('Y-m-d'));
+        $dateTo = $request->input('date_to', now()->format('Y-m-d'));
+
         $query = BotUser::query()->orderBy('id', 'asc');
 
         if ($dateFrom) {
@@ -23,7 +24,7 @@ class BotUserController extends Controller
         }
 
         $botUsers = $query->get();
-        return view('admin.users.bot-users', compact('botUsers'));
+        return view('admin.users.bot-users', compact('botUsers', 'dateFrom', 'dateTo'));
     }
 
     public function showJourney(BotUser $user): View

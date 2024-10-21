@@ -24,13 +24,13 @@ class DashboardController extends Controller
 
     public function index(Request $request): View
     {
-        $dateFrom = $request->input('date_from', now()->subDays(7)->format('Y-m-d'));
+        $dateFrom = $request->input('date_from', now()->firstOfMonth()->format('Y-m-d'));
         $dateTo = $request->input('date_to', now()->format('Y-m-d'));
 
-        $dateFromFrequency = $request->input('date_from_session_frequency', now()->subDays(7)->format('Y-m-d'));
+        $dateFromFrequency = $request->input('date_from_session_frequency', now()->firstOfMonth()->format('Y-m-d'));
         $dateToFrequency = $request->input('date_to_session_frequency', now()->format('Y-m-d'));
 
-        $dateFromChurn = $request->input('date_from_session_churn', now()->subDays(7)->format('Y-m-d'));
+        $dateFromChurn = $request->input('date_from_session_churn', now()->firstOfMonth()->format('Y-m-d'));
         $dateToChurn = $request->input('date_to_session_churn', now()->format('Y-m-d'));
 
         $statistics['active_users'] = $this->statisticsRepository->dashboardStatistics();

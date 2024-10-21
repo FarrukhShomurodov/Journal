@@ -1398,13 +1398,27 @@ class TelegramService
 
         $keyboard = [];
 
-        foreach ($currencies as $currency) {
-            $keyboard[] = [$currency->ccy];
-        }
-
         $keyboard[] = [
             __('telegram.navigation.home')
         ];
+
+        $toThreeKeyboard = [];
+        $count = 0;
+
+        foreach ($currencies as $currency) {
+            $toThreeKeyboard[] = $currency->ccy;
+
+            $count++;
+            if ($count === 3) {
+                $keyboard[] = $toThreeKeyboard;
+                $toThreeKeyboard = [];
+                $count = 0;
+            }
+        }
+
+        if (!empty($toThreeKeyboard)) {
+            $keyboard[] = $toThreeKeyboard;
+        }
 
         $reply_markup = Keyboard::make([
             'keyboard' => $keyboard,
@@ -1426,6 +1440,15 @@ class TelegramService
     private function showCurrencyInformation($chatId, $text): void
     {
         $currency = Currency::query()->where('ccy', $text)->first();
+
+        if (!$currency) {
+            $this->telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => __('telegram.errors.currency_not_found'),
+            ]);
+
+            return;
+        }
 
         $information = "💱 *{$currency->ccy}*\n\n"
             . "💳 *Код:* _{$currency->code}_\n"

@@ -76,6 +76,6 @@ return [
         'contacts' => 'Kontaktlar:',
         'link' => 'Havola',
         'price_range' => 'Narx oraligʻi',
-        'uz' => 'Reyting',
+        'rating' => 'Reyting',
     ],
 ];
