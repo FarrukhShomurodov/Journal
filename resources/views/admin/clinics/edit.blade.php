@@ -168,7 +168,7 @@
 
                 <div class="mb-3">
                     <label class="form-label" for="specialization_id">Специализация</label>
-                    <select name="specialization[]" class="form-control @error('specialization') is-invalid @enderror"
+                    <select name="specialization[]" class="select2 form-control @error('specialization') is-invalid @enderror"
                             id="specialization_id" required multiple>
                         <option value="">Выберите специализацию</option>
                         @foreach($specializations as $specialization)
@@ -184,10 +184,10 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="disease_type_id">Тип болезни</label>
-                    <select name="disease_type[]" class="form-control @error('disease_type') is-invalid @enderror"
+                    <label class="form-label" for="disease_type_id">Типы заболеваний</label>
+                    <select name="disease_type[]" class="select2 form-control @error('disease_type') is-invalid @enderror"
                             id="disease_type_id" required multiple>
-                        <option value="">Выберите тип болезни</option>
+                        <option value="">Выберите типы заболеваний</option>
                         @foreach($diseaseTypes as $diseaseType)
                             <option value="{{ $diseaseType->id }}"
                                 {{ in_array($diseaseType->id, old('disease_type', $clinic->diseaseTypes->pluck('id')->toArray())) ? 'selected' : '' }}>
@@ -222,23 +222,26 @@
                     <label class="form-label">Контакты</label>
                     <div id="contacts-container">
                         @foreach($clinic->contacts['type'] as $index => $contactType)
-                            <div class="contact-group mb-2">
-                                <div class="d-flex">
-                                    <div class="me-2">
-                                        <label for="type">Тип контакта:</label>
-                                        <input type="text" name="contacts[type][{{ $index }}]"
-                                               id="type"
-                                               class="form-control @error('contacts.type.' . $index) is-invalid @enderror"
-                                               placeholder="(e.g., Phone)"
-                                               value="{{ $contactType }}" required>
-                                        @error('contacts.type.' . $index)
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div>
-                                        <label for="type_value">Значение Типа:</label>
+                            <div class="contact-group mb-3 border p-3 rounded">
+                                <div class="row g-3 align-items-center">
+                                    @foreach(['ru', 'en', 'uz', 'kz', 'tj'] as $lang)
+                                        <div class="col-md-6">
+                                            <label for="type-{{ $lang }}">Тип контакта ({{ strtoupper($lang) }}):</label>
+                                            <input type="text" name="contacts[type][{{ $index }}][{{ $lang }}]"
+                                                   id="type-{{ $lang }}"
+                                                   class="form-control @error('contacts.type.' . $index . '.' . $lang) is-invalid @enderror"
+                                                   placeholder="(e.g., Телефон)"
+                                                   value="{{ $contactType[$lang] ?? '' }}" required>
+                                            @error('contacts.type.' . $index . '.' . $lang)
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    @endforeach
+
+                                    <div class="col-md-6">
+                                        <label for="type_val-{{ $index }}">Значение контакта:</label>
                                         <input type="text" name="contacts[type_value][{{ $index }}]"
-                                               id="type_value"
+                                               id="type_val-{{ $index }}"
                                                class="form-control @error('contacts.type_value.' . $index) is-invalid @enderror"
                                                placeholder="(e.g., 99890000000)"
                                                value="{{ $clinic->contacts['type_value'][$index] }}" required>
@@ -246,18 +249,18 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    @if($index > 1)
-                                        <button type="button"
-                                                class="btn btn-danger mt-3 ms-2 delete-contact">Удалить
-                                        </button>
-                                    @endif
+
+                                    <div class="col-md-12 text-end">
+                                        @if($index > 1)
+                                            <button type="button" class="btn btn-danger delete-contact">Удалить контакт</button>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
-                    <button type="button" class="btn btn-secondary mt-2"
-                            id="add-contact">Добавить контакт
-                    </button>
+
+                    <button type="button" class="btn btn-secondary mt-3" id="add-contact">Добавить контакт</button>
                 </div>
                 <button type="submit" class="btn btn-warning">Редактировать</button>
             </form>

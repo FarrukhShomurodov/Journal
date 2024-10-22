@@ -214,26 +214,29 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">@lang('establishment.contacts')</label>
+                    <label class="form-label">Контакты</label>
                     <div id="contacts-container">
                         @foreach($establishment->contacts['type'] as $index => $contactType)
-                            <div class="contact-group mb-2">
-                                <div class="d-flex">
-                                    <div class="me-2">
-                                        <label for="type">@lang('establishment.contact_type'):</label>
-                                        <input type="text" name="contacts[type][{{ $index }}]"
-                                               id="type"
-                                               class="form-control @error('contacts.type.' . $index) is-invalid @enderror"
-                                               placeholder="(e.g., Phone)"
-                                               value="{{ $contactType }}" required>
-                                        @error('contacts.type.' . $index)
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div>
-                                        <label for="type_val">@lang('establishment.contact_value'):</label>
+                            <div class="contact-group mb-3 border p-3 rounded">
+                                <div class="row g-3 align-items-center">
+                                    @foreach(['ru', 'en', 'uz', 'kz', 'tj'] as $lang)
+                                        <div class="col-md-6">
+                                            <label for="type-{{ $lang }}">Тип контакта ({{ strtoupper($lang) }}):</label>
+                                            <input type="text" name="contacts[type][{{ $index }}][{{ $lang }}]"
+                                                   id="type-{{ $lang }}"
+                                                   class="form-control @error('contacts.type.' . $index . '.' . $lang) is-invalid @enderror"
+                                                   placeholder="(e.g., Телефон)"
+                                                   value="{{ $contactType[$lang] ?? '' }}" required>
+                                            @error('contacts.type.' . $index . '.' . $lang)
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    @endforeach
+
+                                    <div class="col-md-6">
+                                        <label for="type_val-{{ $index }}">Значение контакта:</label>
                                         <input type="text" name="contacts[type_value][{{ $index }}]"
-                                               id="type_val"
+                                               id="type_val-{{ $index }}"
                                                class="form-control @error('contacts.type_value.' . $index) is-invalid @enderror"
                                                placeholder="(e.g., 99890000000)"
                                                value="{{ $establishment->contacts['type_value'][$index] }}" required>
@@ -241,18 +244,18 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    @if($index > 1)
-                                        <button type="button"
-                                                class="btn btn-danger mt-3 ms-2 delete-contact">Удалить
-                                        </button>
-                                    @endif
+
+                                    <div class="col-md-12 text-end">
+                                        @if($index > 1)
+                                            <button type="button" class="btn btn-danger delete-contact">Удалить контакт</button>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
-                    <button type="button" class="btn btn-secondary mt-2"
-                            id="add-contact">Добавить контакт
-                    </button>
+
+                    <button type="button" class="btn btn-secondary mt-3" id="add-contact">Добавить контакт</button>
                 </div>
 
                 <div class="mb-3">

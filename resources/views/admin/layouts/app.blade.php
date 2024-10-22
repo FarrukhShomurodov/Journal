@@ -197,7 +197,7 @@
         });
 
         @php
-            $i = 0;
+            $i = 1;
 
             if (isset($entertainment)) {
                 $i = count($entertainment->contacts['type']);
@@ -214,41 +214,50 @@
 
         $('#add-contact').click(function () {
             i++;
-            console.log(i)
-            const contactGroup = $('<div class="contact-group mb-2"></div>');
-            const flexContainer = $('<div class="d-flex align-items-center"></div>');
+            const contactGroup = $('<div class="contact-group mb-3 border p-3 rounded"></div>');
+            const flexContainer = $('<div class="row g-3 align-items-center"></div>');
 
-            const contactTypeInput = $('<div class="me-2"></div>').append(
-                $('<label>Тип контакта:</label>'),
-                $('<input>', {
-                    type: 'text',
-                    name: `contacts[type][${i}]`,
-                    class: 'form-control',
-                    placeholder: '(e.g., Phone)',
-                })
-            );
+            const languages = ['ru', 'en', 'uz', 'kz', 'tj'];
+            languages.forEach(lang => {
+                const contactTypeInput = $('<div class="col-md-6"></div>').append(
+                    $('<label></label>').text(`Тип контакта (${lang.toUpperCase()}):`),
+                    $('<input>', {
+                        type: 'text',
+                        name: `contacts[type][${i}][${lang}]`,
+                        class: 'form-control',
+                        placeholder: `Напр. Телефон (${lang.toUpperCase()})`,
+                        required: true
+                    })
+                );
+                flexContainer.append(contactTypeInput);
+            });
 
-            // Create input for contact value
-            const contactValueInput = $('<div></div>').append(
-                $('<label>Значение Типа:</label>'),
+
+            const contactValueInput = $('<div class="col-md-6"></div>').append(
+                $('<label>Значение контакта:</label>'),
                 $('<input>', {
                     type: 'text',
                     name: `contacts[type_value][${i}]`,
                     class: 'form-control',
-                    placeholder: '(e.g., 99890000000)',
+                    placeholder: 'e.g., 998900000000',
+                    required: true
                 })
             );
 
-            const deleteButton = $('<button type="button" class="btn btn-danger mt-3 ms-2 delete-contact">Удалить</button>');
-
-            flexContainer.append(contactTypeInput);
             flexContainer.append(contactValueInput);
-            flexContainer.append(deleteButton);
 
+
+            const deleteButton = $('<div class="col-md-12 text-end"></div>').append(
+                $('<button type="button" class="btn btn-danger delete-contact">Удалить контакт</button>')
+            );
+
+
+            flexContainer.append(deleteButton);
             contactGroup.append(flexContainer);
 
             $('#contacts-container').append(contactGroup);
         });
+
 
         $(document).on('click', '.delete-contact', function () {
             $(this).closest('.contact-group').remove();

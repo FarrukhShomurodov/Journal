@@ -167,24 +167,69 @@
                 <div class="mb-3">
                     <label class="form-label">Контакты</label>
                     <div id="contacts-container">
-                        <div class="contact-group mb-2">
-                            <div class="d-flex">
-                                <div class="me-2">
-                                    <label for="type">Тип контакта:</label>
-                                    <input type="text" name="contacts[type][1]"
-                                           id="type"
-                                           class="form-control @error('contacts.phone') is-invalid @enderror"
-                                           placeholder="(e.g., Phone)" required>
-                                    @error('contacts.type')
+                        <div class="contact-group mb-3 border p-3 rounded">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="contact-type-ru" class="form-label">Тип контакта (RU):</label>
+                                    <input type="text" name="contacts[type][1][ru]"
+                                           id="contact-type-ru"
+                                           class="form-control @error('contacts.type.ru') is-invalid @enderror"
+                                           placeholder="Напр. Телефон" required>
+                                    @error('contacts.type.ru')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div>
-                                    <label for="type_val">Значение Типа:</label>
+
+                                <div class="col-md-6">
+                                    <label for="contact-type-en" class="form-label">Тип контакта (EN):</label>
+                                    <input type="text" name="contacts[type][1][en]"
+                                           id="contact-type-en"
+                                           class="form-control @error('contacts.type.en') is-invalid @enderror"
+                                           placeholder="e.g., Phone" required>
+                                    @error('contacts.type.en')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="contact-type-uz" class="form-label">Тип контакта (UZ):</label>
+                                    <input type="text" name="contacts[type][1][uz]"
+                                           id="contact-type-uz"
+                                           class="form-control @error('contacts.type.uz') is-invalid @enderror"
+                                           placeholder="Напр. Телефон" required>
+                                    @error('contacts.type.uz')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="contact-type-kz" class="form-label">Тип контакта (KZ):</label>
+                                    <input type="text" name="contacts[type][1][kz]"
+                                           id="contact-type-kz"
+                                           class="form-control @error('contacts.type.kz') is-invalid @enderror"
+                                           placeholder="e.g., Телефон" required>
+                                    @error('contacts.type.kz')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="contact-type-tj" class="form-label">Тип контакта (TJ):</label>
+                                    <input type="text" name="contacts[type][1][tj]"
+                                           id="contact-type-tj"
+                                           class="form-control @error('contacts.type.tj') is-invalid @enderror"
+                                           placeholder="Напр. Телефон" required>
+                                    @error('contacts.type.tj')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="contact-value" class="form-label">Значение контакта:</label>
                                     <input type="text" name="contacts[type_value][1]"
-                                           id="type_val"
-                                           class="form-control @error('contacts.phone_value') is-invalid @enderror"
-                                           placeholder="(e.g., 99890000000)" required>
+                                           id="contact-value"
+                                           class="form-control @error('contacts.type_value') is-invalid @enderror"
+                                           placeholder="e.g., 998900000000" required>
                                     @error('contacts.type_value')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -192,10 +237,10 @@
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-secondary mt-2"
-                            id="add-contact">Добавить Контакт
-                    </button>
+
+                    <button type="button" class="btn btn-secondary mt-3" id="add-contact">Добавить Контакт</button>
                 </div>
+
 
                 <button type="submit" class="btn btn-primary">Сохранить</button>
             </form>
