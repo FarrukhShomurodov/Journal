@@ -711,7 +711,7 @@ class TelegramService
         $contacts = '';
         foreach ($clinic->contacts['type'] as $index => $contactType) {
             if ($contactType) {
-                $contacts .= "• *{$contactType}:* {$clinic->contacts['type_value'][$index]}\n";
+                $contacts .= "• *{$contactType[$this->lang]}:* {$clinic->contacts['type_value'][$index]}\n";
             }
         }
 
@@ -1079,7 +1079,7 @@ class TelegramService
         $contacts = '';
         foreach ($hotel->contacts['type'] as $index => $contactType) {
             if ($contactType) {
-                $contacts .= "• *{$contactType}:* {$hotel->contacts['type_value'][$index]}\n";
+                $contacts .= "• *{$contactType[$this->lang]}:* {$hotel->contacts['type_value'][$index]}\n";
             }
         }
 
@@ -1185,7 +1185,7 @@ class TelegramService
         $contacts = '';
         foreach ($entertainment->contacts['type'] as $index => $contactType) {
             if ($contactType) {
-                $contacts .= "• *{$contactType}:* {$entertainment->contacts['type_value'][$index]}\n";
+                $contacts .= "• *{$contactType[$this->lang]}:* {$entertainment->contacts['type_value'][$index]}\n";
             }
         }
         $contactList = strlen($contacts) > 1 ? "📞 *" . __('telegram.fields.contacts') . "*\n" . $contacts : $contacts;
@@ -1333,7 +1333,7 @@ class TelegramService
         $contacts = '';
         foreach ($establishment->contacts['type'] as $index => $contactType) {
             if ($contactType) {
-                $contacts .= "• *{$contactType}:* {$establishment->contacts['type_value'][$index]}\n";
+                $contacts .= "• *{$contactType[$this->lang]}:* {$establishment->contacts['type_value'][$index]}\n";
             }
         }
 
