@@ -17,7 +17,6 @@ use App\Http\Controllers\Admin\Web\SpecializationController;
 use App\Http\Controllers\Admin\Web\UsefulInformationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Telegram\TelegramController;
-use App\Models\Clinic;
 use Illuminate\Support\Facades\Route;
 use Telegram\Bot\Api;
 
@@ -28,8 +27,11 @@ Route::get('set-lang/{locale}/{botUser?}', [DashboardController::class, 'setLoca
 Route::group(['middleware' => 'auth'], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/statistics', [DashboardController::class, 'exportStatistics'])->name('dashboard.statistics.export');
 
     Route::get('bot-users', [BotUserController::class, 'index'])->name('bot.users');
+    Route::get('bot-users/statistics', [BotUserController::class, 'exportStatistics'])->name('bot.users.statistics.export');
+
     Route::get('bot-user-journey/{user}', [BotUserController::class, 'showJourney'])->name('bot.user.journey');
     Route::get('applications', [ApplicationController::class, 'index'])->name('applications');
 
@@ -56,13 +58,4 @@ Route::prefix('telegram')->group(function () {
     });
 
     Route::post('webhook', [TelegramController::class, 'handleWebhook']);
-});
-
-Route::get('test', function () {
-    $userJourney = \App\Models\BotUser::query()->find(2)->journey()
-        ->orderBy('created_at', 'desc')
-        ->whereIn('event_name', ['Выбор клиники', 'Выбор топ клиники'])
-        ->first();
-
-    dd($userJourney);
 });

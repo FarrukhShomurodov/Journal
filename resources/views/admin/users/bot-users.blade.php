@@ -9,6 +9,15 @@
         <span class="text-muted fw-light">Пользователи бота</span>
     </h6>
 
+    @if ($errors->any())
+        @foreach ($errors->all() as $error)
+            <div class="alert alert-solid-danger alert-dismissible d-flex align-items-center" role="alert">
+                {{ $error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endforeach
+    @endif
+
     <div class="card">
         <div class="d-flex justify-content-between align-items-center">
             <h5 class="card-header">Пользователи бота</h5>
@@ -17,14 +26,20 @@
                     <div class="d-flex flex-row align-items-center " style="margin-right: 10px">
                         <label for="date_from" class="me-2">От: </label>
                         <input id="date_from" onchange="this.form.submit()" name="date_from" type="date"
-                               class="form-control"
+                               class="form-control form-control-sm"
                                value="{{$dateFrom }}">
                     </div>
                     <div class="d-flex flex-row align-items-center " style="margin-right: 10px">
                         <label for="date_to" class="me-2">До: </label>
                         <input id="date_to" onchange="this.form.submit()" name="date_to" type="date"
-                               class="form-control"
+                               class="form-control form-control-sm"
                                value="{{ $dateTo }}">
+                    </div>
+                    <div class="d-flex flex-row align-items-center" style="margin-right: 10px">
+                        <a href="{{ route('bot.users.statistics.export', ['date_from' => $dateFrom, 'date_to' => $dateTo]) }}"
+                           class="btn btn-success btn-sm">
+                            <i class="fas fa-file-export me-2"></i>Экспорт статистики
+                        </a>
                     </div>
                 </div>
             </form>

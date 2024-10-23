@@ -13,19 +13,22 @@ use Illuminate\Support\Facades\DB;
 
 class StatisticsRepository
 {
-    public function dashboardStatistics(): array
+    public function dashboardStatistics($dateFromRR, $dateToRR, $dateFromFrequency, $dateToFrequency, $dateFromChurn, $dateToChurn): array
     {
         return [
             'dau' => $this->getDAU(),
             'wau' => $this->getWAU(),
             'mau' => $this->getMAU(),
-            'average_session_length' => $this->getAverageSessionLength(),
+            'average_session_length' => $this->getAverageSessionLength() ? gmdate("H:i:s", $this->getAverageSessionLength()) : '-',
             'drop_off_point' => $this->dropOffPoint() ?? '-',
             'user_counts_by_menu_section' => $this->getUniqueUserCountsByMenuSection(),
-            'user_journey_completion_rate' => $this->UserJourneyCompletionRate(),
-            'most_frequent_сountry' => $this->mostFrequentCountry(),
+            'most_frequent_country' => $this->mostFrequentCountry(),
             'most_frequent_city' => $this->mostFrequentCity(),
             'user_count' => $this->userCount(),
+            'retention_rate' => round($this->calculateRetentionRate($dateFromRR, $dateToRR), 1) . '%',
+            'get_average_session_frequency' => round($this->getAverageSessionFrequency($dateFromFrequency, $dateToFrequency), 1),
+            'calculate_churn_rate' => round($this->calculateChurnRate($dateFromChurn, $dateToChurn), 1) . '%',
+            'user_journey_completion_rate' => $this->UserJourneyCompletionRate(),
         ];
     }
 
@@ -57,24 +60,24 @@ class StatisticsRepository
     }
 
     // Pgsql
-    public function getAverageSessionLength(): int|null
-    {
-        return BotUserSession::query()
-            ->whereNotNull('session_end')
-            ->select(DB::raw('AVG(EXTRACT(EPOCH FROM (session_end - session_start))) as avg_session_length'))
-            ->first()
-            ->avg_session_length;
-    }
-
-    // Mysql
 //    public function getAverageSessionLength(): int|null
 //    {
 //        return BotUserSession::query()
 //            ->whereNotNull('session_end')
-//            ->select(DB::raw('AVG(TIMESTAMPDIFF(SECOND, session_start, session_end)) as avg_session_length'))
+//            ->select(DB::raw('AVG(EXTRACT(EPOCH FROM (session_end - session_start))) as avg_session_length'))
 //            ->first()
 //            ->avg_session_length;
 //    }
+
+    // Mysql
+    public function getAverageSessionLength(): int|null
+    {
+        return BotUserSession::query()
+            ->whereNotNull('session_end')
+            ->select(DB::raw('AVG(TIMESTAMPDIFF(SECOND, session_start, session_end)) as avg_session_length'))
+            ->first()
+            ->avg_session_length;
+    }
 
 
     public function getAverageSessionFrequency($dateTo, $dateFrom): float|int|null
@@ -189,13 +192,13 @@ class StatisticsRepository
             }
         }
 
-        $userJourneyCompletion['application'] = ($botUsersCount > 0) ? ($applicationsCount / $botUsersCount) * 100 : 0;
-        $userJourneyCompletion['promotionViewCount'] = ($botUsersCount > 0) ? ($promotionViewCount / $botUsersCount) * 100 : 0;
-        $userJourneyCompletion['useFullInformationViewCount'] = ($botUsersCount > 0) ? ($useFullInformationViewCount / $botUsersCount) * 100 : 0;
-        $userJourneyCompletion['hotelViewCount'] = ($botUsersCount > 0) ? ($hotelViewCount / $botUsersCount) * 100 : 0;
-        $userJourneyCompletion['establishmentViewCount'] = ($botUsersCount > 0) ? ($establishmentViewCount / $botUsersCount) * 100 : 0;
-        $userJourneyCompletion['currencyViewCount'] = ($botUsersCount > 0) ? ($currencyViewCount / $botUsersCount) * 100 : 0;
-        $userJourneyCompletion['entertainmentViewCount'] = ($botUsersCount > 0) ? ($entertainmentViewCount / $botUsersCount) * 100 : 0;
+        $userJourneyCompletion['application'] = ($botUsersCount > 0) ? round(($applicationsCount / $botUsersCount) * 100, 1) : 0;
+        $userJourneyCompletion['promotionViewCount'] = ($botUsersCount > 0) ? round(($promotionViewCount / $botUsersCount) * 100, 1) : 0;
+        $userJourneyCompletion['useFullInformationViewCount'] = ($botUsersCount > 0) ? round(($useFullInformationViewCount / $botUsersCount) * 100, 1) : 0;
+        $userJourneyCompletion['hotelViewCount'] = ($botUsersCount > 0) ? round(($hotelViewCount / $botUsersCount) * 100, 1) : 0;
+        $userJourneyCompletion['establishmentViewCount'] = ($botUsersCount > 0) ? round(($establishmentViewCount / $botUsersCount) * 100, 1) : 0;
+        $userJourneyCompletion['currencyViewCount'] = ($botUsersCount > 0) ? round(($currencyViewCount / $botUsersCount) * 100, 1) : 0;
+        $userJourneyCompletion['entertainmentViewCount'] = ($botUsersCount > 0) ? round(($entertainmentViewCount / $botUsersCount) * 100, 1) : 0;
 
         return $userJourneyCompletion;
     }
