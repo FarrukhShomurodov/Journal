@@ -25,16 +25,16 @@ class UpdateCurrencyRates extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $date = now()->format('Y-m-d');
-        $response = Http::get("https://cbu.uz/ru/arkhiv-kursov-valyut/json/all/{$date}/");
+        $response = Http::withOptions(['verify' => false])->get("https://cbu.uz/ru/arkhiv-kursov-valyut/json/all/{$date}/");
 
         if ($response->successful()) {
             $currencies = $response->json();
 
             foreach ($currencies as $currency) {
-                Currency::updateOrCreate(
+                Currency::query()->updateOrCreate(
                     ['code' => $currency['Code']],
                     [
                         'name' => json_encode([
