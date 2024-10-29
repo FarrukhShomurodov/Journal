@@ -77,5 +77,7 @@ return [
         'link' => 'Link',
         'price_range' => 'Price Range',
         'rating' => 'Rating',
+        'currency' => 'Exchange Rate',
+        'date' => 'Date',
     ],
 ];

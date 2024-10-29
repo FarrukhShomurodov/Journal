@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\BotUser;
-use App\Models\BotUserJourney;
 use App\Models\Category;
 use App\Models\City;
 use App\Models\Clinic;
@@ -293,7 +292,7 @@ class TelegramService
                     $reply_markup = Keyboard::make([
                         'keyboard' => $keyboard,
                         'resize_keyboard' => true,
-                        'one_time_keyboard' => true
+                        'one_time_keyboard' => false
                     ]);
 
                     $this->telegram->sendMessage([
@@ -365,7 +364,7 @@ class TelegramService
         $reply_markup = Keyboard::make([
             'keyboard' => $keyboard,
             'resize_keyboard' => true,
-            'one_time_keyboard' => true
+            'one_time_keyboard' => false
         ]);
 
         $this->telegram->sendMessage([
@@ -512,7 +511,7 @@ class TelegramService
         $reply_markup = Keyboard::make([
             'keyboard' => $keyboard,
             'resize_keyboard' => true,
-            'one_time_keyboard' => true
+            'one_time_keyboard' => false
         ]);
 
         $this->telegram->sendMessage([
@@ -558,7 +557,7 @@ class TelegramService
         $reply_markup = Keyboard::make([
             'keyboard' => $keyboard,
             'resize_keyboard' => true,
-            'one_time_keyboard' => true
+            'one_time_keyboard' => false
         ]);
 
         $this->telegram->sendMessage([
@@ -662,9 +661,23 @@ class TelegramService
             ]);
         } else {
             $keyboard = [];
+            $toTwoKeyboard = [];
+
+            $count = 0;
 
             foreach ($clinics as $clinic) {
-                $keyboard[] = [$clinic->name[$this->lang]];
+                $toTwoKeyboard[] = $clinic->name[$this->lang];
+
+                $count++;
+                if ($count === 2) {
+                    $keyboard[] = $toTwoKeyboard;
+                    $toTwoKeyboard = [];
+                    $count = 0;
+                }
+            }
+
+            if (!empty($toTwoKeyboard)) {
+                $keyboard[] = $toTwoKeyboard;
             }
 
             $keyboard[] = [
@@ -1258,7 +1271,7 @@ class TelegramService
         $reply_markup = Keyboard::make([
             'keyboard' => $keyboard,
             'resize_keyboard' => true,
-            'one_time_keyboard' => true
+            'one_time_keyboard' => false
         ]);
 
         $this->telegram->sendMessage([
@@ -1451,9 +1464,8 @@ class TelegramService
         }
 
         $information = "💱 *{$currency->ccy}*\n\n"
-            . "💳 *Код:* _{$currency->code}_\n"
-            . "💵 *Курс:* _{$currency->rate}_\n"
-            . "📅 *Дата:* _{$currency->relevance_date}_";
+            . "💵 *".__('telegram.fields.currency').":* _{$currency->rate}_\n"
+            . "📅 *".__('telegram.fields.date').":* _{$currency->relevance_date}_";
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
@@ -1506,7 +1518,7 @@ class TelegramService
 
     public function requestPhoneKeyboard(): Keyboard
     {
-        return new Keyboard(['keyboard' => [[['text' => 'Отправить контакт', 'request_contact' => true]]], 'resize_keyboard' => true, 'one_time_keyboard' => true]);
+        return new Keyboard(['keyboard' => [[['text' => 'Отправить контакт', 'request_contact' => true]]], 'resize_keyboard' => true, 'one_time_keyboard' => false]);
     }
 
     // Back

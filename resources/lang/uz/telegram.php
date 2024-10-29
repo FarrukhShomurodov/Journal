@@ -77,5 +77,7 @@ return [
         'link' => 'Havola',
         'price_range' => 'Narx oraligʻi',
         'rating' => 'Reyting',
+        'currency' => 'Kurs',
+        'date' => 'Sana',
     ],
 ];
