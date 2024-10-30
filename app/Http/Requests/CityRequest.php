@@ -24,11 +24,11 @@ class CityRequest extends FormRequest
     {
         return [
             'name' => 'required|array',
-            'name.ru' => 'required|string|max:100',
-            'name.en' => 'required|string|max:100',
-            'name.uz' => 'required|string|max:100',
-            'name.kz' => 'required|string|max:100',
-            'name.tj' => 'required|string|max:100',
+            'name.ru' => 'required|string|max:300',
+            'name.en' => 'required|string|max:300',
+            'name.uz' => 'required|string|max:300',
+            'name.kz' => 'required|string|max:300',
+            'name.tj' => 'required|string|max:300',
             'country_id' => 'required|integer|exists:countries,id',
         ];
     }
