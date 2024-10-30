@@ -39,6 +39,7 @@
                 <tr>
                     <th>Названия</th>
                     <th>Категория</th>
+                    <th>Кол-во просмотров</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -51,6 +52,9 @@
                             @endforeach
                         </td>
                         <td>{{ $establishment->category->name['ru'] }}</td>
+                        <td>
+                            {{ $establishment->views()->count() }}
+                        </td>
                         <td>
                             <div class="d-inline-block text-nowrap">
                                 <button class="btn btn-sm btn-icon"

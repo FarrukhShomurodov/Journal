@@ -38,6 +38,7 @@
                 <thead>
                 <tr>
                     <th>Название</th>
+                    <th>Кол-во просмотров</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -48,6 +49,9 @@
                             @foreach($promotion->name as $lang => $name)
                                 <div><b>{{ strtoupper($lang) }}:</b> {{ $name }}</div>
                             @endforeach
+                        </td>
+                        <td>
+                            {{ $promotion->views()->count() }}
                         </td>
                         <td>
                             <div class="d-inline-block text-nowrap">

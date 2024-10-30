@@ -40,6 +40,7 @@
                     <th>Валюта</th>
                     <th>Курс</th>
                     <th>ДАТА АКТУАЛЬНОСТИ</th>
+                    <th>Кол-во просмотров</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -54,6 +55,7 @@
                         <td>{{ $currency->ccy }}</td>
                         <td>{{ number_format($currency->rate, 2) }}</td>
                         <td>{{ $currency->relevance_date->format('Y-m-d') }}</td>
+                        <td>{{ $currency->views()->count() }}</td>
                     </tr>
                 @endforeach
                 </tbody>

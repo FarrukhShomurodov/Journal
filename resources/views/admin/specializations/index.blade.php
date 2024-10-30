@@ -39,6 +39,7 @@
                 <tr>
                     <th>Название</th>
                     <th>Ретинг</th>
+                    <th>Кол-во просмотров</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -52,6 +53,9 @@
                         </td>
                         <td>
                             {{ $specialization->rating }}
+                        </td>
+                        <td>
+                            {{ $specialization->views()->count() }}
                         </td>
                         <td>
                             <div class="d-inline-block text-nowrap">

@@ -39,6 +39,7 @@
                 <tr>
                     <th>Название</th>
                     <th>Страна</th>
+                    <th>Кол-во выбранных</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -52,6 +53,9 @@
                         </td>
                         <td>
                             {{$city->country->name['ru']}}
+                        </td>
+                        <td>
+                            {{ $city->users() ? $city->users()->count() : '0' }}
                         </td>
                         <td>
                             <div class="d-inline-block text-nowrap">

@@ -41,6 +41,7 @@
                     <th>Специализация</th>
                     <th>Тип болезни</th>
                     <th>Ретинг</th>
+                    <th>Кол-во просмотров</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -64,6 +65,9 @@
                         </td>
                         <td>
                             {{ $clinic->rating }}
+                        </td>
+                        <td>
+                            {{ $clinic->views()->count() }}
                         </td>
                         <td>
                             <div class="d-inline-block text-nowrap">
