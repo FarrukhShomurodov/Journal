@@ -39,6 +39,7 @@ class DashboardController extends Controller
             $dateFromChurn,
             $dateToChurn
         );
+
         $chartLabels = $this->statisticsRepository->activeUsers()->pluck('date');
         $chartData = $this->statisticsRepository->activeUsers()->pluck('count');
 

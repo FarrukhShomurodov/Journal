@@ -75,24 +75,24 @@ class StatisticsRepository
     }
 
     // Pgsql
-    public function getAverageSessionLength(): int|null
-    {
-        return BotUserSession::query()
-            ->whereNotNull('session_end')
-            ->select(DB::raw('AVG(EXTRACT(EPOCH FROM (session_end - session_start))) as avg_session_length'))
-            ->first()
-            ->avg_session_length;
-    }
-
-    // Mysql
 //    public function getAverageSessionLength(): int|null
 //    {
 //        return BotUserSession::query()
 //            ->whereNotNull('session_end')
-//            ->select(DB::raw('AVG(TIMESTAMPDIFF(SECOND, session_start, session_end)) as avg_session_length'))
+//            ->select(DB::raw('AVG(EXTRACT(EPOCH FROM (session_end - session_start))) as avg_session_length'))
 //            ->first()
 //            ->avg_session_length;
 //    }
+
+    // Mysql
+    public function getAverageSessionLength(): int|null
+    {
+        return BotUserSession::query()
+            ->whereNotNull('session_end')
+            ->select(DB::raw('AVG(TIMESTAMPDIFF(SECOND, session_start, session_end)) as avg_session_length'))
+            ->first()
+            ->avg_session_length;
+    }
 
 
     public function getAverageSessionFrequency($dateTo, $dateFrom): float|int|null
@@ -252,9 +252,11 @@ class StatisticsRepository
 
     public function activeUsers(): Collection|array
     {
-        return BotUser::query()->where('last_activity', '<=', now())
+        return BotUser::query()
+            ->where('last_activity', '<=', now())
             ->selectRaw('DATE(last_activity) as date, COUNT(*) as count')
             ->groupBy('date')
+            ->orderBy('date', 'asc')
             ->get();
     }
 
