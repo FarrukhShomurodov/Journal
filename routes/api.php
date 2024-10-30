@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\Route;
 Route::delete('/delete/image/{folderName}/{fileName}', [ImageController::class, 'deletePhoto']);
 
 // Bot user
+Route::get('/bot-users', [BotUserController::class, 'index']);
 Route::put('/bot-users/{botUser}/is-active', [BotUserController::class, 'isActive']);
 
 // Application
 Route::put('/application/{application}/is-reviewed', [ApplicationController::class, 'isReviewed']);
+Route::get('applications/filter', [ApplicationController::class, 'filterApplications']);

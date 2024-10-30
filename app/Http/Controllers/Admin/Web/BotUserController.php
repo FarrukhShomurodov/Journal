@@ -5,43 +5,38 @@ namespace App\Http\Controllers\Admin\Web;
 use App\Http\Controllers\Controller;
 use App\Models\BotUser;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class BotUserController extends Controller
 {
-    public function index(Request $request): View
+    public function index(): View
     {
-        $dateFrom = $request->input('date_from', now()->startOfMonth()->format('Y-m-d'));
-        $dateTo = $request->input('date_to', now()->format('Y-m-d'));
-
-        $query = BotUser::query()->orderBy('id', 'asc');
-
-        if ($dateFrom) {
-            $query->whereDate('created_at', '>=', $dateFrom);
-        }
-        if ($dateTo) {
-            $query->whereDate('created_at', '<=', $dateTo);
-        }
-
-        $botUsers = $query->get();
-        return view('admin.users.bot-users', compact('botUsers', 'dateFrom', 'dateTo'));
+        return view('admin.users.bot-users');
     }
 
-    public function exportStatistics(Request $request)
+    public function exportStatistics(Request $request): StreamedResponse|RedirectResponse
     {
         $dateFrom = $request->input('date_from', now()->startOfMonth()->format('Y-m-d'));
         $dateTo = $request->input('date_to', now()->format('Y-m-d'));
+        $phone = $request->input('phone');
 
         $query = BotUser::query()->orderBy('id', 'asc');
 
         if ($dateFrom) {
             $query->whereDate('created_at', '>=', $dateFrom);
         }
+
         if ($dateTo) {
             $query->whereDate('created_at', '<=', $dateTo);
+        }
+
+        if ($phone) {
+            $query->where('phone', 'LIKE', "%$phone%");
         }
 
         try {
@@ -55,7 +50,7 @@ class BotUserController extends Controller
                     'first_name' => $user->first_name ?? '-',
                     'second_name' => $user->second_name ?? '-',
                     'uname' => $user->uname ?? '-',
-                    'phone' => $user->phone ?? '-',
+                    'phone' => (string)$user->phone ?? '-',
                     'step' => $user->step ?? '-',
                     'lang' => $user->lang ?? '-',
                     'isactive' => $user->isactive ?? '-',
