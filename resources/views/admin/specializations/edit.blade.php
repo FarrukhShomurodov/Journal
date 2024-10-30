@@ -74,6 +74,18 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="rating">Рейтинг</label>
+                    <input type="text" name="rating"
+                           class="form-control @error('rating') is-invalid @enderror" id="rating"
+                           value="{{$specialization->rating}}"
+                           placeholder="Рейтинг"
+                           min="1" max="5" step="0.1" required>
+                    @error('rating')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
                 <button type="submit" class="btn btn-warning">Редактировать</button>
             </form>
         </div>

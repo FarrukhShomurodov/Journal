@@ -15,6 +15,7 @@ class Specialization extends Model
      */
     protected $fillable = [
         'name',
+        'rating',
     ];
 
     protected $casts = [

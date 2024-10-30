@@ -507,7 +507,10 @@ class TelegramService
         $chatId,
         $isTop = false
     ): void {
-        $specializations = Specialization::query()->get();
+        $specializations = Specialization::query()
+            ->orderByDesc('rating')
+            ->orderBy("name->$this->lang")
+            ->get();
 
         if ($specializations->isEmpty()) {
             $this->updateUserStep($chatId, 'show_main_menu');

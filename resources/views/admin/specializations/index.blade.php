@@ -38,6 +38,7 @@
                 <thead>
                 <tr>
                     <th>Название</th>
+                    <th>Ретинг</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -48,6 +49,9 @@
                             @foreach($specialization->name as $lang => $name)
                                 <div><b>{{ strtoupper($lang) }}:</b> {{ $name }}</div>
                             @endforeach
+                        </td>
+                        <td>
+                            {{ $specialization->rating }}
                         </td>
                         <td>
                             <div class="d-inline-block text-nowrap">
