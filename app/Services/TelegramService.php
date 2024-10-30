@@ -503,10 +503,8 @@ class TelegramService
     }
 
     // Clinic
-    private function selectSpecialization(
-        $chatId,
-        $isTop = false
-    ): void {
+    private function selectSpecialization($chatId, $isTop = false): void
+    {
         $specializations = Specialization::query()
             ->orderByDesc('rating')
             ->orderBy("name->$this->lang")
@@ -557,11 +555,8 @@ class TelegramService
         $this->storeUserJourney('Выбор специализации');
     }
 
-    private
-    function selectDiseaseType(
-        $chatId,
-        $isTop = false
-    ): void {
+    private function selectDiseaseType($chatId, $isTop = false): void
+    {
         $diseaseTypes = DiseaseType::query()->get();
 
         if ($diseaseTypes->isEmpty()) {
@@ -606,10 +601,8 @@ class TelegramService
         $this->storeUserJourney('Выбор тип болезни');
     }
 
-    private
-    function clinicTop(
-        $chatId
-    ): void {
+    private function clinicTop($chatId): void
+    {
         $keyboard[] = [
             __('telegram.menu.by_disease_type'),
             __('telegram.menu.by_specialization')
@@ -636,13 +629,8 @@ class TelegramService
         $this->storeUserJourney('Выбор топ клиники');
     }
 
-    private
-    function clinicList(
-        $chatId,
-        $text = null,
-        $from = null,
-        $isTop = false
-    ): void {
+    private function clinicList($chatId, $text = null, $from = null, $isTop = false): void
+    {
         if ($from == 'specialization') {
             if (is_integer($text)) {
                 $specialization = Specialization::query()->find($text);
@@ -666,6 +654,10 @@ class TelegramService
                 ]
             );
 
+            $specialization->views()->create([
+                'bot_user_id' => $this->user->id,
+            ]);
+
             $clinics = $isTop ? $specialization->clinics()->orderByRating()->get() : $specialization->clinics;
         } elseif ($from == 'disease_type') {
             if (is_integer($text)) {
@@ -681,6 +673,10 @@ class TelegramService
                 ]);
                 return;
             }
+
+            $diseaseType->views()->create([
+                'bot_user_id' => $this->user->id,
+            ]);
 
             $this->user->previousChoice()->updateOrCreate(
                 ['bot_user_id' => $this->user->id],
@@ -746,12 +742,8 @@ class TelegramService
         }
     }
 
-    private
-    function showClinicInformation(
-        $chatId,
-        $text,
-        $isTop = false
-    ): void {
+    private function showClinicInformation($chatId, $text, $isTop = false): void
+    {
         $clinic = Clinic::query()->whereJsonContains("name->{$this->lang}", $text)->first();
 
         if (!$clinic) {
@@ -761,8 +753,12 @@ class TelegramService
             ]);
             return;
         }
-        $photos = $clinic->images;
 
+        $clinic->views()->create([
+            'bot_user_id' => $this->user->id,
+        ]);
+
+        $photos = $clinic->images;
 
         $clinicDescription = $clinic->description ? "*📝 Описание:* _{$clinic->description[$this->lang]}_\n" : '';
 
@@ -845,10 +841,8 @@ class TelegramService
     }
 
     // Application
-    private
-    function getApplication(
-        $chatId
-    ): void {
+    private function getApplication($chatId): void
+    {
         if ($this->user->phone) {
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
@@ -867,11 +861,8 @@ class TelegramService
         }
     }
 
-    private
-    function storeApplication(
-        $chatId,
-        $text
-    ): void {
+    private function storeApplication($chatId, $text): void
+    {
         $clinicId = $this->user->previousChoice->previous_clinic_id;
 
         try {
@@ -898,10 +889,8 @@ class TelegramService
     }
 
     // Promotion
-    private
-    function selectPromotion(
-        $chatId
-    ): void {
+    private function selectPromotion($chatId): void
+    {
         $promotions = Promotion::query()->get();
 
         if ($promotions->isEmpty()) {
@@ -942,11 +931,8 @@ class TelegramService
         $this->storeUserJourney("Выбор акции");
     }
 
-    private
-    function showPromotionInformation(
-        $chatId,
-        $text
-    ): void {
+    private function showPromotionInformation($chatId, $text): void
+    {
         $promotion = Promotion::query()->whereJsonContains("name->{$this->lang}", $text)->first();
 
         if (!$promotion) {
@@ -956,8 +942,12 @@ class TelegramService
             ]);
             return;
         }
-        $photos = $promotion->images;
 
+        $promotion->views()->create([
+            'bot_user_id' => $this->user->id,
+        ]);
+
+        $photos = $promotion->images;
 
         $promotionDescription = $promotion->description ? "*📝 Описание:* _{$promotion->description[$this->lang]}_\n" : '';
 
@@ -995,10 +985,8 @@ class TelegramService
     }
 
     // UsefulInfo
-    private
-    function selectUsefulInfo(
-        $chatId
-    ): void {
+    private function selectUsefulInfo($chatId): void
+    {
         $usefulInformations = UsefulInformation::query()->get();
 
         if ($usefulInformations->isEmpty()) {
@@ -1040,11 +1028,8 @@ class TelegramService
         $this->storeUserJourney("Выбор полезной информации");
     }
 
-    private
-    function showUsefulInfoInformation(
-        $chatId,
-        $text
-    ): void {
+    private function showUsefulInfoInformation($chatId, $text): void
+    {
         $usefulInformation = UsefulInformation::query()->whereJsonContains("name->{$this->lang}", $text)->first();
 
         if (!$usefulInformation) {
@@ -1054,8 +1039,12 @@ class TelegramService
             ]);
             return;
         }
-        $photos = $usefulInformation->images;
 
+        $usefulInformation->views()->create([
+            'bot_user_id' => $this->user->id,
+        ]);
+
+        $photos = $usefulInformation->images;
 
         $promotionDescription = $usefulInformation->description ? "*📝 Описание:* _{$usefulInformation->description[$this->lang]}_\n" : '';
 
@@ -1093,10 +1082,8 @@ class TelegramService
     }
 
     // Hotel
-    private
-    function selectHotel(
-        $chatId
-    ): void {
+    private function selectHotel($chatId): void
+    {
         $hotels = Hotel::query()->get();
 
         if ($hotels->isEmpty()) {
@@ -1138,11 +1125,8 @@ class TelegramService
         $this->storeUserJourney("Выбор отеля");
     }
 
-    private
-    function showHotelInformation(
-        $chatId,
-        $text
-    ): void {
+    private function showHotelInformation($chatId, $text): void
+    {
         $hotel = Hotel::query()->whereJsonContains("name->{$this->lang}", $text)->first();
 
         if (!$hotel) {
@@ -1152,8 +1136,12 @@ class TelegramService
             ]);
             return;
         }
-        $photos = $hotel->images;
 
+        $hotel->views()->create([
+            'bot_user_id' => $this->user->id,
+        ]);
+
+        $photos = $hotel->images;
 
         $clinicDescription = $hotel->description ? "*📝 Описание:* _{$hotel->description[$this->lang]}_\n" : '';
 
@@ -1219,10 +1207,8 @@ class TelegramService
     }
 
     // Entertainment
-    private
-    function selectEntertainment(
-        $chatId
-    ): void {
+    private function selectEntertainment($chatId): void
+    {
         $entertainments = Entertainment::query()->get();
 
         if ($entertainments->isEmpty()) {
@@ -1263,11 +1249,8 @@ class TelegramService
         $this->storeUserJourney("Выбор развлечения");
     }
 
-    private
-    function showEntertainmentInformation(
-        $chatId,
-        $text
-    ): void {
+    private function showEntertainmentInformation($chatId, $text): void
+    {
         $entertainment = Entertainment::query()->whereJsonContains("name->{$this->lang}", $text)->first();
 
         if (!$entertainment) {
@@ -1277,6 +1260,11 @@ class TelegramService
             ]);
             return;
         }
+
+        $entertainment->views()->create([
+            'bot_user_id' => $this->user->id,
+        ]);
+
         $photos = $entertainment->images;
 
         $entertainmentDescription = $entertainment->description ? "*📝 Описание:* _{$entertainment->description[$this->lang]}_\n" : '';
@@ -1342,10 +1330,8 @@ class TelegramService
     }
 
     // Establishment
-    private
-    function selectEstablishmentCategory(
-        $chatId
-    ): void {
+    private function selectEstablishmentCategory($chatId): void
+    {
         $categories = Category::query()->get();
 
         if ($categories->isEmpty()) {
@@ -1386,12 +1372,23 @@ class TelegramService
         $this->storeUserJourney("Выбор категорию заведения");
     }
 
-    private
-    function establishmentList(
-        $chatId,
-        $text
-    ): void {
+    private function establishmentList($chatId, $text): void
+    {
         $category = Category::query()->whereJsonContains("name->{$this->lang}", $text)->first();
+
+        if (!$category) {
+            $this->selectEstablishmentCategory($chatId);
+
+            $this->telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => __('telegram.errors.establishments_not_found'),
+            ]);
+        }
+
+        $category->views()->create([
+            'bot_user_id' => $this->user->id,
+        ]);
+
         $establishments = $category->establishments;
 
         if ($establishments->isEmpty()) {
@@ -1431,11 +1428,8 @@ class TelegramService
         $this->storeUserJourney("Выбор заведения");
     }
 
-    private
-    function showEstablishmentInformation(
-        $chatId,
-        $text
-    ): void {
+    private function showEstablishmentInformation($chatId, $text): void
+    {
         $establishment = Establishment::query()->whereJsonContains("name->{$this->lang}", $text)->first();
 
         if (!$establishment) {
@@ -1445,6 +1439,11 @@ class TelegramService
             ]);
             return;
         }
+
+        $establishment->views()->create([
+            'bot_user_id' => $this->user->id,
+        ]);
+
         $photos = $establishment->images;
 
         $establishmentDescription = $establishment->description ? "*📝 Описание:* _{$establishment->description[$this->lang]}_\n" : '';
@@ -1513,10 +1512,8 @@ class TelegramService
     }
 
     // Currency
-    private
-    function selectCurrency(
-        $chatId
-    ): void {
+    private function selectCurrency($chatId): void
+    {
         $currencies = Currency::query()->get();
 
         if ($currencies->isEmpty()) {
@@ -1571,11 +1568,8 @@ class TelegramService
         $this->storeUserJourney("Выбор валюты");
     }
 
-    private
-    function showCurrencyInformation(
-        $chatId,
-        $text
-    ): void {
+    private function showCurrencyInformation($chatId, $text): void
+    {
         $currency = Currency::query()->where('ccy', $text)->first();
 
         if (!$currency) {
@@ -1586,6 +1580,10 @@ class TelegramService
 
             return;
         }
+
+        $currency->views()->create([
+            'bot_user_id' => $this->user->id,
+        ]);
 
         $information = "💱 *{$currency->ccy}*\n\n"
             . "💵 *" . __('telegram.fields.currency') . ":* _{$currency->rate}_\n"
@@ -1601,10 +1599,8 @@ class TelegramService
     }
 
     // Setting
-    private
-    function settingInformation(
-        $chatId
-    ): void {
+    private function settingInformation($chatId): void
+    {
         $keyboard[] = [
             __('telegram.settings.language'),
             __('telegram.settings.phone_number'),
@@ -1642,8 +1638,7 @@ class TelegramService
         $this->storeUserJourney("Настройки");
     }
 
-    public
-    function requestPhoneKeyboard(): Keyboard
+    public function requestPhoneKeyboard(): Keyboard
     {
         return new Keyboard(
             [
@@ -1655,11 +1650,8 @@ class TelegramService
     }
 
     // Back
-    private
-    function back(
-        $chatId,
-        $step
-    ): void {
+    private function back($chatId, $step): void
+    {
         $stepInfo = $this->user->previousChoice;
 
         $commands = [
@@ -1714,10 +1706,8 @@ class TelegramService
     }
 
     // User
-    private
-    function updateUserLang(
-        $lang
-    ): void {
+    private function updateUserLang($lang): void
+    {
         $this->user->update(['lang' => $lang]);
 
         $this->lang = $this->user->lang;
@@ -1725,18 +1715,13 @@ class TelegramService
         App::setLocale($lang);
     }
 
-    private
-    function updateUserStep(
-        $chatId,
-        $step
-    ): void {
+    private function updateUserStep($chatId, $step): void
+    {
         BotUser::query()->updateOrCreate(['chat_id' => $chatId], ['step' => $step]);
     }
 
-    private
-    function storeUserJourney(
-        $event
-    ): void {
+    private function storeUserJourney($event): void
+    {
         $this->user->journey()->create(['event_name' => $event]);
     }
 }

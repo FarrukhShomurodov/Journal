@@ -27,4 +27,9 @@ class Promotion extends Model
     {
         return $this->morphMany(Image::class, 'imageable');
     }
+
+    public function views(): MorphMany
+    {
+        return $this->morphMany(View::class, 'viewable');
+    }
 }

@@ -59,4 +59,9 @@ class Clinic extends Model
         return $query->orderBy('rating', $order);
     }
 
+    public function views(): MorphMany
+    {
+        return $this->morphMany(View::class, 'viewable');
+    }
+
 }
