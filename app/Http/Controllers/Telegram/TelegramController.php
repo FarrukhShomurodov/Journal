@@ -7,6 +7,9 @@ use App\Models\BotUser;
 use App\Models\BotUserSession;
 use App\Services\TelegramService;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Telegram\Bot\Api;
 use Telegram\Bot\Keyboard\Keyboard;
@@ -141,6 +144,25 @@ class TelegramController extends Controller
             $user = BotUser::query()->where('chat_id', $chatId)->first();
 
             $this->telegramService->processMessage($chatId, $text, $user->step, $message, $user);
+        }
+    }
+
+    public function sendMessageToUser(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'chat_id' => 'required|string',
+            'text' => 'required|string',
+        ]);
+
+        try {
+            $this->telegram->sendMessage([
+                'chat_id' => $validated['chat_id'],
+                'text' => $validated['text']
+            ]);
+
+            return redirect()->back()->with('success', 'Сообщение успешно отправлено!');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Ошибка при отправке сообщения: ' . $e->getMessage());
         }
     }
 

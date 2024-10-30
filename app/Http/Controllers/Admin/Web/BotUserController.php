@@ -125,6 +125,6 @@ class BotUserController extends Controller
     public function showJourney(BotUser $user): View
     {
         $journeys = $user->journey;
-        return view('admin.users.journey', compact('journeys'));
+        return view('admin.users.journey', compact('journeys', 'user'));
     }
 }

@@ -30,7 +30,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/statistics', [DashboardController::class, 'exportStatistics'])->name('dashboard.statistics.export');
 
     Route::get('bot-users', [BotUserController::class, 'index'])->name('bot.users');
-    Route::get('bot-users/statistics', [BotUserController::class, 'exportStatistics'])->name('bot.users.statistics.export');
+    Route::get('bot-users/statistics', [BotUserController::class, 'exportStatistics'])->name(
+        'bot.users.statistics.export'
+    );
 
     Route::get('bot-user-journey/{user}', [BotUserController::class, 'showJourney'])->name('bot.user.journey');
     Route::get('applications', [ApplicationController::class, 'index'])->name('applications');
@@ -47,6 +49,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('categories', CategoryController::class);
     Route::resource('countries', CountryController::class);
     Route::resource('cities', CityController::class);
+
+    Route::post('bot-user/send-message', [TelegramController::class, 'sendMessageToUser'])->name('bot.sendMessage');
 });
 
 // Telegram
