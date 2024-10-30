@@ -150,7 +150,7 @@
                     <input type="number" step="0.01" name="price_from"
                            class="form-control @error('price_from') is-invalid @enderror" id="price_from"
                            placeholder="Цена от"
-                           value="{{ round($hotel->price_from) }}" required>
+                           value="{{ $hotel->price_from ? round($hotel->price_from) : null }}">
                     @error('price_from')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -161,7 +161,7 @@
                     <input type="number" step="0.01" name="price_to"
                            class="form-control @error('price_to') is-invalid @enderror" id="price_to"
                            placeholder="Цена до"
-                           value="{{ round($hotel->price_to) }}" required>
+                           value="{{ $hotel->price_to ? round($hotel->price_to) : null }}">
                     @error('price_to')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -204,7 +204,8 @@
                                 <div class="row g-3 align-items-center">
                                     @foreach(['ru', 'en', 'uz', 'kz', 'tj'] as $lang)
                                         <div class="col-md-6">
-                                            <label for="type-{{ $lang }}">Тип контакта ({{ strtoupper($lang) }}):</label>
+                                            <label for="type-{{ $lang }}">Тип контакта ({{ strtoupper($lang) }}
+                                                ):</label>
                                             <input type="text" name="contacts[type][{{ $index }}][{{ $lang }}]"
                                                    id="type-{{ $lang }}"
                                                    class="form-control @error('contacts.type.' . $index . '.' . $lang) is-invalid @enderror"
@@ -230,7 +231,9 @@
 
                                     <div class="col-md-12 text-end">
                                         @if($index > 1)
-                                            <button type="button" class="btn btn-danger delete-contact">Удалить контакт</button>
+                                            <button type="button" class="btn btn-danger delete-contact">Удалить
+                                                контакт
+                                            </button>
                                         @endif
                                     </div>
                                 </div>

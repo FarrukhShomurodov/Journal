@@ -79,5 +79,7 @@ return [
         'rating' => 'Rating',
         'currency' => 'Exchange Rate',
         'date' => 'Date',
+        'from' => 'from',
+        'to' => 'to',
     ],
 ];

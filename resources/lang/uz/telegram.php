@@ -79,5 +79,7 @@ return [
         'rating' => 'Reyting',
         'currency' => 'Kurs',
         'date' => 'Sana',
+        'from' => 'dan',
+        'to' => 'gacha',
     ],
 ];

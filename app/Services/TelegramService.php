@@ -170,7 +170,6 @@ class TelegramService
                     } else {
                         $this->showMainMenu($chatId);
                     }
-
                 } else {
                     $this->showClinicInformation($chatId, $text);
                 }
@@ -186,7 +185,6 @@ class TelegramService
                     } else {
                         $this->showMainMenu($chatId);
                     }
-
                 } else {
                     $this->showClinicInformation($chatId, $text, true);
                 }
@@ -337,7 +335,6 @@ class TelegramService
                 'text' => __('telegram.errors.generic_error')
             ]);
         }
-
     }
 
     private function processSelectCountry($chatId): void
@@ -597,7 +594,6 @@ class TelegramService
 
         $this->updateUserStep($chatId, 'clinic_top');
         $this->storeUserJourney('Выбор топ клиники');
-
     }
 
     private function clinicList($chatId, $text = null, $from = null, $isTop = false): void
@@ -734,7 +730,9 @@ class TelegramService
             . "⭐ *" . __('telegram.fields.rating') . "* _{$clinic->rating}_\n"
             . "📅 *" . __('telegram.fields.working_hours') . "* _{$clinic->working_hours}_\n"
             . $clinicDescription
-            . "📍 *" . __('telegram.fields.location') . "* [" . __('telegram.fields.link') . "]($clinic->location_link)\n\n"
+            . "📍 *" . __('telegram.fields.location') . "* [" . __(
+                'telegram.fields.link'
+            ) . "]($clinic->location_link)\n\n"
             . $contactList;
 
 
@@ -1070,7 +1068,6 @@ class TelegramService
 
         $this->updateUserStep($chatId, 'show_hotel');
         $this->storeUserJourney("Выбор отеля");
-
     }
 
     private function showHotelInformation($chatId, $text): void
@@ -1101,11 +1098,23 @@ class TelegramService
         $priceFrom = round($hotel->price_from);
         $priceTo = round($hotel->price_to);
 
+        if ($hotel->price_from && $hotel->price_to) {
+            $priceRange = "$priceFrom - $priceTo";
+        } elseif ($hotel->price_from) {
+            $priceRange = __('telegram.fields.from') . ' ' . $priceFrom;
+        } elseif ($hotel->price_to) {
+            $priceRange = __('telegram.fields.to') . ' ' . $priceTo;
+        } else {
+            $priceRange = '-';
+        }
+
         $description = "*{$hotel->name[$this->lang]}*\n\n"
             . "📅 *" . __('telegram.fields.working_hours') . "* _{$hotel->working_hours}_\n"
             . $clinicDescription
-            . "📍 *" . __('telegram.fields.location') . "* [" . __('telegram.fields.link') . "]($hotel->location_link)\n\n"
-            . "💰 *" . __('telegram.fields.price_range') . "* _{$priceFrom} - {$priceTo}_\n\n"
+            . "📍 *" . __('telegram.fields.location') . "* [" . __(
+                'telegram.fields.link'
+            ) . "]($hotel->location_link)\n\n"
+            . "💰 *" . __('telegram.fields.price_range') . ":" . "* _{$priceRange}_\n\n"
             . $contactList;
 
         if (count($photos) === 0) {
@@ -1134,7 +1143,6 @@ class TelegramService
             ]);
         }
         $this->storeUserJourney("Просмотр отеля " . $hotel->name['ru']);
-
     }
 
     // Entertainment
@@ -1206,11 +1214,23 @@ class TelegramService
         $priceFrom = round($entertainment->price_from);
         $priceTo = round($entertainment->price_to);
 
+        if ($entertainment->price_from && $entertainment->price_to) {
+            $priceRange = "$priceFrom - $priceTo";
+        } elseif ($entertainment->price_from) {
+            $priceRange = __('telegram.fields.from') . ' ' . $priceFrom;
+        } elseif ($entertainment->price_to) {
+            $priceRange = __('telegram.fields.to') . ' ' . $priceTo;
+        } else {
+            $priceRange = '-';
+        }
+
         $description = "*{$entertainment->name[$this->lang]}*\n\n"
             . "📅 *" . __('telegram.fields.working_hours') . "* _{$entertainment->working_hours}_\n"
             . $entertainmentDescription
-            . "📍 *" . __('telegram.fields.location') . "* [" . __('telegram.fields.link') . "]($entertainment->location_link)\n\n"
-            . "💰 *" . __('telegram.fields.price_range') . "* _{$priceFrom} - {$priceTo}_\n\n"
+            . "📍 *" . __('telegram.fields.location') . "* [" . __(
+                'telegram.fields.link'
+            ) . "]($entertainment->location_link)\n\n"
+            . "💰 *" . __('telegram.fields.price_range') . ":" . "* _{$priceRange}_\n\n"
             . $contactList;
 
         if (count($photos) === 0) {
@@ -1282,7 +1302,6 @@ class TelegramService
 
         $this->updateUserStep($chatId, 'show_establishment_category');
         $this->storeUserJourney("Выбор категорию заведения");
-
     }
 
     private function establishmentList($chatId, $text): void
@@ -1325,7 +1344,6 @@ class TelegramService
         }
 
         $this->storeUserJourney("Выбор заведения");
-
     }
 
     private function showEstablishmentInformation($chatId, $text): void
@@ -1355,11 +1373,23 @@ class TelegramService
         $priceFrom = round($establishment->price_from);
         $priceTo = round($establishment->price_to);
 
+        if ($establishment->price_from && $establishment->price_to) {
+            $priceRange = "$priceFrom - $priceTo";
+        } elseif ($establishment->price_from) {
+            $priceRange = __('telegram.fields.from') . ' ' . $priceFrom;
+        } elseif ($establishment->price_to) {
+            $priceRange = __('telegram.fields.to') . ' ' . $priceTo;
+        } else {
+            $priceRange = '-';
+        }
+
         $description = "*{$establishment->name[$this->lang]}*\n\n"
             . "📅 *" . __('telegram.fields.working_hours') . "* _{$establishment->working_hours}_\n"
             . $establishmentDescription
-            . "📍 *" . __('telegram.fields.location') . "* [" . __('telegram.fields.link') . "]($establishment->location_link)\n\n"
-            . "💰 *" . __('telegram.fields.price_range') . "* _{$priceFrom} - {$priceTo}_\n\n"
+            . "📍 *" . __('telegram.fields.location') . "* [" . __(
+                'telegram.fields.link'
+            ) . "]($establishment->location_link)\n\n"
+            . "💰 *" . __('telegram.fields.price_range') . ":" . "* _{$priceRange}_\n\n"
             . $contactList;
 
         if (count($photos) === 0) {
@@ -1390,7 +1420,6 @@ class TelegramService
         }
 
         $this->storeUserJourney("Просмотр информации об заведение " . $establishment->name['ru']);
-
     }
 
     // Currency
@@ -1464,8 +1493,8 @@ class TelegramService
         }
 
         $information = "💱 *{$currency->ccy}*\n\n"
-            . "💵 *".__('telegram.fields.currency').":* _{$currency->rate}_\n"
-            . "📅 *".__('telegram.fields.date').":* _{$currency->relevance_date}_";
+            . "💵 *" . __('telegram.fields.currency') . ":* _{$currency->rate}_\n"
+            . "📅 *" . __('telegram.fields.date') . ":* _{$currency->relevance_date}_";
 
         $this->telegram->sendMessage([
             'chat_id' => $chatId,
@@ -1518,7 +1547,13 @@ class TelegramService
 
     public function requestPhoneKeyboard(): Keyboard
     {
-        return new Keyboard(['keyboard' => [[['text' => 'Отправить контакт', 'request_contact' => true]]], 'resize_keyboard' => true, 'one_time_keyboard' => false]);
+        return new Keyboard(
+            [
+                'keyboard' => [[['text' => 'Отправить контакт', 'request_contact' => true]]],
+                'resize_keyboard' => true,
+                'one_time_keyboard' => false
+            ]
+        );
     }
 
     // Back
@@ -1575,7 +1610,6 @@ class TelegramService
         if (array_key_exists($step, $events)) {
             $this->storeUserJourney($events[$step]);
         }
-
     }
 
     // User

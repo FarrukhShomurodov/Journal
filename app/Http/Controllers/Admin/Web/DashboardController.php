@@ -31,11 +31,31 @@ class DashboardController extends Controller
         $dateFromChurn = $request->input('date_from_session_churn', now()->firstOfMonth()->format('Y-m-d'));
         $dateToChurn = $request->input('date_to_session_churn', now()->format('Y-m-d'));
 
-        $statistics = $this->statisticsRepository->dashboardStatistics($dateFromRR, $dateToRR, $dateFromFrequency, $dateToFrequency, $dateFromChurn, $dateToChurn);
+        $statistics = $this->statisticsRepository->dashboardStatistics(
+            $dateFromRR,
+            $dateToRR,
+            $dateFromFrequency,
+            $dateToFrequency,
+            $dateFromChurn,
+            $dateToChurn
+        );
         $chartLabels = $this->statisticsRepository->activeUsers()->pluck('date');
         $chartData = $this->statisticsRepository->activeUsers()->pluck('count');
 
-        return view('admin.dashboard', compact('statistics', 'dateFromRR', 'dateToRR', 'dateFromFrequency', 'dateToFrequency', 'dateFromChurn', 'dateToChurn', 'chartLabels', 'chartData'));
+        return view(
+            'admin.dashboard',
+            compact(
+                'statistics',
+                'dateFromRR',
+                'dateToRR',
+                'dateFromFrequency',
+                'dateToFrequency',
+                'dateFromChurn',
+                'dateToChurn',
+                'chartLabels',
+                'chartData'
+            )
+        );
     }
 
     public function exportStatistics(Request $request)
@@ -50,7 +70,14 @@ class DashboardController extends Controller
         $dateToChurn = $request->input('date_to_session_churn', now()->format('Y-m-d'));
 
         try {
-            $statistics = $this->statisticsRepository->dashboardStatistics($dateFromRR, $dateToRR, $dateFromFrequency, $dateToFrequency, $dateFromChurn, $dateToChurn);
+            $statistics = $this->statisticsRepository->dashboardStatistics(
+                $dateFromRR,
+                $dateToRR,
+                $dateFromFrequency,
+                $dateToFrequency,
+                $dateFromChurn,
+                $dateToChurn
+            );
 
             if (empty($statistics)) {
                 return response()->json(['message' => 'Нет данных для выбранного диапазона дат.'], 404);
@@ -103,7 +130,6 @@ class DashboardController extends Controller
             }, $filename, [
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ]);
-
         } catch (\Exception $e) {
             return redirect()->back()->withErrors('Возникла ошибка при экспорте статистики. Попробуйте снова.');
         }

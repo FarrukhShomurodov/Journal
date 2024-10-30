@@ -14,8 +14,8 @@ class ApplicationController
         $clinics = Clinic::query()->orderBy('id', 'asc')->get();
 
         $clinicId = $request->input('clinic-id');
-        $dateTo = $request->input('date_to');
-        $dateFrom = $request->input('date_from');
+        $dateFrom = $request->input('date_from', now()->startOfMonth()->format('Y-m-d'));
+        $dateTo = $request->input('date_to', now()->format('Y-m-d'));
 
         $query = Application::query()->orderBy('id', 'asc');
 
@@ -32,7 +32,7 @@ class ApplicationController
 
         $applications = $query->get();
 
-        return view('admin.applications.index', compact('applications', 'clinics'));
+        return view('admin.applications.index', compact('applications', 'clinics', 'dateFrom', 'dateTo'));
     }
 
 }

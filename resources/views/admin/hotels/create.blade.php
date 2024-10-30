@@ -134,7 +134,7 @@
                     <label class="form-label" for="price_from">Цена от</label>
                     <input type="number" step="0.01" name="price_from"
                            class="form-control @error('price_from') is-invalid @enderror" id="price_from"
-                           placeholder="Цена от" required>
+                           placeholder="Цена от">
                     @error('price_from')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -143,7 +143,7 @@
                     <label class="form-label" for="price_to">Цена до</label>
                     <input type="number" step="0.01" name="price_to"
                            class="form-control @error('price_to') is-invalid @enderror" id="price_to"
-                           placeholder="Цена до" required>
+                           placeholder="Цена до">
                     @error('price_to')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

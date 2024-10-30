@@ -13,20 +13,32 @@ use Illuminate\Support\Facades\DB;
 
 class StatisticsRepository
 {
-    public function dashboardStatistics($dateFromRR, $dateToRR, $dateFromFrequency, $dateToFrequency, $dateFromChurn, $dateToChurn): array
-    {
+    public function dashboardStatistics(
+        $dateFromRR,
+        $dateToRR,
+        $dateFromFrequency,
+        $dateToFrequency,
+        $dateFromChurn,
+        $dateToChurn
+    ): array {
         return [
             'dau' => $this->getDAU(),
             'wau' => $this->getWAU(),
             'mau' => $this->getMAU(),
-            'average_session_length' => $this->getAverageSessionLength() ? gmdate("H:i:s", $this->getAverageSessionLength()) : '-',
+            'average_session_length' => $this->getAverageSessionLength() ? gmdate(
+                "H:i:s",
+                $this->getAverageSessionLength()
+            ) : '-',
             'drop_off_point' => $this->dropOffPoint() ?? '-',
             'user_counts_by_menu_section' => $this->getUniqueUserCountsByMenuSection(),
             'most_frequent_country' => $this->mostFrequentCountry(),
             'most_frequent_city' => $this->mostFrequentCity(),
             'user_count' => $this->userCount(),
             'retention_rate' => round($this->calculateRetentionRate($dateFromRR, $dateToRR), 1) . '%',
-            'get_average_session_frequency' => round($this->getAverageSessionFrequency($dateFromFrequency, $dateToFrequency), 1),
+            'get_average_session_frequency' => round(
+                $this->getAverageSessionFrequency($dateFromFrequency, $dateToFrequency),
+                1
+            ),
             'calculate_churn_rate' => round($this->calculateChurnRate($dateFromChurn, $dateToChurn), 1) . '%',
             'user_journey_completion_rate' => $this->UserJourneyCompletionRate(),
         ];
@@ -50,7 +62,10 @@ class StatisticsRepository
     public function calculateRetentionRate($dateTo, $dateFrom)
     {
         $userCount = BotUser::query()->count();
-        $usersActive = BotUser::query()->whereBetween('last_activity', [Carbon::parse($dateTo), Carbon::parse($dateFrom)])->count();
+        $usersActive = BotUser::query()->whereBetween(
+            'last_activity',
+            [Carbon::parse($dateTo), Carbon::parse($dateFrom)]
+        )->count();
 
         if ($userCount == 0) {
             return 0;
@@ -98,7 +113,10 @@ class StatisticsRepository
     public function calculateChurnRate($dateTo, $dateFrom): float|int
     {
         $userCount = BotUser::query()->count();
-        $usersActive = BotUser::query()->whereBetween('last_activity', [Carbon::parse($dateTo), Carbon::parse($dateFrom)])->count();
+        $usersActive = BotUser::query()->whereBetween(
+            'last_activity',
+            [Carbon::parse($dateTo), Carbon::parse($dateFrom)]
+        )->count();
 
         $unUsedUsers = $userCount - $usersActive;
 
@@ -163,10 +181,18 @@ class StatisticsRepository
         foreach ($botUsers as $botUser) {
             $application = $botUser->application()->exists();
             $promotionView = $botUser->journey()->where('event_name', 'LIKE', '%Просмотр акции%')->exists();
-            $useFullInformationView = $botUser->journey()->where('event_name', 'LIKE', '%Просмотр полезной ифнормации%')->exists();
+            $useFullInformationView = $botUser->journey()->where(
+                'event_name',
+                'LIKE',
+                '%Просмотр полезной ифнормации%'
+            )->exists();
             $hotelView = $botUser->journey()->where('event_name', 'LIKE', '%Просмотр отеля%')->exists();
             $entertainmentView = $botUser->journey()->where('event_name', 'LIKE', '%Просмотр развлечения%')->exists();
-            $establishmentView = $botUser->journey()->where('event_name', 'LIKE', '%Просмотр информации об заведение%')->exists();
+            $establishmentView = $botUser->journey()->where(
+                'event_name',
+                'LIKE',
+                '%Просмотр информации об заведение%'
+            )->exists();
             $currencyView = $botUser->journey()->where('event_name', 'LIKE', '%Просмотр валюты%')->exists();
 
             if ($application) {
@@ -192,13 +218,34 @@ class StatisticsRepository
             }
         }
 
-        $userJourneyCompletion['application'] = ($botUsersCount > 0) ? round(($applicationsCount / $botUsersCount) * 100, 1) : 0;
-        $userJourneyCompletion['promotionViewCount'] = ($botUsersCount > 0) ? round(($promotionViewCount / $botUsersCount) * 100, 1) : 0;
-        $userJourneyCompletion['useFullInformationViewCount'] = ($botUsersCount > 0) ? round(($useFullInformationViewCount / $botUsersCount) * 100, 1) : 0;
-        $userJourneyCompletion['hotelViewCount'] = ($botUsersCount > 0) ? round(($hotelViewCount / $botUsersCount) * 100, 1) : 0;
-        $userJourneyCompletion['establishmentViewCount'] = ($botUsersCount > 0) ? round(($establishmentViewCount / $botUsersCount) * 100, 1) : 0;
-        $userJourneyCompletion['currencyViewCount'] = ($botUsersCount > 0) ? round(($currencyViewCount / $botUsersCount) * 100, 1) : 0;
-        $userJourneyCompletion['entertainmentViewCount'] = ($botUsersCount > 0) ? round(($entertainmentViewCount / $botUsersCount) * 100, 1) : 0;
+        $userJourneyCompletion['application'] = ($botUsersCount > 0) ? round(
+            ($applicationsCount / $botUsersCount) * 100,
+            1
+        ) : 0;
+        $userJourneyCompletion['promotionViewCount'] = ($botUsersCount > 0) ? round(
+            ($promotionViewCount / $botUsersCount) * 100,
+            1
+        ) : 0;
+        $userJourneyCompletion['useFullInformationViewCount'] = ($botUsersCount > 0) ? round(
+            ($useFullInformationViewCount / $botUsersCount) * 100,
+            1
+        ) : 0;
+        $userJourneyCompletion['hotelViewCount'] = ($botUsersCount > 0) ? round(
+            ($hotelViewCount / $botUsersCount) * 100,
+            1
+        ) : 0;
+        $userJourneyCompletion['establishmentViewCount'] = ($botUsersCount > 0) ? round(
+            ($establishmentViewCount / $botUsersCount) * 100,
+            1
+        ) : 0;
+        $userJourneyCompletion['currencyViewCount'] = ($botUsersCount > 0) ? round(
+            ($currencyViewCount / $botUsersCount) * 100,
+            1
+        ) : 0;
+        $userJourneyCompletion['entertainmentViewCount'] = ($botUsersCount > 0) ? round(
+            ($entertainmentViewCount / $botUsersCount) * 100,
+            1
+        ) : 0;
 
         return $userJourneyCompletion;
     }

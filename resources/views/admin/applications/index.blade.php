@@ -24,14 +24,14 @@
             <form method="GET" action="">
                 <div class="d-flex">
                     <div class="d-flex flex-row align-items-center " style="margin-right: 10px">
-                        <label class="me-2">От: </label>
-                        <input onchange="this.form.submit()" name="date_from" type="date" class="form-control"
-                               value="{{ request('date_from') }}">
+                        <label for="from" class="me-2">От: </label>
+                        <input onchange="this.form.submit()" id="from" name="date_from" type="date" class="form-control"
+                               value="{{ $dateFrom }}">
                     </div>
                     <div class="d-flex flex-row align-items-center " style="margin-right: 10px">
-                        <label class="me-2">До: </label>
-                        <input onchange="this.form.submit()" name="date_to" type="date" class="form-control"
-                               value="{{ request('date_to') }}">
+                        <label for="to" class="me-2">До: </label>
+                        <input onchange="this.form.submit()" id="to" name="date_to" type="date" class="form-control"
+                               value="{{ $dateTo }}">
                     </div>
                     <div class="me-2">
                         <select id="select2"

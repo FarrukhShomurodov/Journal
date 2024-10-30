@@ -16,8 +16,8 @@ return new class extends Migration
             $table->json('name');
             $table->json('description');
             $table->string('working_hours');
-            $table->decimal('price_from', 10, 2);
-            $table->decimal('price_to', 10, 2);
+            $table->decimal('price_from', 10, 2)->nullable();
+            $table->decimal('price_to', 10, 2)->nullable();
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
             $table->text('location_link');
             $table->json('contacts');
