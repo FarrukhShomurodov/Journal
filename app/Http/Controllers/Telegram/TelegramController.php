@@ -47,7 +47,9 @@ class TelegramController extends Controller
 
             $lastSession = BotUserSession::query()->where('bot_user_id', $user->id)->latest()->first();
 
-            if (!$lastSession || $lastSession->session_end && Carbon::parse($lastSession->session_end)->diffInMinutes(now()) > 1) {
+            if (!$lastSession || $lastSession->session_end && Carbon::parse($lastSession->session_end)->diffInMinutes(
+                    now()
+                ) > 1) {
                 BotUserSession::query()->create([
                     'bot_user_id' => $user->id,
                     'session_start' => now(),
@@ -99,6 +101,7 @@ class TelegramController extends Controller
 
             if ($update->getMessage()->has('contact')) {
                 $phoneNumber = $update->getMessage()->getContact()->getPhoneNumber();
+                $phoneNumber = str_contains((string)$phoneNumber, '+') ? $phoneNumber : '+' . $phoneNumber;
                 $user->update([
                     'phone' => $phoneNumber
                 ]);
@@ -108,23 +111,26 @@ class TelegramController extends Controller
                         'step' => 'phone_changed'
                     ]);
                 }
-            } else if ($user->step === 'get_application' || $user->step === 'change_phone') {
-                if ((int)$text) {
-                    $user->update([
-                        'phone' => $text
-                    ]);
-
-                    if ($user->step === 'change_phone') {
+            } else {
+                if ($user->step === 'get_application' || $user->step === 'change_phone') {
+                    if ((int)$text) {
+                        $text = str_contains((string)$text, '+') ? $text : '+' . $text;
                         $user->update([
-                            'step' => 'phone_changed'
+                            'phone' => $text
+                        ]);
+
+                        if ($user->step === 'change_phone') {
+                            $user->update([
+                                'step' => 'phone_changed'
+                            ]);
+                        }
+                    } else {
+                        $this->telegram->sendMessage([
+                            'chat_id' => $chatId,
+                            'text' => 'Введите действительный номер телефона.',
+                            'reply_markup' => $this->telegramService->requestPhoneKeyboard(),
                         ]);
                     }
-                } else {
-                    $this->telegram->sendMessage([
-                        'chat_id' => $chatId,
-                        'text' => 'Введите действительный номер телефона.',
-                        'reply_markup' => $this->telegramService->requestPhoneKeyboard(),
-                    ]);
                 }
             }
 
