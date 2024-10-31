@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\Web\PromotionController;
 use App\Http\Controllers\Admin\Web\SpecializationController;
 use App\Http\Controllers\Admin\Web\UsefulInformationController;
 use App\Http\Controllers\Admin\Web\UserController;
+use App\Http\Controllers\Admin\Web\ViewedStatisticsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Telegram\TelegramController;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +42,9 @@ Route::group(['middleware' => 'auth'], function () {
         );
         Route::get('bot-user-journey/{user}', [BotUserController::class, 'showJourney'])->name('bot.user.journey');
         Route::get('mailing', [MailingController::class, 'index'])->name('mailing');
+
+        Route::get('viewed-statistics', [ViewedStatisticsController::class, 'index'])->name('viewed.statistics');
+        Route::get('viewed-statistics/export', [ViewedStatisticsController::class, 'exportStatistics'])->name('viewed.statistics.export');
     });
 
     Route::get('applications', [ApplicationController::class, 'index'])->name('applications');

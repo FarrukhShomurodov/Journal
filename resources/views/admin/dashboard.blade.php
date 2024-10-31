@@ -23,6 +23,10 @@
                 <h1 class="display-4 fw-bold text-primary">Аналитика</h1>
                 <p class="lead text-muted">Добро пожаловать на панель управления. Следите за активностью пользователей и
                     основными метриками вашего бота.</p>
+
+                <a href="{{ route('viewed.statistics') }}" class="btn btn-primary btn-sm">
+                    <i class="bx bx-chart me-2"></i> Кол-во просмотров
+                </a>
             </div>
             <div class="col-md-4">
                 <div class="col-12 text-end mb-4">

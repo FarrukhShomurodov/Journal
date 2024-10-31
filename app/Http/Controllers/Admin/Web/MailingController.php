@@ -109,7 +109,7 @@ class MailingController extends Controller
                     )
                 );
             })
-            ->get();
+            ->get('chat_id');
 
         return view(
             'admin.mailing.index',
