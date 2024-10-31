@@ -100,59 +100,59 @@
         </div>
     </div>
 
-    <div class="card mt-4">
-        <div class="card-datatable table-responsive">
-            <table class="datatables-users table border-top">
-                <thead>
-                <tr>
-                    <th>id</th>
-                    <th>Chat id</th>
-                    <th>Имя</th>
-                    <th>Фамилия</th>
-                    <th>Имя пользователя</th>
-                    <th>Телефон</th>
-                    <th>Шаг</th>
-                    <th>Активный</th>
-                    <th>Местоположение</th>
-                    <th>Первое посещение</th>
-                    <th>Последнее посещение</th>
-                    <th>Путь</th>
-                </tr>
-                </thead>
-                <tbody>
-                @php $userCount = 1; @endphp
-                @foreach($botUsers as $user)
-                    <tr>
-                        <td>{{ $userCount++ }}</td>
-                        <td>{{ $user->chat_id }}</td>
-                        <td>{{ $user->first_name }}</td>
-                        <td>{{ $user->second_name }}</td>
-                        <td>{{ $user->uname }}</td>
-                        <td>{{ $user->phone }}</td>
-                        <td>{{ $user->step }}</td>
-                        <td>
-                            <label class="switch">
-                                <input type="checkbox" class="switch-input" data-user-id="{{ $user->id }}"
-                                       @if($user->isactive) checked @endif>
-                                <span class="switch-toggle-slider">
-                                    <span class="switch-on"></span>
-                                    <span class="switch-off"></span>
-                                </span>
-                            </label>
-                        </td>
-                        <td>{{ $user->country ? $user->country->name['ru'] . ',' : '' }} {{ $user->city ? $user->city->name['ru'] : '' }}</td>
-                        <td>{{ $user->created_at }}</td>
-                        <td>{{ $user->last_activity }}</td>
-                        <td>
-                            <button class="btn btn-sm btn-icon"
-                                    onclick="location.href='{{ route('bot.user.journey', $user->id) }}'">
-                                <i class="bx bx-show"></i>
-                            </button>
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
+{{--    <div class="card mt-4">--}}
+{{--        <div class="card-datatable table-responsive">--}}
+{{--            <table class="datatables-users table border-top">--}}
+{{--                <thead>--}}
+{{--                <tr>--}}
+{{--                    <th>id</th>--}}
+{{--                    <th>Chat id</th>--}}
+{{--                    <th>Имя</th>--}}
+{{--                    <th>Фамилия</th>--}}
+{{--                    <th>Имя пользователя</th>--}}
+{{--                    <th>Телефон</th>--}}
+{{--                    <th>Шаг</th>--}}
+{{--                    <th>Активный</th>--}}
+{{--                    <th>Местоположение</th>--}}
+{{--                    <th>Первое посещение</th>--}}
+{{--                    <th>Последнее посещение</th>--}}
+{{--                    <th>Путь</th>--}}
+{{--                </tr>--}}
+{{--                </thead>--}}
+{{--                <tbody>--}}
+{{--                @php $userCount = 1; @endphp--}}
+{{--                @foreach($botUsers as $user)--}}
+{{--                    <tr>--}}
+{{--                        <td>{{ $userCount++ }}</td>--}}
+{{--                        <td>{{ $user->chat_id }}</td>--}}
+{{--                        <td>{{ $user->first_name }}</td>--}}
+{{--                        <td>{{ $user->second_name }}</td>--}}
+{{--                        <td>{{ $user->uname }}</td>--}}
+{{--                        <td>{{ $user->phone }}</td>--}}
+{{--                        <td>{{ $user->step }}</td>--}}
+{{--                        <td>--}}
+{{--                            <label class="switch">--}}
+{{--                                <input type="checkbox" class="switch-input" data-user-id="{{ $user->id }}"--}}
+{{--                                       @if($user->isactive) checked @endif>--}}
+{{--                                <span class="switch-toggle-slider">--}}
+{{--                                    <span class="switch-on"></span>--}}
+{{--                                    <span class="switch-off"></span>--}}
+{{--                                </span>--}}
+{{--                            </label>--}}
+{{--                        </td>--}}
+{{--                        <td>{{ $user->country ? $user->country->name['ru'] . ',' : '' }} {{ $user->city ? $user->city->name['ru'] : '' }}</td>--}}
+{{--                        <td>{{ $user->created_at }}</td>--}}
+{{--                        <td>{{ $user->last_activity }}</td>--}}
+{{--                        <td>--}}
+{{--                            <button class="btn btn-sm btn-icon"--}}
+{{--                                    onclick="location.href='{{ route('bot.user.journey', $user->id) }}'">--}}
+{{--                                <i class="bx bx-show"></i>--}}
+{{--                            </button>--}}
+{{--                        </td>--}}
+{{--                    </tr>--}}
+{{--                @endforeach--}}
+{{--                </tbody>--}}
+{{--            </table>--}}
+{{--        </div>--}}
+{{--    </div>--}}
 @endsection

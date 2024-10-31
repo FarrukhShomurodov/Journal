@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Telegram;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendMessageToChat;
 use App\Models\BotUser;
 use App\Models\BotUserSession;
 use App\Services\TelegramService;
@@ -12,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Telegram\Bot\Api;
+use Telegram\Bot\Exceptions\TelegramSDKException;
 use Telegram\Bot\Keyboard\Keyboard;
 
 class TelegramController extends Controller
@@ -19,6 +21,9 @@ class TelegramController extends Controller
     protected Api $telegram;
     protected TelegramService $telegramService;
 
+    /**
+     * @throws TelegramSDKException
+     */
     public function __construct(TelegramService $telegramService)
     {
         $this->telegram = new Api(config('telegram.bot_token'));
@@ -147,7 +152,7 @@ class TelegramController extends Controller
         }
     }
 
-    public function sendMessageToUser(Request $request): RedirectResponse
+    public function sendMessageToUser(Request $request)
     {
         $validated = $request->validate([
             'chat_ids' => 'required|array',
@@ -155,11 +160,11 @@ class TelegramController extends Controller
         ]);
 
         try {
-            foreach ($validated['chat_ids'] as $chatId) {
-                $this->telegram->sendMessage([
-                    'chat_id' => $chatId,
-                    'text' => $validated['text']
-                ]);
+            foreach (array_chunk($validated['chat_ids'], 100) as $chatIds) {
+                foreach ($chatIds as $chatId) {
+                    SendMessageToChat::dispatch($chatId, $validated['text']);
+                }
+                usleep(500000);
             }
 
             return redirect()->back()->with('success', 'Сообщение успешно отправлено!');
