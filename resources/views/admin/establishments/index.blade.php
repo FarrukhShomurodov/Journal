@@ -64,6 +64,8 @@
                                         onclick="location.href='{{ route('establishments.edit', $establishment->id) }}'">
                                     <i
                                         class="bx bx-edit"></i></button>
+                                @role('admin')
+
                                 <form action="{{ route('establishments.destroy', $establishment->id) }}" method="POST"
                                       style="display:inline;">
                                     @csrf
@@ -71,6 +73,7 @@
                                     <button class="btn btn-sm btn-icon delete-record"><i class="bx bx-trash"></i>
                                     </button>
                                 </form>
+                                @endrole
                             </div>
                         </td>
                     </tr>

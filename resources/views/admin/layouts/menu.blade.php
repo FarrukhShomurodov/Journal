@@ -15,10 +15,18 @@
     <div class="menu-divider mt-0"></div>
 
     <ul class="menu-inner py-1 ps ps--active-y">
+        @role('admin')
         <li class="menu-item {{ Request::is('/') || Request::is('statistics*') ? 'active' : '' }}">
             <a href="{{route('dashboard')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div data-i18n="Панели управления">Панели управления</div>
+            </a>
+        </li>
+
+        <li class="menu-item {{ Request::is('users*') ? 'active' : '' }}">
+            <a href="{{route('users.index')}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-user-circle"></i>
+                <div data-i18n="Пользователи">Пользователи</div>
             </a>
         </li>
 
@@ -35,6 +43,7 @@
                 <div data-i18n="Рассылка">Рассылка</div>
             </a>
         </li>
+        @endrole
 
         <li class="menu-item {{ Request::is('countries*') || Request::is('countries*') || Request::is('cities*') ? 'open' : '' }}"
             style="">

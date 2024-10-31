@@ -1,12 +1,12 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    <title>Journal - Категории</title>
+    <title>Journal | Пользователи</title>
 @endsection
 
 @section('content')
     <h6 class="py-3 breadcrumb-wrapper mb-4">
-        <span class="text-muted fw-light">Категории</span>
+        <span class="text-muted fw-light">Пользователи</span>
     </h6>
 
     @if ($errors->any())
@@ -31,45 +31,63 @@
 
     <div class="card">
         <div class="d-flex justify-content-between align-items-center">
-            <h5 class="card-header">Категории</h5>
-            <a href="{{  route('categories.create') }}" class="btn btn-primary"
+            <h5 class="card-header">Пользователи</h5>
+            <a href="{{ route('users.create') }}" class="btn btn-primary "
                style="margin-right: 22px;">Создать</a>
         </div>
-
         <div class="card-datatable table-responsive">
             <table class="datatables-users table border-top">
                 <thead>
                 <tr>
-                    <th>Название</th>
-                    <th>Кол-во просмотров</th>
+                    <th>Id</th>
+                    <th>Имя</th>
+                    <th>Фамилия</th>
+                    <th>Логин</th>
+                    <th>Роль</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                @foreach ($categories as $category)
+                @php
+                    $count = 1
+                @endphp
+
+                @foreach($users as $user)
                     <tr>
+                        <td>{{ $count++ }}</td>
+                        <td>{{ $user->name }}</td>
+                        <td>{{ $user->second_name }}</td>
+                        <td>{{ $user->login }}</td>
                         <td>
-                            @foreach($category->name as $lang => $name)
-                                <div><b>{{ strtoupper($lang) }}:</b> {{ $name }}</div>
-                            @endforeach
-                        </td>
-                        <td>
-                            {{ $category->views()->count() }}
+                            @php
+                                switch ($user->roles->pluck('name')[0]){
+                                      case 'admin':
+                                         echo "Администратор";
+                                          break;
+                                      case 'moderator':
+                                        echo"Модератор";
+                                          break;
+                                      default:
+                                          echo ' ';
+                                          break;
+                                }
+                            @endphp
                         </td>
                         <td>
                             <div class="d-inline-block text-nowrap">
                                 <button class="btn btn-sm btn-icon"
-                                        onclick="location.href='{{ route('categories.edit', $category->id) }}'"><i
+                                        onclick="location.href='{{ route('users.edit', $user->id) }}'"><i
                                         class="bx bx-edit"></i></button>
-                                @role('admin')
-                                    <form action="{{ route('categories.destroy', $category->id) }}" method="POST"
+
+                                @if($user->roles->pluck('name')[0] != 'admin')
+                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST"
                                           style="display:inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-sm btn-icon delete-record"><i class="bx bx-trash"></i>
                                         </button>
                                     </form>
-                                @endrole
+                                @endif
                             </div>
                         </td>
                     </tr>

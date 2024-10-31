@@ -20,5 +20,9 @@ class DatabaseSeeder extends Seeder
             'login' => 'journal',
             'password' => Hash::make('journal')
         ]);
+
+        $this->call([
+            RolesAndPermissionsSeeder::class,
+        ]);
     }
 }

@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\Web\MailingController;
 use App\Http\Controllers\Admin\Web\PromotionController;
 use App\Http\Controllers\Admin\Web\SpecializationController;
 use App\Http\Controllers\Admin\Web\UsefulInformationController;
+use App\Http\Controllers\Admin\Web\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Telegram\TelegramController;
 use Illuminate\Support\Facades\Route;
@@ -27,17 +28,22 @@ Route::get('set-lang/{locale}/{botUser?}', [DashboardController::class, 'setLoca
 
 Route::group(['middleware' => 'auth'], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/statistics', [DashboardController::class, 'exportStatistics'])->name('dashboard.statistics.export');
 
-    Route::get('bot-users', [BotUserController::class, 'index'])->name('bot.users');
-    Route::get('bot-users/statistics', [BotUserController::class, 'exportStatistics'])->name(
-        'bot.users.statistics.export'
-    );
+    Route::group(['middleware' => 'role:admin'], function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/statistics', [DashboardController::class, 'exportStatistics'])->name(
+            'dashboard.statistics.export'
+        );
+        Route::resource('/users', UserController::class);
+        Route::get('bot-users', [BotUserController::class, 'index'])->name('bot.users');
+        Route::get('bot-users/statistics', [BotUserController::class, 'exportStatistics'])->name(
+            'bot.users.statistics.export'
+        );
+        Route::get('bot-user-journey/{user}', [BotUserController::class, 'showJourney'])->name('bot.user.journey');
+        Route::get('mailing', [MailingController::class, 'index'])->name('mailing');
+    });
 
-    Route::get('bot-user-journey/{user}', [BotUserController::class, 'showJourney'])->name('bot.user.journey');
     Route::get('applications', [ApplicationController::class, 'index'])->name('applications');
-    Route::get('mailing', [MailingController::class, 'index'])->name('mailing');
 
     Route::resource('currencies', CurrencyController::class);
     Route::resource('establishments', EstablishmentController::class);
