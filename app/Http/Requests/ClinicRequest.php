@@ -44,7 +44,7 @@ class ClinicRequest extends FormRequest
             'disease_type*' => 'required|exists:disease_types,id',
             'specialization' => 'required|array',
             'specialization*' => 'required|exists:specializations,id',
-            'rating' => 'required|numeric|min:1|max:5'
+            'rating' => 'required|numeric|min:0|max:5'
         ];
     }
 }

@@ -29,7 +29,7 @@ class SpecializationRequest extends FormRequest
             'name.uz' => 'required|string|max:200',
             'name.kz' => 'required|string|max:200',
             'name.tj' => 'required|string|max:200',
-            'rating' => 'required|numeric|min:1|max:5'
+            'rating' => 'required|numeric|min:0|max:5'
         ];
     }
 }
