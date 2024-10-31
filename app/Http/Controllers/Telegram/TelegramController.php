@@ -150,15 +150,17 @@ class TelegramController extends Controller
     public function sendMessageToUser(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'chat_id' => 'required|string',
+            'chat_ids' => 'required|array',
             'text' => 'required|string',
         ]);
 
         try {
-            $this->telegram->sendMessage([
-                'chat_id' => $validated['chat_id'],
-                'text' => $validated['text']
-            ]);
+            foreach ($validated['chat_ids'] as $chatId) {
+                $this->telegram->sendMessage([
+                    'chat_id' => $chatId,
+                    'text' => $validated['text']
+                ]);
+            }
 
             return redirect()->back()->with('success', 'Сообщение успешно отправлено!');
         } catch (Exception $e) {

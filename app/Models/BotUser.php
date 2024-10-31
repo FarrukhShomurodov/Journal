@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class BotUser extends Model
 {
@@ -59,4 +60,10 @@ class BotUser extends Model
     {
         return $this->belongsTo(City::class);
     }
+
+    public function views(): HasMany
+    {
+        return $this->hasMany(View::class, 'bot_user_id');
+    }
+
 }

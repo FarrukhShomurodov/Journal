@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\Web\DiseaseTypeController;
 use App\Http\Controllers\Admin\Web\EntertainmentController;
 use App\Http\Controllers\Admin\Web\EstablishmentController;
 use App\Http\Controllers\Admin\Web\HotelController;
+use App\Http\Controllers\Admin\Web\MailingController;
 use App\Http\Controllers\Admin\Web\PromotionController;
 use App\Http\Controllers\Admin\Web\SpecializationController;
 use App\Http\Controllers\Admin\Web\UsefulInformationController;
@@ -36,6 +37,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('bot-user-journey/{user}', [BotUserController::class, 'showJourney'])->name('bot.user.journey');
     Route::get('applications', [ApplicationController::class, 'index'])->name('applications');
+    Route::get('mailing', [MailingController::class, 'index'])->name('mailing');
 
     Route::resource('currencies', CurrencyController::class);
     Route::resource('establishments', EstablishmentController::class);

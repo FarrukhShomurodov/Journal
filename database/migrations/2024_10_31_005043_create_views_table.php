@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('views', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('bot_user_id')->nullable()->constrained('bot_users')->onDelete('cascade');
+            $table->foreignId('bot_user_id')->constrained('bot_users')->onDelete('cascade');
             $table->string('viewable_type');
             $table->unsignedBigInteger('viewable_id');
             $table->timestamps();

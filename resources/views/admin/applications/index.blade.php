@@ -16,12 +16,15 @@ $today = date('Y-m-d');
     </h6>
 
     @if ($errors->any())
-        @foreach ($errors->all() as $error)
-            <div class="alert alert-solid-danger alert-dismissible d-flex align-items-center" role="alert">
-                {{ $error }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endforeach
+        <div class="alert alert-solid-danger alert-dismissible d-flex align-items-center" role="alert">
+            <i class="bx bx-error-circle fs-4 me-2"></i>
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     @endif
 
     <div class="card">

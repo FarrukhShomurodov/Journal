@@ -9,19 +9,22 @@
         <span class="text-muted fw-light"><a class="text-muted"
                                              href="{{ route('categories.index') }}">Категории</a> /</span>Редактировать
     </h6>
+    @if ($errors->any())
+        <div class="alert alert-solid-danger alert-dismissible d-flex align-items-center" role="alert">
+            <i class="bx bx-error-circle fs-4 me-2"></i>
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Редактировать</h5>
         </div>
-        @if ($errors->any())
-            <div class="alert alert-danger" role="alert">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
         <div class="card-body">
             <form action="{{ route('categories.update', $category->id) }}" method="POST">
                 @csrf

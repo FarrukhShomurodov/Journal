@@ -21,10 +21,18 @@
                 <div data-i18n="Панели управления">Панели управления</div>
             </a>
         </li>
-        <li class="menu-item {{ Request::is('bot-users*') ||  Request::is('bot-user*')? 'active' : '' }}">
-            <a href="{{route('bot.users')}}" class="menu-link">
+
+        <li class="menu-item {{ Request::is('bot-users*') ||  Request::is('bot-user*') ? 'active' : '' }}">
+            <a href="{{ route('bot.users') }}" class="menu-link">
                 <i class='menu-icon bx bx-bot'></i>
                 <div data-i18n="Пользователи бота">Пользователи бота</div>
+            </a>
+        </li>
+
+        <li class="menu-item {{ Request::is('mailing*') ? 'active' : '' }}">
+            <a href="{{route('mailing')}}" class="menu-link">
+                <i class="menu-icon bx bx-envelope"></i>
+                <div data-i18n="Рассылка">Рассылка</div>
             </a>
         </li>
 
