@@ -152,21 +152,30 @@ class TelegramController extends Controller
         }
     }
 
-    public function sendMessageToUser(Request $request)
+    public function sendMessageToUser(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'chat_ids' => 'array',
-            'text' => 'required|string',
+            'text' => 'required|string|max:1024',
+            'photo' => 'sometimes|image|mimes:jpg,png'
         ]);
 
         if (empty($validated['chat_ids'])) {
             return redirect()->back()->withErrors('Пользователи не найдены.');
         }
 
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store(
+                'mailing_photo',
+                'public'
+            );
+        }
+
         try {
             foreach (array_chunk($validated['chat_ids'], 100) as $chatIds) {
                 foreach ($chatIds as $chatId) {
-                    SendMessageToChat::dispatch($chatId, $validated['text']);
+                    SendMessageToChat::dispatch($chatId, $validated['text'], $photoPath);
                 }
                 usleep(500000);
             }

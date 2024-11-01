@@ -22,6 +22,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Telegram\TelegramController;
 use Illuminate\Support\Facades\Route;
 use Telegram\Bot\Api;
+use Telegram\Bot\FileUpload\InputFile;
 
 Route::get('login', [AuthController::class, 'showLoginForm']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
@@ -44,7 +45,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('mailing', [MailingController::class, 'index'])->name('mailing');
 
         Route::get('viewed-statistics', [ViewedStatisticsController::class, 'index'])->name('viewed.statistics');
-        Route::get('viewed-statistics/export', [ViewedStatisticsController::class, 'exportStatistics'])->name('viewed.statistics.export');
+        Route::get('viewed-statistics/export', [ViewedStatisticsController::class, 'exportStatistics'])->name(
+            'viewed.statistics.export'
+        );
     });
 
     Route::get('applications', [ApplicationController::class, 'index'])->name('applications');

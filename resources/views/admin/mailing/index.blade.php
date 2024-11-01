@@ -90,7 +90,7 @@
         </div>
 
         <div class="card-body">
-            <form class="d-flex flex-column gap-3" method="POST" action="{{ route('bot.sendMessage') }}">
+            <form class="d-flex flex-column gap-3" method="POST" action="{{ route('bot.sendMessage') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
                     <label for="text" class="form-label">Сообщение</label>
@@ -103,6 +103,11 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+                <div class="mb-3">
+                    <label for="imageInput" class="form-label">Загрузить фото</label>
+                    <input type="file" name="photo" id="imageInput" class="form-control">
+                </div>
+                <div id="imagePreview" class="mb-3 main__td"></div>
                 <button type="submit" class="btn btn-primary">Отправить сообщение</button>
             </form>
         </div>
