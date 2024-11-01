@@ -13,6 +13,7 @@ use App\Models\DiseaseType;
 use App\Models\Entertainment;
 use App\Models\Establishment;
 use App\Models\Hotel;
+use App\Models\Language;
 use App\Models\Promotion;
 use App\Models\Specialization;
 use App\Models\UsefulInformation;
@@ -23,20 +24,24 @@ class MailingController extends Controller
 {
     public function index(Request $request): View
     {
-        $clinics = Clinic::all();
-        $categories = Category::all();
-        $cities = City::all();
-        $countries = Country::all();
-        $currencies = Currency::all();
-        $diseaseTypes = DiseaseType::all();
-        $entertainments = Entertainment::all();
-        $establishments = Establishment::all();
-        $hotels = Hotel::all();
-        $promotions = Promotion::all();
-        $specializations = Specialization::all();
-        $usefulInformations = UsefulInformation::all();
+        $clinics = Clinic::query()->get(['id', 'name']);
+        $categories = Category::query()->get(['id', 'name']);
+        $cities = City::query()->get(['id', 'name']);
+        $countries = Country::query()->get(['id', 'name']);
+        $currencies = Currency::query()->get(['id', 'name']);
+        $diseaseTypes = DiseaseType::query()->get(['id', 'name']);
+        $entertainments = Entertainment::query()->get(['id', 'name']);
+        $establishments = Establishment::query()->get(['id', 'name']);
+        $hotels = Hotel::query()->get(['id', 'name']);
+        $promotions = Promotion::query()->get(['id', 'name']);
+        $specializations = Specialization::query()->get(['id', 'name']);
+        $usefulInformations = UsefulInformation::query()->get(['id', 'name']);
+        $langs = Language::query()->get(['name', 'code']);
 
         $botUsers = BotUser::query()
+            ->when($request->filled('lang_id'), function ($query) use ($request) {
+                $query->where('lang', $request->input('lang_id'));
+            })
             ->when($request->input('clinic_id'), function ($query, $clinicId) {
                 $query->whereHas('views', function ($q) use ($clinicId) {
                     $q->where('viewable_id', $clinicId)
@@ -126,7 +131,8 @@ class MailingController extends Controller
                 'promotions',
                 'specializations',
                 'usefulInformations',
-                'botUsers'
+                'botUsers',
+                'langs'
             )
         );
     }

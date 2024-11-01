@@ -39,7 +39,7 @@
         </div>
 
         <div id="filtersCollapse"
-             class="collapse @if(request('category_id') || request('establishment_id') || request('country_id') || request('city_id') || request('clinic_id') || request('specialization_id') || request('diseaseType_id') || request('entertainment_id') || request('hotel_id') || request('promotion_id') || request('usefulInformation_id') || request('currency_id')) show @endif">
+             class="collapse @if(request('category_id') || request('establishment_id') || request('country_id') || request('city_id') || request('clinic_id') || request('specialization_id') || request('diseaseType_id') || request('entertainment_id') || request('hotel_id') || request('promotion_id') || request('usefulInformation_id') || request('currency_id') || request('lang_id')) show @endif">
             <div class="card-body">
                 <form method="GET" action="{{ route('mailing') }}">
                     <div class="row g-3">
@@ -56,7 +56,8 @@
                                 ['id' => 'hotel', 'label' => 'Отели', 'items' => $hotels],
                                 ['id' => 'promotion', 'label' => 'Акции', 'items' => $promotions],
                                 ['id' => 'usefulInformation', 'label' => 'Полезная информация', 'items' => $usefulInformations],
-                                ['id' => 'currency', 'label' => 'Валюты', 'items' => $currencies]
+                                ['id' => 'currency', 'label' => 'Валюты', 'items' => $currencies],
+                                ['id' => 'lang', 'label' => 'Языки', 'items' => $langs]
                             ];
                         @endphp
 
@@ -67,10 +68,17 @@
                                         class="form-control select2">
                                     <option value="">Все</option>
                                     @foreach($filter['items'] as $item)
-                                        <option value="{{ $item->id }}"
-                                            {{ request("{$filter['id']}_id") == $item->id ? 'selected' : '' }}>
-                                            {{ $filter['id'] == 'currency' ? json_decode($item->name)->ru : $item->name['ru'] }}
-                                        </option>
+                                        @if($filter['id'] == 'lang')
+                                            <option value="{{ $item->code }}"
+                                                {{ request("{$filter['id']}_id") == $item->code ? 'selected' : '' }}>
+                                                {{ $item->name }}
+                                            </option>
+                                        @else
+                                            <option value="{{ $item->id }}"
+                                                {{ request("{$filter['id']}_id") == $item->id ? 'selected' : '' }}>
+                                                {{ $filter['id'] == 'currency' ? json_decode($item->name)->ru : $item->name['ru'] }}
+                                            </option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>
