@@ -17,7 +17,8 @@
     </style>
 
     <h6 class="py-3 breadcrumb-wrapper mb-4">
-        <span class="text-muted fw-light">Журнал /</span>Кол-во просмотров
+        <span class="text-muted fw-light"><a class="text-muted"
+                                             href="{{ route('dashboard') }}">Журнал /</a></span>Кол-во просмотров
     </h6>
 
     <div class="col-12 text-end mb-4">
