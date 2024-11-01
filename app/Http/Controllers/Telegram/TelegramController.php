@@ -155,9 +155,13 @@ class TelegramController extends Controller
     public function sendMessageToUser(Request $request)
     {
         $validated = $request->validate([
-            'chat_ids' => 'required|array',
+            'chat_ids' => 'array',
             'text' => 'required|string',
         ]);
+
+        if (empty($validated['chat_ids'])) {
+            return redirect()->back()->withErrors('Пользователи не найдены.');
+        }
 
         try {
             foreach (array_chunk($validated['chat_ids'], 100) as $chatIds) {
