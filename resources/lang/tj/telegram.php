@@ -74,6 +74,7 @@ return [
         'working_hours' => 'Соатҳои корӣ:',
         'location' => 'Макон:',
         'contacts' => 'Тамосҳо:',
+        'description' => 'Тавсифи:',
         'link' => 'Пайванд',
         'price_range' => 'Диапазони нарх',
         'rating' => 'Рейтинг',

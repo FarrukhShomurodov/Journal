@@ -760,7 +760,7 @@ class TelegramService
 
         $photos = $clinic->images;
 
-        $clinicDescription = $clinic->description ? "*📝 Описание:* _{$clinic->description[$this->lang]}_\n" : '';
+        $clinicDescription = $clinic->description ? "*📝 ".__('telegram.fields.description')."* _{$clinic->description[$this->lang]}_\n" : '';
 
         $contacts = '';
         foreach ($clinic->contacts['type'] as $index => $contactType) {
@@ -811,8 +811,6 @@ class TelegramService
                 $mediaGroup[] = [
                     'type' => 'photo',
                     'media' => $fullPhotoUrl,
-                    'caption' => $index === 0 ? $description : '',
-                    'parse_mode' => 'Markdown'
                 ];
             }
 
@@ -823,7 +821,7 @@ class TelegramService
 
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => __('telegram.messages.submit_application'),
+                'text' => $description,
                 'reply_markup' => $reply_markup,
                 'parse_mode' => 'Markdown'
             ]);
@@ -844,9 +842,15 @@ class TelegramService
     private function getApplication($chatId): void
     {
         if ($this->user->phone) {
+
+            $keyboard[] = [__("telegram.navigation.back")];
+
+            $replyKeyboard = Keyboard::make(["keyboard"=> $keyboard, "resize_keyboard"=> true]);
+
             $this->telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => "Создайте заявку.",
+                'text' => __("telegram.messages.submit_application"),
+                "reply_markup" => $replyKeyboard
             ]);
             $this->updateUserStep($chatId, 'store_application');
             $this->storeUserJourney("Напишите заявку");
@@ -949,19 +953,13 @@ class TelegramService
 
         $photos = $promotion->images;
 
-        $promotionDescription = $promotion->description ? "*📝 Описание:* _{$promotion->description[$this->lang]}_\n" : '';
+        $promotionDescription = $promotion->description ? "*📝 ".__('telegram.fields.description')."* _{$promotion->description[$this->lang]}_\n" : '';
 
         $description = "*{$promotion->name[$this->lang]}*\n\n"
             . $promotionDescription;
 
 
-        if (count($photos) === 0) {
-            $this->telegram->sendMessage([
-                'chat_id' => $chatId,
-                'text' => $description,
-                'parse_mode' => 'Markdown'
-            ]);
-        } else {
+        if (count($photos) !== 0) {
             $mediaGroup = [];
             foreach ($photos as $index => $photo) {
                 $photoPath = Storage::url('public/' . $photo->url);
@@ -970,8 +968,6 @@ class TelegramService
                 $mediaGroup[] = [
                     'type' => 'photo',
                     'media' => $fullPhotoUrl,
-                    'caption' => $index === 0 ? $description : '',
-                    'parse_mode' => 'Markdown'
                 ];
             }
 
@@ -980,6 +976,12 @@ class TelegramService
                 'media' => json_encode($mediaGroup)
             ]);
         }
+
+        $this->telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => $description,
+            'parse_mode' => 'Markdown'
+        ]);
 
         $this->storeUserJourney("Просмотр акции " . $promotion->name[$this->lang]);
     }
@@ -1046,19 +1048,14 @@ class TelegramService
 
         $photos = $usefulInformation->images;
 
-        $promotionDescription = $usefulInformation->description ? "*📝 Описание:* _{$usefulInformation->description[$this->lang]}_\n" : '';
+        $promotionDescription = $usefulInformation->description ? "*📝 ".__('telegram.fields.description')."* _{$usefulInformation->description[$this->lang]}_\n" : '';
 
         $description = "*{$usefulInformation->name[$this->lang]}*\n\n"
             . $promotionDescription;
 
 
-        if (count($photos) === 0) {
-            $this->telegram->sendMessage([
-                'chat_id' => $chatId,
-                'text' => $description,
-                'parse_mode' => 'Markdown'
-            ]);
-        } else {
+        if (count($photos) !== 0) {
+
             $mediaGroup = [];
             foreach ($photos as $index => $photo) {
                 $photoPath = Storage::url('public/' . $photo->url);
@@ -1067,8 +1064,6 @@ class TelegramService
                 $mediaGroup[] = [
                     'type' => 'photo',
                     'media' => $fullPhotoUrl,
-                    'caption' => $index === 0 ? $description : '',
-                    'parse_mode' => 'Markdown'
                 ];
             }
 
@@ -1076,7 +1071,14 @@ class TelegramService
                 'chat_id' => $chatId,
                 'media' => json_encode($mediaGroup)
             ]);
+
         }
+
+        $this->telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => $description,
+            'parse_mode' => 'Markdown'
+        ]);
 
         $this->storeUserJourney("Просмотр полезной ифнормации " . $usefulInformation->name['ru']);
     }
@@ -1143,7 +1145,7 @@ class TelegramService
 
         $photos = $hotel->images;
 
-        $clinicDescription = $hotel->description ? "*📝 Описание:* _{$hotel->description[$this->lang]}_\n" : '';
+        $clinicDescription = $hotel->description ? "*📝 ".__('telegram.fields.description')."* _{$hotel->description[$this->lang]}_\n" : '';
 
         $contacts = '';
         foreach ($hotel->contacts['type'] as $index => $contactType) {
@@ -1178,13 +1180,7 @@ class TelegramService
             . "💰 *" . __('telegram.fields.price_range') . ":" . "* _{$priceRange}_\n\n"
             . $contactList;
 
-        if (count($photos) === 0) {
-            $this->telegram->sendMessage([
-                'chat_id' => $chatId,
-                'text' => $description,
-                'parse_mode' => 'Markdown'
-            ]);
-        } else {
+        if (count($photos) !== 0) {
             $mediaGroup = [];
             foreach ($photos as $index => $photo) {
                 $photoPath = Storage::url('public/' . $photo->url);
@@ -1193,8 +1189,6 @@ class TelegramService
                 $mediaGroup[] = [
                     'type' => 'photo',
                     'media' => $fullPhotoUrl,
-                    'caption' => $index === 0 ? $description : '',
-                    'parse_mode' => 'Markdown'
                 ];
             }
 
@@ -1202,7 +1196,16 @@ class TelegramService
                 'chat_id' => $chatId,
                 'media' => json_encode($mediaGroup)
             ]);
+
         }
+
+        $this->telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => $description,
+            'parse_mode' => 'Markdown'
+        ]);
+
+
         $this->storeUserJourney("Просмотр отеля " . $hotel->name['ru']);
     }
 
@@ -1267,7 +1270,7 @@ class TelegramService
 
         $photos = $entertainment->images;
 
-        $entertainmentDescription = $entertainment->description ? "*📝 Описание:* _{$entertainment->description[$this->lang]}_\n" : '';
+        $entertainmentDescription = $entertainment->description ? "*📝 ".__('telegram.fields.description')."* _{$entertainment->description[$this->lang]}_\n" : '';
 
         $contacts = '';
         foreach ($entertainment->contacts['type'] as $index => $contactType) {
@@ -1301,13 +1304,7 @@ class TelegramService
             . "💰 *" . __('telegram.fields.price_range') . ":" . "* _{$priceRange}_\n\n"
             . $contactList;
 
-        if (count($photos) === 0) {
-            $this->telegram->sendMessage([
-                'chat_id' => $chatId,
-                'text' => $description,
-                'parse_mode' => 'Markdown'
-            ]);
-        } else {
+        if (count($photos) !== 0) {
             $mediaGroup = [];
             foreach ($photos as $index => $photo) {
                 $photoPath = Storage::url('public/' . $photo->url);
@@ -1316,8 +1313,6 @@ class TelegramService
                 $mediaGroup[] = [
                     'type' => 'photo',
                     'media' => $fullPhotoUrl,
-                    'caption' => $index === 0 ? $description : '',
-                    'parse_mode' => 'Markdown'
                 ];
             }
 
@@ -1326,6 +1321,14 @@ class TelegramService
                 'media' => json_encode($mediaGroup)
             ]);
         }
+
+
+        $this->telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => $description,
+            'parse_mode' => 'Markdown'
+        ]);
+
         $this->storeUserJourney("Просмотр развлечения " . $entertainment->name['ru']);
     }
 
@@ -1446,7 +1449,7 @@ class TelegramService
 
         $photos = $establishment->images;
 
-        $establishmentDescription = $establishment->description ? "*📝 Описание:* _{$establishment->description[$this->lang]}_\n" : '';
+        $establishmentDescription = $establishment->description ? "*📝 ".__('telegram.fields.description')."* _{$establishment->description[$this->lang]}_\n" : '';
 
         $contacts = '';
         foreach ($establishment->contacts['type'] as $index => $contactType) {
@@ -1481,13 +1484,8 @@ class TelegramService
             . "💰 *" . __('telegram.fields.price_range') . ":" . "* _{$priceRange}_\n\n"
             . $contactList;
 
-        if (count($photos) === 0) {
-            $this->telegram->sendMessage([
-                'chat_id' => $chatId,
-                'text' => $description,
-                'parse_mode' => 'Markdown'
-            ]);
-        } else {
+        if (count($photos) !== 0) {
+
             $mediaGroup = [];
 
             foreach ($photos as $index => $photo) {
@@ -1497,8 +1495,6 @@ class TelegramService
                 $mediaGroup[] = [
                     'type' => 'photo',
                     'media' => $fullPhotoUrl,
-                    'caption' => $index === 0 ? $description : '',
-                    'parse_mode' => 'Markdown'
                 ];
             }
 
@@ -1506,7 +1502,15 @@ class TelegramService
                 'chat_id' => $chatId,
                 'media' => json_encode($mediaGroup)
             ]);
+
         }
+
+
+        $this->telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => $description,
+            'parse_mode' => 'Markdown'
+        ]);
 
         $this->storeUserJourney("Просмотр информации об заведение " . $establishment->name['ru']);
     }

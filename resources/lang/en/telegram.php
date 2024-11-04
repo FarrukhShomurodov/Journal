@@ -74,6 +74,7 @@ return [
         'working_hours' => 'Working hours:',
         'location' => 'Location:',
         'contacts' => 'Contacts:',
+        'description' => 'Description:',
         'link' => 'Link',
         'price_range' => 'Price Range',
         'rating' => 'Rating',

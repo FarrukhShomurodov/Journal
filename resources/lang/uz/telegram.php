@@ -74,6 +74,7 @@ return [
         'working_hours' => 'Ish vaqti:',
         'location' => 'Joylashuv:',
         'contacts' => 'Kontaktlar:',
+        'description' => 'Tavsif:',
         'link' => 'Havola',
         'price_range' => 'Narx oraligʻi',
         'rating' => 'Reyting',

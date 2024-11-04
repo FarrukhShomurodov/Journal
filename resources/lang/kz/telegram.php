@@ -74,6 +74,7 @@ return [
         'working_hours' => 'Жұмыс кестесі:',
         'location' => 'Орналасқан жері:',
         'contacts' => 'Байланыстар:',
+        'description' => 'Сипаттамасы:',
         'link' => 'Сілтеме',
         'price_range' => 'Баға диапазоны',
         'rating' => 'Рейтинг',
